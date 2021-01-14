@@ -2,6 +2,22 @@ plugins {
   id 'java-library'
 }
 
+Properties env = new Properties()
+File subPropertiesFile = new File("$projectDir/env.properties")
+subPropertiesFile.withInputStream {
+  env.load(it)
+}
+
+// define environment and application settings
+def applicationName = env.APPLICATION_NAME
+def buildNumber = env.APPLICATION_BUILD_NUMBER
+group = env.APPLICATION_GROUP
+version = env.APPLICATION_VERSION
+def javaVersion = JavaVersion.toVersion(env.JAVA_VERSION)
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
+compileJava.options.encoding = env.ENCODING
+
 ext {
   LOMBOK_VERSION = '1.18.+'
 }
