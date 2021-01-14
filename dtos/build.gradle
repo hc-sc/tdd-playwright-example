@@ -1,0 +1,14 @@
+plugins {
+  id 'java-library'
+}
+
+ext {
+  LOMBOK_VERSION = '1.18.+'
+}
+
+dependencies {
+	compileOnly "org.projectlombok:lombok:$LOMBOK_VERSION"
+	annotationProcessor "org.projectlombok:lombok:$LOMBOK_VERSION"
+	testCompileOnly "org.projectlombok:lombok:$LOMBOK_VERSION"
+	testAnnotationProcessor "org.projectlombok:lombok:$LOMBOK_VERSION"
+}
