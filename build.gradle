@@ -1,0 +1,70 @@
+buildscript{
+  repositories {
+    // the order of declaration determines where Gradle will look for dependencies
+    // start with the one provided in the gradle.properties file from JACK, then
+    // try a public one
+    maven {
+      url pluginrepo_url
+    }
+    mavenCentral()
+  }
+}
+
+// define common plugins
+// NOTE: we need to 'apply false' since we don't want to apply to this project, only subprojects
+plugins {
+	id 'org.springframework.boot' version '2.2.0.RELEASE' apply false // sets up gradle boot* tasks
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE' // defines all spring libraries to use the version specified by Spring Boot
+  id 'eclipse' // easier use in eclipse and other IDEs
+}
+
+// pulls out properties from a global properties file
+Properties env = new Properties()
+File propertiesFile = new File("$projectDir/env.properties")
+propertiesFile.withInputStream {
+  env.load(it)
+}
+
+ext.gradleVersion = env.GRADLE_VERSION
+
+// define default spring profile
+ext.localProfileName = 'local'
+ext.defaultProfile = localProfileName
+ext.profiles = project.hasProperty('profiles')
+  ? project.getProperty('profiles')
+  : defaultProfile
+
+// set build expansion parameters
+ext.buildDate = new Date().format('yyyy-MM-dd') // shows build date in footer on pages
+
+// if you change the gradle version in env.properties, you'll need to rerun `gradle wrapper`
+wrapper {
+  gradleVersion env.GRADLE_VERSION
+  distributionUrl "https://jack.hc-sc.gc.ca/artifactory/gradle-distribution/gradle-${env.GRADLE_VERSION}-bin.zip"
+}
+
+allprojects {
+  repositories {
+    // see note about resolution order from the 'buildscript' section
+    maven {
+      url repo_url
+    }
+    mavenCentral()
+  }
+}
+
+subprojects {
+  apply plugin: 'io.spring.dependency-management'
+
+  dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:2.1.9.RELEASE")
+    }
+  }
+}
+
+configure(subprojects.findAll { it.name == 'api' || it.name == 'external' }) {
+  apply plugin: 'org.springframework.boot'
+}
+
+
