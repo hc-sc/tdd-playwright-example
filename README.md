@@ -1,1 +1,2 @@
 # java-spring-api-template
+[![CircleCI](https://circleci.com/gh/hc-sc/tdd-playwright-example/tree/circleCI.svg?style=svg&circle-token=<YOUR_STATUS_API_TOKEN>)](https://circleci.com/gh/hc-sc/tdd-playwright-example/tree/circleCI)
