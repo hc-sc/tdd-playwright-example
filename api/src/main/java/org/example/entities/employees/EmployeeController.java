@@ -32,12 +32,10 @@ public class EmployeeController {
     return employeeService.addEmployee(employee);
   }
 
-  // Can't seem to have two endpoints to handle list of singleton
-  // @PostMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
-  // public List<EmployeeDTO> addEmployees(@RequestBody List<EmployeeDTO>
-  // employees) {
-  // return employeeService.addEmployees(employees);
-  // }
+  @PostMapping({ "${endpoints.employees.en}/bulk", "${endpoints.employees.fr}/vrac" })
+  public List<EmployeeDTO> addEmployees(@RequestBody List<EmployeeDTO> employees) {
+    return employeeService.addEmployees(employees);
+  }
 
   @PutMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
   public EmployeeDTO updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employee) {
