@@ -90,6 +90,7 @@ dependencies {
   testImplementation "io.rest-assured:rest-assured-all:$RESTASSURED_VERSION" // easier REST testing
   testImplementation "io.rest-assured:spring-mock-mvc:3.3.0" // test mocks
 	testImplementation ("org.springframework.boot:spring-boot-starter-test") { // allows for SpringBootTest
+  testImplementation "org.junit.jupiter:junit-jupiter:5.4.0" // remove?
 		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
 	}
 }
