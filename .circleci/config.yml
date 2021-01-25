@@ -41,10 +41,6 @@ jobs: # a collection of steps
           command: |
           path: api/build/libs
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
-<<<<<<< HEAD
-
-=======
->>>>>>> 2767f01da3a175d261193a3ef92d3e4379c02b7a
       
 workflows:
   version: 2
