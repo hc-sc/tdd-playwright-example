@@ -1,6 +1,7 @@
 package org.example.entities.employees;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class EmployeeController {
   private EmployeeService employeeService;
 
   @GetMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
-  public List<EmployeeDTO> findAll() {
+  public Map<String, List<EmployeeDTO>> findAll() {
     return employeeService.findAll();
   }
 
@@ -49,25 +50,5 @@ public class EmployeeController {
   public void deleteEmployee(@PathVariable Long id) {
     employeeService.deleteEmployee(id);
   }
-
-  @GetMapping(value = {"{name}"})
-  public EmployeeDTO findByName(EmployeeDTO anEmployee, @PathVariable String name) {
-    return anEmployee;
-  }
-
-  @GetMapping(value = {"{id}"})
-  public EmployeeDTO findById(EmployeeDTO anEmployee) {
-    return anEmployee;
-  }
-
-  /*
-  @PostMapping("newEmployee")
-  public EmployeeDTO findByid(@RequestBody EmployeeDTO anEmployee) {
-    return anEmployee;
-  }
-
-
-  */
-
 
 }

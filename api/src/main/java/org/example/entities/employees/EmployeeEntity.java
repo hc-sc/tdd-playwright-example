@@ -22,4 +22,6 @@ class EmployeeEntity {
   @NotNull(message = "Role cannot be null")
   private String role;
 
+
+
 }

@@ -1,10 +1,13 @@
 package org.example.entities.employees;
 
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 public class EmployeeDTO {
   Long id;
-  String name;
-  String role;
+  private String name;
+  private String role;
+
+
 }
