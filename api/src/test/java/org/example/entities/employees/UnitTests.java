@@ -29,7 +29,7 @@ import static org.hamcrest.Matchers.*;
 @Tag("integration")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // automatically scans for @SpringBootApplication
 
-public abstract class UnitTests { // make it abstract so it isn't instantiated by Spring Test
+public class UnitTests { // make it abstract so it isn't instantiated by Spring Test
 
     @LocalServerPort
     int port; // autowired to be set to whichever port the application is served on
