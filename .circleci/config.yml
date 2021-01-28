@@ -1,5 +1,4 @@
 version: 2 # use CircleCI 2.0
-
 jobs: # a collection of steps
   build:
     # Remove if parallelism is not desired
@@ -51,10 +50,10 @@ jobs: # a collection of steps
   #   steps:
   #     - checkout
   #     - run: <command>
-deploy:
+  deploy:
     machine:
         enabled: true
-    working_directory: ~/circleci-demo-workflows
+    #working_directory: ~/circleci-demo-workflows
     environment:
       HEROKU_APP: $HEROKU_APP # define env var $HEROKU_APP
     steps:
@@ -65,17 +64,10 @@ deploy:
       - run:
           command: |
             ./gradlew clean && ./gradlew bootJar && heroku deploy:jar api/build/libs/api##1.0.0.null.jar --app $HEROKU_APP
-
       
 workflows:
   version: 2
   workflow:
     jobs:
     - build
-    - deploy:
-      requires:
-        - build
-      filters:
-        branches:
-          only: dev
-
+    - deploy
