@@ -31,9 +31,16 @@ public class EmployeeService {
   }
 
   public EmployeeDTO addEmployee(EmployeeDTO employeeDto) {
+    
+    //  if (employeeAlreadyExists(employeeDto)) return null;
+    
     return employeeMapper
         .employeeEntityToEmployeeDTO(employeeRepository.save(employeeMapper.employeeDTOToEmployeeEntity(employeeDto)));
   }
+
+  // private boolean employeeAlreadyExists(EmployeeDTO employeeDto){
+  //    return (!employeeRepository.findByNameOrderByNameAndRole(employeeDto.getName(), employeeDto.getRole()).isEmpty());
+  //  }
 
   // convert all DTOs to Entities, insert them, then convert the returned
   // entities back to DTOs to send back
@@ -49,12 +56,13 @@ public class EmployeeService {
 
     EmployeeEntity employeeEntity = employeeRepository.getOne(id);
 
-      employeeEntity.setName(employeeDto.getName());
-      employeeEntity.setRole(employeeDto.getRole());
-    
-    
+      if ((employeeDto.getName() != null || !employeeDto.getName().equals("")) && !employeeDto.getName().equals(employeeEntity.getName())){
+          employeeEntity.setName(employeeDto.getName());
+        }
 
-    // some merge operation between employeeDto and the one in the DB...
+      if ((employeeDto.getRole() != null || !employeeDto.getRole().equals("")) && !employeeDto.getRole().equals(employeeEntity.getRole())){
+        employeeEntity.setRole(employeeDto.getRole()); 
+      }
 
     return employeeMapper.employeeEntityToEmployeeDTO(employeeRepository.save(employeeEntity));
   }

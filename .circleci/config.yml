@@ -1,4 +1,5 @@
 version: 2 # use CircleCI 2.0
+
 jobs: # a collection of steps
   build:
     # Remove if parallelism is not desired
@@ -41,18 +42,40 @@ jobs: # a collection of steps
           command: |
           path: api/build/libs
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
-  test:
-    docker: # run the steps with Docker
-      - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+  # test:
+  #   docker: # run the steps with Docker
+  #     - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
+  #       auth:
+  #         username: mydockerhub-user
+  #         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+  #   steps:
+  #     - checkout
+  #     - run: <command>
+deploy:
+    machine:
+        enabled: true
+    working_directory: ~/circleci-demo-workflows
+    environment:
+      HEROKU_APP: $HEROKU_APP # define env var $HEROKU_APP
     steps:
       - checkout
-      - run: <command>
+      - run:
+          name: Setup Heroku
+          command: bash .circleci/setup-heroku.sh # run a script to set up Heroku
+      - run:
+          command: |
+            ./gradlew clean && ./gradlew bootJar && heroku deploy:jar api/build/libs/api##1.0.0.null.jar --app $HEROKU_APP
+
       
 workflows:
   version: 2
   workflow:
     jobs:
     - build
+    - deploy:
+      requires:
+        - build
+      filters:
+        branches:
+          only: dev
+
