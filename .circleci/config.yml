@@ -61,9 +61,7 @@ jobs:
 
       - run:
           command: |
-            git add api/build/libs/api##1.0.0.null.jar heroku dev:main
-            git commit -m"heroku"
-            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git master
+            heroku deploy:jar api/build/libs/api##1.0.0.null.jar --app thawing-beach-30413
             sleep 5 # sleep for 5 seconds to wait for dynos
             heroku restart
 
