@@ -11,6 +11,7 @@ machine git.heroku.com
   password $HEROKU_API_KEY
 EOF
 
+echo $PWD
 # heroku run bash -a $HEROKU_APP_NAME
 # git remote add heroku git@heroku.com:$HEROKU_APP_NAME.git
 # heroku git:remote -a $HEROKU_APP_NAME

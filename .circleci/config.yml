@@ -46,7 +46,7 @@ jobs:
   deploy:
     machine:
         enabled: true
-    working_directory: /home/circleci/project/
+    working_directory: ~/project/
     environment:
       HEROKU_APP_NAME: $HEROKU_APP_NAME # define env var $HEROKU_APP_NAME https://$HEROKU_APP_NAME.herokuapp.com
       HEROKU_API_KEY: $HEROKU_API_KEY
