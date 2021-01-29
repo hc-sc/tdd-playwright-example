@@ -1,6 +1,6 @@
-version: 2 # use CircleCI 2.0
+version: 2.0
 
-jobs: # a collection of steps
+jobs:
   build:
     # Remove if parallelism is not desired
     environment:
@@ -36,50 +36,40 @@ jobs: # a collection of steps
       - run:
           name: Assemble JAR
           command: |
-              ./gradlew assemble
+              ./gradlew assemble && ./gradlew bootJars
       # As the JAR was only assembled in the first build container, build/libs will be empty in all the other build containers.
       - store_artifacts:
           command: |
           path: api/build/libs
-      - run:
-          name: more jars
-            command: |
-              ./gradlew bootJar
-      # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
-  # test:
-  #   docker: # run the steps with Docker
-  #     - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
-  #       auth:
-  #         username: mydockerhub-user
-  #         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-  #   steps:
-  #     - checkout
-  #     - run: <command>
-  deploy:
-      machine:
-          enabled: true
-      working_directory: ~/apiTemplate2
-      environment:
-        HEROKU_APP: $HEROKU_APP # define env var $HEROKU_APP
-      steps:
-        - checkout
-        - run:
-            name: Setup Heroku
-            command: bash .circleci/setup-heroku.sh # run a script to set up Heroku
-        - run:
-            command: |
-              heroku deploy:jar api/build/libs/api##1.0.0.null.jar --app $HEROKU_APP
 
-      
+  deploy:
+    machine:
+        enabled: true
+    working_directory: ~/apiTemplate2
+    environment:
+      HEROKU_APP: "thawing-beach-30413" # define env var $HEROKU_APP https://thawing-beach-30413.herokuapp.com
+    steps:
+      - checkout
+      - run:
+          name: Setup Heroku
+          command: bash .circleci/setup-heroku.sh # run a script to set up Heroku
+
+      - run:
+          command: |
+            git add api/build/libs/api##1.0.0.null.jar heroku dev:main
+            git commit -m"heroku"
+            git push heroku main
+            sleep 5 # sleep for 5 seconds to wait for dynos
+            heroku restart
+
 workflows:
   version: 2
-  workflow:
+  build-and-deploy:
     jobs:
-    - build
-    - deploy:
-      requires:
-        - build
-      filters:
-        branches:
-          only: dev
-
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: dev
