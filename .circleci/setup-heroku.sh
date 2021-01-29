@@ -11,4 +11,5 @@ machine git.heroku.com
   password $HEROKU_API_KEY
 EOF
 
+git init
 heroku git:remote -a $HEROKU_APP_NAME
