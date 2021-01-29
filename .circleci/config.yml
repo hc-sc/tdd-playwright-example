@@ -45,6 +45,11 @@ jobs:
       - store_artifacts:
           command: |
           path: api/build/libs
+      - run:
+          name: Check Jars Exist
+          command: |
+            test -f /api/build/libs/api##1.0.0.null.jar && echo "Jar exists."
+
 
   deploy:
     machine:
