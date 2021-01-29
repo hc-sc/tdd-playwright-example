@@ -36,7 +36,7 @@ jobs:
       - run:
           name: Assemble JAR
           command: |
-              ./gradlew assemble && ./gradlew bootJars
+              ./gradlew assemble
       # As the JAR was only assembled in the first build container, build/libs will be empty in all the other build containers.
       - store_artifacts:
           command: |
