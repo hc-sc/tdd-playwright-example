@@ -36,12 +36,12 @@ jobs:
       - run:
           name: Assemble JAR
           command: |
-              ./gradlew assem the first build container, build/libs will be empty in all the other build containers.ble
+              ./gradlew assemble
+          # As the JAR was only assembled in  the first build container, build/libs will be empty in all the other build containers
       - run:
           name: Boot Jars
           command: |
               ./gradlew bootJar
-      # As the JAR was only assembled in
       - store_artifacts:
           command: |
           path: api/build/libs
