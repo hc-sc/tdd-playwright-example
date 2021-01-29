@@ -49,7 +49,7 @@ jobs:
   deploy:
     machine:
         enabled: true
-    working_directory: ~/apiTemplate2
+    working_directory: ~/$HEROKU_APP_NAME
     environment:
       HEROKU_APP_NAME: $HEROKU_APP_NAME # define env var $HEROKU_APP_NAME https://$HEROKU_APP_NAME.herokuapp.com
       HEROKU_API_KEY: $HEROKU_API_KEY
