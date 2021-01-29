@@ -50,11 +50,7 @@ jobs:
       - run:
           name: Pushing to Heroku
           command: |
-            git add /api/build/libs/api##1.0.0.null.jar heroku dev:main
-            git commit -m"heroku"
-            git push heroku dev:main
-            sleep 5 # sleep for 5 seconds to wait for dynos
-            heroku restart
+            heroku deploy:jar api/build/libs/api##1.0.0.null.jar --app tdd-playwright-example
      
 
   # deploy:
