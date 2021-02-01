@@ -6,6 +6,7 @@ jobs: # a collection of steps
       # Configure the JVM and Gradle to avoid OOM errors
       _JAVA_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1"
+      HEROKU_APP_NAME: "tdd-playwright-example"
     docker: # run the steps with Docker
       - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
         auth:
@@ -35,35 +36,11 @@ jobs: # a collection of steps
           name: Setup Heroku
           command: |
             bash .circleci/setup-heroku.sh
+            heroku deploy:jar "api/build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME
           # run a script to set up Heroku
           
       # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
-      
-    
 
-
-  deploy:
-    machine:
-        enabled: true
-    working_directory: /home/circleci/project/api/build/libs/
-    # environment:
-    #   HEROKU_APP_NAME: $HEROKU_APP_NAME # define env var $HEROKU_APP_NAME https://$HEROKU_APP_NAME.herokuapp.com
-      # HEROKU_API_KEY: $HEROKU_API_KEY
-    steps:
-      - checkout
-      - run:
-          name: Setup Heroku
-          command: |
-            bash .circleci/setup-heroku.sh
-          # run a script to set up Heroku
-
-      - run:
-          command: |
-            git add /home/circleci/project/api/build/libs/api##1.0.0.null.war heroku dev:main
-            git commit -m"heroku"
-            git push heroku dev:main
-            sleep 5 # sleep for 5 seconds to wait for dynos
-            heroku restart
 
 workflows:
   version: 2
