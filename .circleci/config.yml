@@ -40,10 +40,10 @@ jobs:
           command: |
               ./gradlew assemble
           # As the JAR was only assembled in  the first build container, build/libs will be empty in all the other build containers
-      - store_artifacts:
-          command: |
-          path: /api/build/libs
-          destination: jars
+      # - store_artifacts:
+      #     command: |
+      #     path: /api/build/libs
+      #     destination: jars
           
       # run a script to set up Heroku
       
@@ -83,4 +83,4 @@ workflows:
             - build
           filters:
             branches:
-              only: sequential-branch-filter
+              only: dev
