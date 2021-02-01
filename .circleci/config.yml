@@ -65,7 +65,7 @@ jobs: # a collection of steps
       - checkout
       - attach_workspace:
           at: .
-            - restore_cache:
+      - restore_cache:
           keys:
             - v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
