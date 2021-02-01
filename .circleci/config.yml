@@ -49,6 +49,11 @@ jobs: # a collection of steps
           paths:
             - ~/.gradle/caches
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+
 
 
           # run a script to set up Heroku
