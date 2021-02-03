@@ -34,10 +34,6 @@ jobs: # a collection of steps
               ./gradlew bootJar
       - store_artifacts:
           path: api/build/libs
-      - run:
-          name: Setup Heroku
-          command: |
-            bash .circleci/setup-heroku.sh
       - save_cache:
           paths:
             - ~/.gradle/wrapper

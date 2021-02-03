@@ -1,11 +1,15 @@
 package org.example.entities.employees;
 
+
+// import main.java.org.example.http;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
+// import org.example.entities.http.ApiError;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.context.WebApplicationContext;
 import io.restassured.RestAssured;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -29,7 +34,7 @@ import static org.hamcrest.Matchers.*;
 @Tag("integration")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // automatically scans for @SpringBootApplication
 
-public class UnitTests { // make it abstract so it isn't instantiated by Spring Test
+public class EntityUnitTests { // make it abstract so it isn't instantiated by Spring Test
 
     @LocalServerPort
     int port; // autowired to be set to whichever port the application is served on
@@ -98,8 +103,18 @@ public class UnitTests { // make it abstract so it isn't instantiated by Spring 
 
     @Test
     public void test_deleteEmployee() {
-        given().header("Content-Type", "application/json").when().delete("/employees/7").then().statusCode(200);
+        given().header("Content-Type", "application/json").when().delete("/employees/2").then().statusCode(200);
     }
+
+    // @Test
+    // public void whenMethodArgumentMismatch_thenBadRequest(){
+    //     Response response =  given().get("/employees/2");
+    //     ApiError error = response.as(ApiError.class);
+
+    //     assertEquals(HttpStatus.BAD_REQUEST, error.getStatus());
+    //     assertEquals(1, error.getErrors().size());
+    //     assertTrue(error.getErrors().get(0).contains("should be of type"));
+    // }
 
     private JSONObject createProfile(String name, String role) throws JSONException {
         JSONObject anEmployee = new JSONObject();
