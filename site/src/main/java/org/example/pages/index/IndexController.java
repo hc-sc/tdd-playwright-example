@@ -1,8 +1,5 @@
 package org.example.pages.index;
 
-import java.util.Arrays;
-
-import org.example.entities.employees.EmployeeDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 
 @Controller
 public class IndexController {
@@ -37,19 +30,20 @@ public class IndexController {
 
   // @GetMapping("/add")
   // public String addOne(Model model, @RequestBody EmployeeDTO employeeDto) {
-  //   model.addAttribute("employees", indexService.addEmployee(employeeDto));
-  //   return "index";
+  // model.addAttribute("employees", indexService.addEmployee(employeeDto));
+  // return "index";
   // }
 
   // @PostMapping("/add?name={name}&role={role}")
-  // public String addOne(Model model, @RequestParam String name, @RequestParam String role) {
-  //   model.addAttribute("employees", indexService.addEmployee(name, role));
-  //   return "index";
+  // public String addOne(Model model, @RequestParam String name, @RequestParam
+  // String role) {
+  // model.addAttribute("employees", indexService.addEmployee(name, role));
+  // return "index";
   // }
 
   @PostMapping("/add")
   public String addOne(Model model) {
-  
+    log.debug("{}", model);
     model.addAttribute("employees", indexService.addEmployee("JUSTIN", "TEST"));
     return "index";
   }
