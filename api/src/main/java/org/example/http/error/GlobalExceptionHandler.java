@@ -30,7 +30,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseEntityExceptionHandler.class);
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final String error = ex.getValue() + " value for " + ex.getPropertyName() + " should be of type " + ex.getRequiredType();
 
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         //
         final String error = ex.getRequestPartName() + " part is missing";
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         //
         final String error = ex.getParameterName() + " parameter is missing";
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
     //
@@ -110,7 +110,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final String error = ex.getName() + " should be of type " + ex.getRequiredType().getName();
 
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), apiError.getStatus(), request);
     }
 
     @ExceptionHandler({ ConstraintViolationException.class })
@@ -124,7 +124,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), apiError.getStatus(), request);
     }
 
     // // 404
@@ -135,10 +135,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(ex.getMessage());
         //
         final String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
+        String message = "End-point does not exist";
 
-        final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
-        System.out.println(apiError.toString());
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, message, error);
+        return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
     // 405
@@ -153,8 +153,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         builder.append(" method is not supported for this request. Supported methods are ");
         ex.getSupportedHttpMethods().forEach(t -> builder.append(t + " "));
 
-        final ApiError apiError = new ApiError(HttpStatus.METHOD_NOT_ALLOWED, ex.getLocalizedMessage(), builder.toString());
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        final ApiError apiError = new ApiError(HttpStatus.METHOD_NOT_ALLOWED, "Not allowed", builder.toString());
+        return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
     // 415
@@ -170,7 +170,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
 
         final ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex.getLocalizedMessage(), builder.substring(0, builder.length() - 2));
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
     // 500
@@ -181,7 +181,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error("error", ex);
         //
         final ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        return handleExceptionInternal(ex, apiError, new HttpHeaders(), apiError.getStatus(), request);
     }
 
 
@@ -197,7 +197,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         // final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, "<<Some error message.>>", errors);
         final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage(), errors);
-        return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+        // return handleExceptionInternal(ex, apiError, new HttpHeaders(), apiError.getStatus(), request);
+        return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
     }
 
 

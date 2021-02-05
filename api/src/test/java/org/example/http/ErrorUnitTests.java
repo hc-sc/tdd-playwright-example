@@ -42,63 +42,42 @@ public class ErrorUnitTests { // make it abstract so it isn't instantiated by Sp
     @Autowired
     public WebApplicationContext webApplicationContext; // use the whole application context
 
+    private String path;
+
     @BeforeEach
     public void init() {
         RestAssured.port = port; // need to tell rest-assured which port to listen on
         RestAssuredMockMvc.webAppContextSetup(webApplicationContext); // stand up the whole application
+        path = "/employees";
     }
 
 
     @Test
     public void whenTry_thenOK() {
-        final Response response = given().get("/employees/1");
+        path += "/1";
+        final Response response = given().get(path);
         assertEquals(200, response.statusCode());
-        System.out.println(response.asString());
+        // System.out.println(response.asString());
     }
-
-    // @Test
-    // public void whenEmployeeNotFound_thenBadRequest() {
-    //     final Response response = given().get("/employees/540240210353");
-    //     final ApiError error = response.as(ApiError.class);
-    //     assertEquals(HttpStatus.NOT_FOUND, error.getStatus());
-    //     // assertEquals(1, error.getErrors().size());
-    //     // assertTrue(error.getErrors().get(0).contains("should be of type"));
-    // }
 
     @Test
     public void whenNoHandlerForHttpRequest_thenNotFound() {
-        final Response response = given().get("/employees/3543543");;
-        // final ApiError error = response.as(ApiError.class); 
-
-        response.then()
-            .body("status", equalTo(404))
-            .body("error", containsString("Not Found"))
-            .body("message", containsString("Entity Not Found"))
-            .body("path", containsString("/employees/3543543"));
+        path += "/3543543";
+        assertResponse(given().get(path), 404, "Not Found", "Entity Not Found", path);
     }
 
 
     // @Test
     // public void whenHttpRequestMethodNotSupported_thenMethodNotAllowed() {
-    //     final Response response = givenAuth().delete(URL_PREFIX + "/2");
-    //     final ApiError error = response.as(ApiError.class);
-    //     assertEquals(HttpStatus.METHOD_NOT_ALLOWED, error.getStatus());
-    //     assertEquals(1, error.getErrors().size());
-    //     assertTrue(error.getErrors().get(0).contains("Supported methods are"));
-    //     System.out.println(response.asString());
-
+    //     // assertResponse(delete(path), "METHOD_NOT_ALLOWED", "Not allowed", "Request method 'DELETE' not supported");
     // }
 
-    // @Test
-    // public void whenSendInvalidHttpMediaType_thenUnsupportedMediaType() {
-    //     final Response response = givenAuth().body("").post(URL_PREFIX + "/");
-    //     final ApiError error = response.as(ApiError.class);
-    //     assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE, error.getStatus());
-    //     assertEquals(1, error.getErrors().size());
-    //     assertTrue(error.getErrors().get(0).contains("media type is not supported"));
-    //     System.out.println(response.asString());
+    @Test
+    public void whenSendInvalidHttpMediaType_thenUnsupportedMediaType() {
+ 
+        assertResponse(given().body("").post(path), "UNSUPPORTED_MEDIA_TYPE", "Content type 'text/plain;charset=ISO-8859-1' not supported");
 
-    // }
+    }
 
     // private JSONObject createProfile(String name, String role) throws JSONException {
     //     JSONObject anEmployee = new JSONObject();
@@ -107,6 +86,23 @@ public class ErrorUnitTests { // make it abstract so it isn't instantiated by Sp
     //     return anEmployee;
     // }
 
+        private void assertResponse(Response response, int status, String error, String message, String path){
+            System.out.println(response.toString());
+            response.then()
+            .body("status", equalTo(status))
+            .body("error", containsString(error))
+            .body("message", containsString(message))
+            .body("path", containsString(path));
+        }
+
+        private void assertResponse(Response response, String status, String message){
+            System.out.println(response.toString());
+            response.then()
+            .body("status", containsString(status))
+            // .body("error[0]", containsString(error))
+            .body("message", containsString(message));
+            // .body("path", containsString(path));
+        }
 
 
 }

@@ -1,6 +1,7 @@
 package org.example.http.util;
-import org.example.http.error.EntityNotFoundException;
 
+import org.example.http.error.EntityNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public final class RestPreconditions {
      * 
      * @param expression
      *            has value true if found, otherwise false
-     * @throws ResponseStatusException
+     * @throws EntityNotFoundException
      *             if expression is false, means value not found.
      */
     public static boolean checkFound(final boolean expression) {
@@ -37,7 +38,7 @@ public final class RestPreconditions {
      * 
      * @param expression
      *            has value true if found, otherwise false
-     * @throws ResponseStatusException
+     * @throws EntityNotFoundException
      *             if expression is false, means value not found.
      */
     public static <T> T checkFound(final T resource) {
