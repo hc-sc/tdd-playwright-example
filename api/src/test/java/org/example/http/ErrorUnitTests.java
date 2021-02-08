@@ -74,7 +74,7 @@ public class ErrorUnitTests { // make it abstract so it isn't instantiated by Sp
 
     @Test
     public void whenSendInvalidHttpMediaType_thenUnsupportedMediaType() {
- 
+        path += "/add";
         assertResponse(given().body("").post(path), "UNSUPPORTED_MEDIA_TYPE", "Content type 'text/plain;charset=ISO-8859-1' not supported");
 
     }
