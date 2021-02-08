@@ -67,7 +67,8 @@ jobs: # a collection of steps
           name: Setup Heroku
           command: |
             bash .circleci/setup-heroku.sh
-            heroku deploy:jar "api/build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME
+            heroku deploy:jar "api/build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_API
+            heroku deploy:jar "api/build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
 
 
 workflows:
