@@ -3,18 +3,11 @@
     "https://localhost:8443/findAll/"
   ).then((response) => response.json());
 
-  console.log(employees);
 
   const table = document.querySelector("#js-employees > tbody");
 
   employees.forEach((employee) => {
-    const row = document.createElement("tr");
-    const tds = ["id", "name", "role"].forEach((key) => {
-      const td = document.createElement("td");
-      td.textContent = employee[key];
-      row.appendChild(td);
-    });
-    table.appendChild(row);
+    createTable(employee, ["id", "name", "role"]);
   });
 })();
 
@@ -24,19 +17,9 @@
     "https://localhost:8443/find/"
   ).then((response) => response.json());
 
-  console.log(employees);
-
   const table = document.querySelector("#js-employees > tbody");
 
-  (employees => {
-    const row = document.createElement("tr");
-    const tds = ["id", "name", "role"].forEach((key) => {
-      const td = document.createElement("td");
-      td.textContent = employees[key];
-      row.appendChild(td);
-    });
-    table.appendChild(row);
-  });
+  createTable(employees, ["id", "name", "role"]);
 })();
 
 (async () => {
@@ -48,13 +31,25 @@
 
   const table = document.querySelector("#js-employees > tbody");
 
-  (employees => {
+    createTable(employees, ["id", "name", "role"]);
+})();
+
+(async () => {
+  const successful = await fetch(
+    "https://localhost:8443/delete/{id}"
+  ).then((response) => response.json());
+
+
+  const table = document.querySelector("#js-successful > tbody");
+  createTable(successful, ["successful"]);
+})();
+
+function createTable(employees, keys){
     const row = document.createElement("tr");
-    const tds = ["id", "name", "role"].forEach((key) => {
+    const tds = keys.forEach((key) => {
       const td = document.createElement("td");
       td.textContent = employees[key];
       row.appendChild(td);
     });
     table.appendChild(row);
-  });
-})();
+}

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublisher;
-import java.net.http.HttpRequest.BodyPublishers;
+import static java.net.http.HttpRequest.BodyPublisher;
+import static java.net.http.HttpRequest.BodyPublishers;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.example.entities.employees.EmployeeDTO;
 import org.example.util.ApiClient;
@@ -34,7 +37,7 @@ public class IndexService {
     String path = baseURL;
     log.debug(path);
 
-    HttpRequest request = HttpRequest.newBuilder().uri(URI.create(path)).timeout(Duration.ofMinutes(1)).GET().build();
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json").uri(URI.create(path)).timeout(Duration.ofMinutes(1)).GET().build();
 
     log.debug(request.toString());
 
@@ -56,46 +59,61 @@ public class IndexService {
 
   public EmployeeDTO getEmployee(String id) {
     log.debug("Getting employee");
-
-    String path = baseURL + "/" + id;
-    log.debug(path);
-
-    HttpRequest request = HttpRequest.newBuilder().uri(URI.create(path)).timeout(Duration.ofMinutes(1)).GET().build();
-
-    log.debug(request.toString());
-
-    @SuppressWarnings("unchecked")
-    Class<EmployeeDTO> clazz = (Class) EmployeeDTO.class;
-    try {
-      EmployeeDTO employee = ApiClient.getApiClient().send(request, new JsonBodyHandler<EmployeeDTO>(clazz)).body()
-          .get();
-
-      log.debug("" + employee);
-      return employee;
-
-    } catch (IOException | InterruptedException e) {
-      log.error(e.getMessage());
-      return new EmployeeDTO();
-    }
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json").uri(URI.create(baseURL + "/" + id)).timeout(Duration.ofMinutes(1))
+        .GET().build();
+    return dtoRequest(request);
   }
 
-  public EmployeeDTO addEmployee(String name, String role) {
+  public EmployeeDTO addEmployee(EmployeeDTO employee) throws JsonProcessingException {
     log.debug("Adding employee");
 
-    String path = baseURL;
-    log.debug(path+"/add");
-
-    BodyPublisher body = buildFormDataFromMap(createProfile(name, role));
-    log.debug(body.toString());
-
-    HttpRequest request = HttpRequest.newBuilder().POST(body)
-        .uri(URI.create(path)).build();
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+        .POST(BodyPublishers.ofString(employeeMapify(employee))).uri(URI.create(baseURL + "/add")).build();
 
     log.debug(request.toString());
+    return dtoRequest(request);
+  }
 
+  public List<EmployeeDTO> addEmployees(List<EmployeeDTO> employee) throws JsonProcessingException {
+    log.debug("Adding employee");
+
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+        .POST(BodyPublishers.ofString(employeeMapify(employee))).uri(URI.create(baseURL + "/bulk")).timeout(Duration.ofMinutes(1)).build();
+
+    log.debug(request.toString());
+    return listRequest(request);
+  }
+
+  public EmployeeDTO updateEmployee(EmployeeDTO employee) throws JsonProcessingException {
+    log.debug("Updating employee");
+
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+        .PUT(BodyPublishers.ofString(employeeMapify(employee))).uri(URI.create(baseURL + "/" + employee.getId()))
+        .build();
+
+    log.debug(request.toString());
+    return dtoRequest(request);
+  }
+
+  public String deleteEmployee(Long id) throws JsonProcessingException {
+    log.debug("Deleting employee");
+
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json").uri(URI.create(baseURL + "/" + id)).timeout(Duration.ofMinutes(1))
+        .DELETE().build();
+
+    return booleanRequest(request);
+    //return true;
+  }
+
+  /*--------------------HelperMethods--------------*/
+
+  private EmployeeDTO dtoRequest(HttpRequest request) {
     @SuppressWarnings("unchecked")
     Class<EmployeeDTO> clazz = (Class) EmployeeDTO.class;
     try {
+
+      JsonBodyHandler jsonBodyHandler = new JsonBodyHandler<EmployeeDTO>((Class) EmployeeDTO.class);
+
       EmployeeDTO employeeResponse = ApiClient.getApiClient().send(request, new JsonBodyHandler<EmployeeDTO>(clazz))
           .body().get();
 
@@ -108,54 +126,74 @@ public class IndexService {
     }
   }
 
-  private EmployeeDTO createProfile(String name, String role) {
+  private List<EmployeeDTO> listRequest(HttpRequest request) {
+    @SuppressWarnings("unchecked")
+    Class<List> clazz = (Class) List.class;
+    try {
+      List<EmployeeDTO> employeeResponse = ApiClient.getApiClient().send(request, new JsonBodyHandler<List>(clazz))
+          .body().get();
+
+      log.debug("" + employeeResponse);
+      return employeeResponse;
+
+    } catch (IOException | InterruptedException e) {
+      log.error(e.getMessage());
+      return new ArrayList<EmployeeDTO>();
+    }
+  }
+
+  private String booleanRequest(HttpRequest request) {
+    @SuppressWarnings("unchecked")
+    Class<String> clazz = (Class) String.class;
+    try {
+      String response = ApiClient.getApiClient().send(request, new JsonBodyHandler<String>(clazz))
+          .body().get();
+
+          log.debug("{\"successful\": \"" + response.toString() + "\"}");
+          return ("{\"successful\": \"" + response.toString() + "\"}");
+
+    } catch (IOException | InterruptedException e) {
+      log.error(e.getMessage());
+      return "Employee with that id not found";
+    }
+  }
+
+  private EmployeeDTO buildEmployeeDTO(String name, String role) {
     EmployeeDTO employee = new EmployeeDTO();
     employee.setName(name);
     employee.setRole(role);
     return employee;
   }
 
-  private BodyPublisher buildFormDataFromMap(EmployeeDTO employee) {
-    log.error(employee.toString());
-  return HttpRequest.BodyPublishers.ofString(employee.toString());
+  private String employeeMapify(EmployeeDTO employee) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("{");
+    try {
+      sb.append("\"id\": \"" + employee.getId() + "\",");
+    } catch (NullPointerException ex) {
+      log.debug(ex.getLocalizedMessage());
+    } finally {
+      sb.append("\"name\": \"" + employee.getName() + "\",");
+      sb.append("\"role\": \"" + employee.getRole() + "\"");
+      sb.append("}");
+      log.debug(sb.toString());
+      return sb.toString();
+    }
   }
 
-      // HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseURL)).timeout(Duration.ofMinutes(1))
-    //     .POST(BodyPublishers.ofString(createProfile(name, role).toString())).build();
-    // log.debug(request.toString());
+  private String employeeMapify(List<EmployeeDTO> employees) {
+    log.error(employees.toString());
 
- 
-    // HttpRequest request = HttpRequest.newBuilder()
-    // .uri(new URI("https://postman-echo.com/post"))
-    // .headers("Content-Type", "text/plain;charset=UTF-8")
-    // .POST(HttpRequest.BodyProcessor.fromString()
-    // .build();
+    StringBuilder sb = new StringBuilder();
+    sb.append("[");
+    for (EmployeeDTO employee : employees) {
+      sb.append(employeeMapify(employee));
+      if (employee != employees.get(employees.size() - 1))
+        sb.append(",");
+    }
+    sb.append("]");
+    return sb.toString();
+  }
 
-  // private Map<String, String> createProfile(String name, String role) {
-  //   Map<String, String> anEmployee = new HashMap<>();
-  //   anEmployee.put("name", name);
-  //   anEmployee.put("role", role);
-  //   return anEmployee;
-  // }
-
-
-
-//   private BodyPublisher buildFormDataFromMap(Map<String, String> map) {
-//     StringBuilder builder = new StringBuilder();
-//     builder.append("{");
-//     for (Entry<String, String> entry : map.entrySet()) {
-//       if (builder.length() > 1) {
-//           builder.append(",");
-//       }
-//       builder.append("\"" + URLEncoder.encode(entry.getKey().toString(), StandardCharsets.UTF_8) + "\"");
-//       builder.append(": ");
-//       builder.append("\"" + URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8) + "\"");
-//   }
-//   builder.append("}");
-
-//   log.error(builder.toString());
-//   log.error(map.toString());
-//   return HttpRequest.BodyPublishers.ofString(map.toString());
-// }
 
 }

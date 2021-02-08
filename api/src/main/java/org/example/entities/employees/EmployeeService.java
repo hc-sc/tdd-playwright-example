@@ -30,17 +30,10 @@ public class EmployeeService {
     return employeeMapper.employeeEntityToEmployeeDTO(employeeRepository.findById(id).orElse(null));
   }
 
-  public EmployeeDTO addEmployee(EmployeeDTO employeeDto) {
-    
-    //  if (employeeAlreadyExists(employeeDto)) return null;
-    
+  public EmployeeDTO addEmployee(EmployeeDTO employeeDto) {    
     return employeeMapper
         .employeeEntityToEmployeeDTO(employeeRepository.save(employeeMapper.employeeDTOToEmployeeEntity(employeeDto)));
   }
-
-  // private boolean employeeAlreadyExists(EmployeeDTO employeeDto){
-  //    return (!employeeRepository.findByNameOrderByNameAndRole(employeeDto.getName(), employeeDto.getRole()).isEmpty());
-  //  }
 
   // convert all DTOs to Entities, insert them, then convert the returned
   // entities back to DTOs to send back

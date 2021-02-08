@@ -63,9 +63,9 @@ public class EmployeeController {
   }
 
   @DeleteMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public String deleteEmployee(@PathVariable Long id) {
-    RestPreconditions.checkFound(employeeService.deleteEmployee(id));
-    return ("Employee with " + id + " successfully deleted."); //?
+  public Boolean deleteEmployee(@PathVariable Long id) {
+    return RestPreconditions.checkFound(employeeService.deleteEmployee(id));
+    // return ("Employee with " + id + " successfully deleted."); //?
   }
 
 }
