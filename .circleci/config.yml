@@ -33,9 +33,10 @@ jobs: # a collection of steps
       - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: ~/test-results/junit         
       - run:
-          name: Assemble JAR
+          name: Assembling JARs
           command: |
-              ./gradlew bootJar
+              ./gradlew :api:bootJar
+              ./gradlew :site:bootJar
       - store_artifacts:
           path: api/build/libs
       - save_cache:
@@ -68,7 +69,7 @@ jobs: # a collection of steps
           command: |
             bash .circleci/setup-heroku.sh
             heroku deploy:jar "api/build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_API
-            heroku deploy:jar "api/build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
+            heroku deploy:jar "site/build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
 
 
 workflows:
