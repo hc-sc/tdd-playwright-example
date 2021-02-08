@@ -24,9 +24,9 @@ jobs: # a collection of steps
             ./gradlew test
       - store_test_results:
           # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-          path: api/build/libs/test-results/*
+          path: api/build/libs/test-results/test
       - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: api/build/libs/test-results/*
+          path: api/build/libs/test-results/test
           when: always
       - run:
           name: Assemble JAR
