@@ -21,6 +21,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr th:each="item, index : ${successful}">
+            <td th:text="${item.successful}"></td>
+          </tr>
           <tr th:each="item, index : ${employees}">
             <td th:text="${item.id}"></td>
             <td th:text="${item.name}"></td>

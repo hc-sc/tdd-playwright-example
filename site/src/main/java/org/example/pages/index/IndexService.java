@@ -22,6 +22,7 @@ import org.example.util.ApiClient;
 import org.example.util.JsonBodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -30,14 +31,16 @@ import org.springframework.stereotype.Service;
 public class IndexService {
   private static final Logger log = LoggerFactory.getLogger(IndexService.class);
 
-  private String baseURL = "https://localhost:9443/employees";
+
+  // private String baseURL = "https://localhost:9443";
+  private String baseURL = "https://tdd-playwright-example-api.herokuapp.com/employees";
 
   public List<EmployeeDTO> getEmployees() {
     log.debug("Getting employees");
-    String path = baseURL;
-    log.debug(path);
 
-    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json").uri(URI.create(path)).timeout(Duration.ofMinutes(1)).GET().build();
+    // log.debug(path);
+
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json").uri(URI.create(baseURL)).timeout(Duration.ofMinutes(1)).GET().build();
 
     log.debug(request.toString());
 
