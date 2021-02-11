@@ -31,7 +31,8 @@ public class IndexController {
   @GetMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
   public String findAll(Model model) {
 
-    log.debug(System.getenv("TEST_KEY"));
+    log.debug(System.getProperties().toString());
+    log.debug(System.getenv().toString());
 
     model.addAttribute("employees", indexService.getEmployees());
     return "index";

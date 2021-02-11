@@ -36,14 +36,14 @@ public class IndexService {
   private String baseURL;
 
   @Autowired
-  public void setValues(@Value("${endpoints.employees.en}") String employeesEndPoint) {
-    this.baseURL = "https://localhost:9443/" + employeesEndPoint;
+  public void setValues(@Value("${api.url}") String rootUrl,
+      @Value("${endpoints.employees.en}") String employeesEndPoint) {
+    this.baseURL = rootUrl + "/" + employeesEndPoint;
   }
 
   public List<EmployeeDTO> getEmployees() {
     log.debug("Getting employees");
 
-    log.debug(System.getenv().toString());
     log.debug(baseURL);
     HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
         .uri(URI.create(baseURL)).timeout(Duration.ofMinutes(1)).GET().build();
