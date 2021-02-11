@@ -23,24 +23,31 @@ import org.example.util.JsonBodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 @Service
 public class IndexService {
   private static final Logger log = LoggerFactory.getLogger(IndexService.class);
 
+  private String baseURL;
 
-  // private String baseURL = "https://localhost:9443";
-  private String baseURL = "https://tdd-playwright-example-api.herokuapp.com/employees";
+  @Autowired
+  public void setValues(@Value("${endpoints.employees.en}") String employeesEndPoint) {
+    this.baseURL = "https://localhost:9443/" + employeesEndPoint;
+  }
 
   public List<EmployeeDTO> getEmployees() {
     log.debug("Getting employees");
 
-    // log.debug(path);
-
-    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json").uri(URI.create(baseURL)).timeout(Duration.ofMinutes(1)).GET().build();
+    log.debug(System.getenv().toString());
+    log.debug(baseURL);
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+        .uri(URI.create(baseURL)).timeout(Duration.ofMinutes(1)).GET().build();
+    log.debug(baseURL);
 
     log.debug(request.toString());
 
@@ -62,8 +69,8 @@ public class IndexService {
 
   public EmployeeDTO getEmployee(String id) {
     log.debug("Getting employee");
-    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json").uri(URI.create(baseURL + "/" + id)).timeout(Duration.ofMinutes(1))
-        .GET().build();
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+        .uri(URI.create(baseURL + "/" + id)).timeout(Duration.ofMinutes(1)).GET().build();
     return dtoRequest(request);
   }
 
@@ -81,7 +88,8 @@ public class IndexService {
     log.debug("Adding employee");
 
     HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
-        .POST(BodyPublishers.ofString(employeeMapify(employee))).uri(URI.create(baseURL + "/bulk")).timeout(Duration.ofMinutes(1)).build();
+        .POST(BodyPublishers.ofString(employeeMapify(employee))).uri(URI.create(baseURL + "/bulk"))
+        .timeout(Duration.ofMinutes(1)).build();
 
     log.debug(request.toString());
     return listRequest(request);
@@ -101,11 +109,11 @@ public class IndexService {
   public String deleteEmployee(Long id) throws JsonProcessingException {
     log.debug("Deleting employee");
 
-    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json").uri(URI.create(baseURL + "/" + id)).timeout(Duration.ofMinutes(1))
-        .DELETE().build();
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+        .uri(URI.create(baseURL + "/" + id)).timeout(Duration.ofMinutes(1)).DELETE().build();
 
     return booleanRequest(request);
-    //return true;
+    // return true;
   }
 
   /*--------------------HelperMethods--------------*/
@@ -149,11 +157,10 @@ public class IndexService {
     @SuppressWarnings("unchecked")
     Class<String> clazz = (Class) String.class;
     try {
-      String response = ApiClient.getApiClient().send(request, new JsonBodyHandler<String>(clazz))
-          .body().get();
+      String response = ApiClient.getApiClient().send(request, new JsonBodyHandler<String>(clazz)).body().get();
 
-          log.debug("{\"successful\": \"" + response.toString() + "\"}");
-          return ("{\"successful\": \"" + response.toString() + "\"}");
+      log.debug("{\"successful\": \"" + response.toString() + "\"}");
+      return ("{\"successful\": \"" + response.toString() + "\"}");
 
     } catch (IOException | InterruptedException e) {
       log.error(e.getMessage());
@@ -197,6 +204,5 @@ public class IndexService {
     sb.append("]");
     return sb.toString();
   }
-
 
 }

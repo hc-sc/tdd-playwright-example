@@ -9,6 +9,7 @@ import org.example.entities.employees.EmployeeDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +30,9 @@ public class IndexController {
 
   @GetMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
   public String findAll(Model model) {
+
+    log.debug(System.getenv("TEST_KEY"));
+
     model.addAttribute("employees", indexService.getEmployees());
     return "index";
   }
@@ -40,33 +44,27 @@ public class IndexController {
   }
 
   @PostMapping({ "${endpoints.employees.en}/add", "${endpoints.employees.fr}/add" })
-  public String addOne(Model model, @RequestBody EmployeeDTO employee)
-      throws JsonProcessingException {
+  public String addOne(Model model, @RequestBody EmployeeDTO employee) throws JsonProcessingException {
     model.addAttribute("employees", indexService.addEmployee(employee));
     return "index";
   }
 
   @PostMapping({ "${endpoints.employees.en}/bulk", "${endpoints.employees.fr}/vrac" })
-  public String addMany(Model model, @RequestBody List<EmployeeDTO> employees)
-      throws JsonProcessingException {
+  public String addMany(Model model, @RequestBody List<EmployeeDTO> employees) throws JsonProcessingException {
     model.addAttribute("employees", indexService.addEmployees(employees));
     return "index";
   }
 
   @PutMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public String updateEmployee(Model model, @RequestBody EmployeeDTO employee)
-      throws JsonProcessingException {
+  public String updateEmployee(Model model, @RequestBody EmployeeDTO employee) throws JsonProcessingException {
     model.addAttribute("employees", indexService.updateEmployee(employee));
     return "index";
   }
 
-
   @DeleteMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public String deleteEmployee(Model model, @PathVariable Long id)
-      throws JsonProcessingException {
+  public String deleteEmployee(Model model, @PathVariable Long id) throws JsonProcessingException {
     model.addAttribute("successful", indexService.deleteEmployee(id));
     return "index";
   }
 
-  //fix the end points
 }

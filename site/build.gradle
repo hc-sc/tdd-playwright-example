@@ -72,24 +72,24 @@ compileJava {
 }
 
 dependencies {
-  implementation project(':dtos')
+  implementation project(':common')
   // implementation "ca.gc.gocwebtemplate:gocwebtemplate-core:$CDTS_VERSION"
   // implementation "ca.gc.gocwebtemplate:gocwebtemplate-core-base:$CDTS_VERSION"
   // implementation "ca.gc.gocwebtemplate:gocwebtemplate-core-spring:$CDTS_VERSION"
 
   implementation fileTree(include: ["*.jar"], dir: "libs")
-  annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster DTOs
+  annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
   annotationProcessor "org.projectlombok:lombok" // annotations for getters/setters/ctors/equals/hashCode
   annotationProcessor "org.projectlombok:lombok-mapstruct-binding:$MAPSTRUCT_BINDING_VERSION"
   developmentOnly "org.springframework.boot:spring-boot-devtools" // better dev experience in bootRun
   implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect"
-  implementation "org.mapstruct:mapstruct:$MAPSTRUCT_VERSION" // easier/faster DTOs
+  implementation "org.mapstruct:mapstruct:$MAPSTRUCT_VERSION" // easier/faster common
   implementation "org.springframework.boot:spring-boot-starter-actuator" // health checks
   implementation "org.springframework.boot:spring-boot-starter-thymeleaf" // health checks
   implementation "org.springframework.boot:spring-boot-starter-web" // allows for 'controllers'
   providedRuntime "org.springframework.boot:spring-boot-starter-tomcat" // set to 'providedRuntime' to allow both jar/war deploys
-  testAnnotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster DTOs
+  testAnnotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
   testImplementation "org.mockito:mockito-junit-jupiter:$MOCKITO_VERSION"
   testImplementation "io.rest-assured:rest-assured-all:$RESTASSURED_VERSION" // easier REST testing
   testImplementation "io.rest-assured:spring-mock-mvc:3.3.0" // test mocks

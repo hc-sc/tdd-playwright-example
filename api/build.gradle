@@ -73,19 +73,19 @@ compileJava {
 dependencies {
   runtimeOnly "com.h2database:h2"
 
-  implementation project(':dtos')
+  implementation project(':common')
   annotationProcessor "jakarta.xml.bind:jakarta.xml.bind-api:$XML_VERSION" // JAXB annotations
-  annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster DTOs
+  annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
   annotationProcessor "org.projectlombok:lombok" // annotations for getters/setters/ctors/equals/hashCode
   developmentOnly "org.springframework.boot:spring-boot-devtools" // better dev experience in bootRun
   implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml" // can produce XML responses
-  implementation "org.mapstruct:mapstruct:$MAPSTRUCT_VERSION" // easier/faster DTOs
+  implementation "org.mapstruct:mapstruct:$MAPSTRUCT_VERSION" // easier/faster common
   implementation "org.springframework.boot:spring-boot-starter-actuator" // health checks
   implementation "org.springframework.boot:spring-boot-starter-data-jpa" // persistance and validation with hibernate
   implementation "org.springframework.boot:spring-boot-starter-web" // allows for 'controllers'
   providedRuntime "org.springframework.boot:spring-boot-starter-tomcat" // set to 'providedRuntime' to allow both jar/war deploys
-  testAnnotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster DTOs
+  testAnnotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
   testImplementation "org.mockito:mockito-junit-jupiter:$MOCKITO_VERSION"
   testImplementation "io.rest-assured:rest-assured-all:$RESTASSURED_VERSION" // easier REST testing
   testImplementation "io.rest-assured:spring-mock-mvc:3.3.0" // test mocks
