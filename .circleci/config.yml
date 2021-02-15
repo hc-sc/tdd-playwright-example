@@ -52,7 +52,7 @@ jobs: # a collection of steps
           paths:
             - .
 
-  # run a script to set up Heroku
+  # Heroku
   deploy:
     machine:
         enabled: true
@@ -65,15 +65,28 @@ jobs: # a collection of steps
             - v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
             - v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          name: Setup Heroku
+          name: Setup Heroku and Deploy
           command: |
             bash .circleci/setup-heroku.sh
-            heroku config:set apiURL=$HEROKU_APP_NAME_API --app $HEROKU_APP_NAME_SERVER
+            heroku config:set apiURL=https://$HEROKU_APP_NAME_API.herokuapp.com --app $HEROKU_APP_NAME_SERVER
             cd api
             heroku deploy:jar "build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_API
             cd ../site
             heroku deploy:jar "build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
 
+  # Unconfirmed if working yet
+  e2e:
+    docker:
+      - image: mcr.microsoft.com/playwright:bionic
+        environment:
+          NODE_ENV: development # Needed if playwright is in `devDependencies`
+    steps:
+      - checkout
+      - run:
+          name: Playwright Tests
+          command: |
+          npm install
+          npm test
 
 workflows:
   version: 2
@@ -86,3 +99,11 @@ workflows:
           filters:
             branches:
               only: dev
+      - e2e:
+          requires:
+            - build
+            - deploy
+          filters:
+            branches:
+              only: dev
+

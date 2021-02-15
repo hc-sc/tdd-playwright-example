@@ -44,7 +44,7 @@ public class IndexController {
     return "index";
   }
 
-  @PostMapping({ "${endpoints.employees.en}/add", "${endpoints.employees.fr}/add" })
+  @PostMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
   public String addOne(Model model, @RequestBody EmployeeDTO employee) throws JsonProcessingException {
     model.addAttribute("employees", indexService.addEmployee(employee));
     return "index";

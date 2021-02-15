@@ -1,50 +1,70 @@
 <!DOCTYPE html>
-<html
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{master-template}"
-  th:with="goctemplateclientbean=${@indexbean}"
->
-  <head>
-    <title>YOLO</title>
-  </head>
-  <body>
-    <h1>Employees</h1>
-    <div layout:fragment="content">
-      <h2>Server-side generated</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>id</th>
-            <th>Name</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="item, index : ${successful}">
-            <td th:text="${item.successful}"></td>
-          </tr>
-          <tr th:each="item, index : ${employees}">
-            <td th:text="${item.id}"></td>
-            <td th:text="${item.name}"></td>
-            <td th:text="${item.role}"></td>
-          </tr>
-        </tbody>
-      </table>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{master-template}" th:with="goctemplateclientbean=${@indexbean}">
 
-      <h2>Client-side generated</h2>
-      <table id="js-employees">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- This will be populated by JS -->
-        </tbody>
-      </table>
-      <script type="text/javascript" src="js/index.js"></script>
-    </div>
-  </body>
+<head>
+  <title>YOLO</title>
+</head>
+
+<body>
+  <h1>Employees</h1>
+  <div layout:fragment="content">
+    <h2>Server-side generated</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>Name</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="item, index : ${successful}">
+          <td th:text="${item.successful}"></td>
+        </tr>
+        <tr th:each="item, index : ${employees}">
+          <td th:text="${item.id}"></td>
+          <td th:text="${item.name}"></td>
+          <td th:text="${item.role}"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Client-side generated</h2>
+
+    <form>
+      <!-- <label for="request">Choose a request:</label> -->
+      <select name="request" id="request">
+        <option value="GET">GET</option>
+        <option value="POST">POST</option>
+        <option value="DELETE">DELETE</option>
+        <option value="PUT">PUT</option>
+      </select>
+      <label for="id">ID:</label>
+      <input type="text" id="id" name="id">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name">
+      <label for="role">Role:</label>
+      <input type="text" id="role" name="role">
+
+      <!-- <input type="submit" value="Submit" onclick="getData()"> -->
+      <button onclick="getData();">Send</button>
+    </form>
+
+    <table id="js-employees">
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>Name</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- This will be populated by JS -->
+      </tbody>
+    </table>
+    <script type="text/javascript" src="js/index.js"></script>
+  </div>
+</body>
+
 </html>
