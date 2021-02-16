@@ -75,9 +75,10 @@ jobs: # a collection of steps
             heroku deploy:jar "build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_API
             cd ../site
             heroku deploy:jar "build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
-            cd ../e2e
+            
 
   build_playwright:
+    working_directory: ~/project/e2e
     docker:
       - image: mcr.microsoft.com/playwright:bionic
         environment:
@@ -121,5 +122,5 @@ workflows:
             branches:
               only: dev
       - build_playwright:
-          requires:
-            - build
+          # requires:
+          #   - build
