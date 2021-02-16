@@ -100,9 +100,11 @@ jobs: # a collection of steps
       - run:
           name: Installing Node
           command: |
+            echo $PWD
             cd e2e
             npm install
             npm i -D playwright
+            cd ..
 
       - run:
           name: Running Playwright
@@ -113,6 +115,7 @@ jobs: # a collection of steps
             # replace below with command you want to run, example for running a script below
             # node myScript.js
             # npm test
+            echo $PWD
             npx folio --param browserName=chromium
 
 # # Node & Playwright
