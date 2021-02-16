@@ -74,19 +74,39 @@ jobs: # a collection of steps
             cd ../site
             heroku deploy:jar "build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
 
-  # Unconfirmed if working yet
-  e2e:
+  build_node:
     docker:
-      - image: mcr.microsoft.com/playwright:bionic
-        environment:
-          NODE_ENV: development # Needed if playwright is in `devDependencies`
+      - image: qawolf/playwright-ci:v1.0.0
     steps:
       - checkout
+
       - run:
-          name: Playwright Tests
+          name: Installing Node
           command: |
-          npm install
-          npm test
+            cd e2e
+            npm install
+            npm i -D playwright
+
+      - run:
+          name: Running Playwright
+          command: |
+            # # Start local server
+            # npm run start & 
+            # npx wait-on http://localhost:3000
+            # replace below with command you want to run, example for running a script below
+            # node myScript.js
+            npm test
+
+# # Node & Playwright
+#  orbs:
+#   node: circleci/node@4.1.0
+#  test:
+#     executor: node/default
+#     steps:
+#       - checkout
+#       - node/install-packages:
+#           cache-path: e2e
+#           overrise-ci-command: npm install 
 
 workflows:
   version: 2
@@ -99,11 +119,4 @@ workflows:
           filters:
             branches:
               only: dev
-      - e2e:
-          requires:
-            - build
-            - deploy
-          filters:
-            branches:
-              only: dev
-
+      - build_playwright
