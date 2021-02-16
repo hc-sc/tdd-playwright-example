@@ -121,6 +121,6 @@ workflows:
           filters:
             branches:
               only: dev
-      - build_playwright:
+      - build_playwright
           # requires:
           #   - build
