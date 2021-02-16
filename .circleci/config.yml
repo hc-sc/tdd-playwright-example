@@ -73,13 +73,30 @@ jobs: # a collection of steps
             heroku deploy:jar "build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_API
             cd ../site
             heroku deploy:jar "build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
 
   build_playwright:
     docker:
       - image: qawolf/playwright-ci:v1.0.0
     steps:
       - checkout
-
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+            - v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
           name: Installing Node
           command: |
