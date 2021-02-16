@@ -97,6 +97,7 @@ jobs: # a collection of steps
           command: |
             cd e2e
             npm ci
+            npx folio --param browserName=chromium
 
 
 
