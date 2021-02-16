@@ -1,7 +1,7 @@
 const playwright = require('playwright');
 
 (async () => {
-    for (const browserType of ['chromium', 'firefox']) { //webkit not working on Ubuntu. Needs to be run with Docker
+    for (const browserType of ['chromium', 'firefox', 'webkit']) { //webkit not working on Ubuntu. Needs to be run with Docker
         const browser = await playwright[browserType].launch({
             headless: false
         });
