@@ -97,7 +97,7 @@ jobs: # a collection of steps
           command: |
             cd e2e
             npm ci
-            npx folio --param browserName=chromium
+            npx folio
 
 
 
@@ -124,5 +124,5 @@ workflows:
             branches:
               only: dev
       - build_playwright
-          # requires:
-          #   - build
+          requires:
+            - build
