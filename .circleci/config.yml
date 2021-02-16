@@ -54,7 +54,7 @@ jobs: # a collection of steps
             - .
         
 
-  # run a script to set up Heroku
+  # Heroku
   deploy:
     machine:
         enabled: true
@@ -67,7 +67,7 @@ jobs: # a collection of steps
             - v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
             - v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          name: Setup Heroku
+          name: Setup Heroku and Deploy
           command: |
             bash .circleci/setup-heroku.sh
             heroku config: set: URL_API=$HEROKU_APP_NAME_API --app $HEROKU_APP_NAME_SERVER
@@ -109,6 +109,16 @@ jobs: # a collection of steps
 
 
 
+# # Node & Playwright
+#  orbs:
+#   node: circleci/node@4.1.0
+#  test:
+#     executor: node/default
+#     steps:
+#       - checkout
+#       - node/install-packages:
+#           cache-path: e2e
+#           overrise-ci-command: npm install 
 
 workflows:
   version: 2
