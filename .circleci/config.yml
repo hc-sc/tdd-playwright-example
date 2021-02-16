@@ -74,7 +74,7 @@ jobs: # a collection of steps
             cd ../site
             heroku deploy:jar "build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
 
-  build_node:
+  build_playwright:
     docker:
       - image: qawolf/playwright-ci:v1.0.0
     steps:
