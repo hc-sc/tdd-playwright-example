@@ -90,7 +90,7 @@ jobs: # a collection of steps
             
 
   build_playwright:
-    working_directory: ~/project/e2e
+    working_directory: ~/project/
     docker:
       - image: mcr.microsoft.com/playwright:bionic
         environment:
@@ -99,8 +99,10 @@ jobs: # a collection of steps
     steps:
       - checkout
       - restore_cache:
+          paths:
+            - ~/project/e2e/cache
           keys:
-            - v1-npm-deps-{{ checksum "package-lock.json" }}
+            - v2-npm-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Playwright Installation and Testing
           command: |
@@ -111,8 +113,8 @@ jobs: # a collection of steps
             npx folio
       - save_cache:
           paths:
-            - ~/.gradle/caches
-          key: v1-npm-deps-{{ checksum "package-lock.json" }}
+            - ~/project/e2e/cache
+          key: v2-npm-deps-{{ checksum "package-lock.json" }}
 
 workflows:
   version: 2
