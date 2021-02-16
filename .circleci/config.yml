@@ -100,7 +100,7 @@ jobs: # a collection of steps
       - checkout
       - restore_cache:
           keys:
-            - v1-npm-deps-{{ checksum "package-lock.gradle" }}
+            - v1-npm-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Playwright Installation and Testing
           command: |
