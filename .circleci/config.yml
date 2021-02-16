@@ -76,18 +76,6 @@ jobs: # a collection of steps
             cd ../site
             heroku deploy:jar "build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
             cd ../e2e
-      - save_cache:
-          paths:
-            - ~/.gradle/wrapper
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - save_cache:
-          paths:
-            - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle" }}
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .
 
   build_playwright:
     docker:
