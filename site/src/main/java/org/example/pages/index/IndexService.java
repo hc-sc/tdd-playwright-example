@@ -78,7 +78,7 @@ public class IndexService {
     log.debug("Adding employee");
 
     HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
-        .POST(BodyPublishers.ofString(employeeMapify(employee))).uri(URI.create(baseURL + "/add")).build();
+        .POST(BodyPublishers.ofString(employeeMapify(employee))).uri(URI.create(baseURL)).build();
 
     log.debug(request.toString());
     return dtoRequest(request);

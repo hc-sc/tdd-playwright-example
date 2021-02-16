@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**") // all endpoints
-        .allowedOrigins("https://localhost:8443"); // specific origins
+        .allowedOrigins("https://localhost:9443"); // specific origins
   }
 
   // ignore 'Accept' header (we use CustomContentNegotiationStrategy instead)

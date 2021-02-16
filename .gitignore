@@ -2,6 +2,8 @@
 build/
 bin/
 .env
+/node_modules
+e2e
 
 # Ignore Gradle GUI config
 gradle-app.setting

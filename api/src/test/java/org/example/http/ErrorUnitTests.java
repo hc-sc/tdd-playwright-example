@@ -51,7 +51,6 @@ public class ErrorUnitTests { // make it abstract so it isn't instantiated by Sp
         path = "/employees";
     }
 
-
     @Test
     public void whenTry_thenOK() {
         path += "/1";
@@ -66,46 +65,39 @@ public class ErrorUnitTests { // make it abstract so it isn't instantiated by Sp
         assertResponse(given().get(path), 404, "Not Found", "Entity Not Found", path);
     }
 
-
     // @Test
     // public void whenHttpRequestMethodNotSupported_thenMethodNotAllowed() {
-    //     // assertResponse(delete(path), "METHOD_NOT_ALLOWED", "Not allowed", "Request method 'DELETE' not supported");
+    // // assertResponse(delete(path), "METHOD_NOT_ALLOWED", "Not allowed", "Request
+    // method 'DELETE' not supported");
     // }
 
     @Test
     public void whenSendInvalidHttpMediaType_thenUnsupportedMediaType() {
-        path += "/add";
-        assertResponse(given().body("").post(path), "UNSUPPORTED_MEDIA_TYPE", "Content type 'text/plain;charset=ISO-8859-1' not supported");
+        assertResponse(given().body("").post(path), "UNSUPPORTED_MEDIA_TYPE",
+                "Content type 'text/plain;charset=ISO-8859-1' not supported");
 
     }
 
-    // private JSONObject createProfile(String name, String role) throws JSONException {
-    //     JSONObject anEmployee = new JSONObject();
-    //     anEmployee.put("name", name);
-    //     anEmployee.put("role", role);
-    //     return anEmployee;
+    // private JSONObject createProfile(String name, String role) throws
+    // JSONException {
+    // JSONObject anEmployee = new JSONObject();
+    // anEmployee.put("name", name);
+    // anEmployee.put("role", role);
+    // return anEmployee;
     // }
 
-        private void assertResponse(Response response, int status, String error, String message, String path){
-            System.out.println(response.toString());
-            response.then()
-            .body("status", equalTo(status))
-            .body("error", containsString(error))
-            .body("message", containsString(message))
-            .body("path", containsString(path));
-        }
+    private void assertResponse(Response response, int status, String error, String message, String path) {
+        System.out.println(response.toString());
+        response.then().body("status", equalTo(status)).body("error", containsString(error))
+                .body("message", containsString(message)).body("path", containsString(path));
+    }
 
-        private void assertResponse(Response response, String status, String message){
-            System.out.println(response.toString());
-            response.then()
-            .body("status", containsString(status))
-            // .body("error[0]", containsString(error))
-            .body("message", containsString(message));
-            // .body("path", containsString(path));
-        }
-
+    private void assertResponse(Response response, String status, String message) {
+        System.out.println(response.toString());
+        response.then().body("status", containsString(status))
+                // .body("error[0]", containsString(error))
+                .body("message", containsString(message));
+        // .body("path", containsString(path));
+    }
 
 }
-
-
-

@@ -1,3 +1,4 @@
+
 version: 2 # use CircleCI 2.0
 jobs: # a collection of steps
   build:
@@ -51,6 +52,7 @@ jobs: # a collection of steps
           root: .
           paths:
             - .
+        
 
   # run a script to set up Heroku
   deploy:
@@ -68,11 +70,44 @@ jobs: # a collection of steps
           name: Setup Heroku
           command: |
             bash .circleci/setup-heroku.sh
-            heroku config:set apiURL=$HEROKU_APP_NAME_API --app $HEROKU_APP_NAME_SERVER
+            heroku config: set: URL_API=$HEROKU_APP_NAME_API --app $HEROKU_APP_NAME_SERVER
             cd api
-            heroku deploy:jar "build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_API
+            heroku deploy:jar "api/build/libs/api##1.0.0.null.jar" --app $HEROKU_APP_NAME_API
             cd ../site
-            heroku deploy:jar "build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
+            heroku deploy:jar "site/build/libs/site##1.0.0.null.jar" --app $HEROKU_APP_NAME_SERVER
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  build_playwright:
+    docker:
+      - image: mcr.microsoft.com/playwright:bionic
+        environment:
+          NODE_ENV: development # Needed if playwright is in `devDependencies`
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+            - v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Installing Playwright
+          command: |
+            npm ci
+
+
 
 
 workflows:
@@ -86,3 +121,6 @@ workflows:
           filters:
             branches:
               only: dev
+      - build_playwright:
+          requires:
+            - build

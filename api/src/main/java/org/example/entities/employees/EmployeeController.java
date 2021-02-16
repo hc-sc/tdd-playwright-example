@@ -3,7 +3,6 @@ package org.example.entities.employees;
 import java.util.List;
 import java.util.Map;
 
-
 import org.example.http.util.RestPreconditions;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +22,17 @@ public class EmployeeController {
   private EmployeeService employeeService;
 
   @GetMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
-  public Map<String, List<EmployeeDTO>> findAll(){
+  public Map<String, List<EmployeeDTO>> findAll() {
     // return RestPreconditions.checkFound(employeeService.findAll());
     return employeeService.findAll();
   }
 
   @GetMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public EmployeeDTO findEmployeeByID(@PathVariable Long id){
+  public EmployeeDTO findEmployeeByID(@PathVariable Long id) {
     return RestPreconditions.checkFound(employeeService.findEmployeeByID(id));
   }
 
-  @PostMapping({ "${endpoints.employees.en}/add", "${endpoints.employees.fr}/add" })
+  @PostMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
   public EmployeeDTO addEmployee(@RequestBody EmployeeDTO employee) {
     // return RestPreconditions.checkFound(employeeService.addEmployee(employee));
     return employeeService.addEmployee(employee);
@@ -47,7 +46,8 @@ public class EmployeeController {
 
   @PutMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
   public EmployeeDTO updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employee) {
-    // return RestPreconditions.checkFound(employeeService.updateEmployee(id, employee));
+    // return RestPreconditions.checkFound(employeeService.updateEmployee(id,
+    // employee));
     return employeeService.updateEmployee(id, employee);
   }
 
