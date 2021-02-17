@@ -128,7 +128,7 @@ workflows:
       - playwright: # Make sure to add colon back in when adding conditions
           requires:
             - build
-            # - deploy
+            - deploy
           filters:
             branches:
               only: dev
