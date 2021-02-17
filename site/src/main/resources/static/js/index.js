@@ -1,8 +1,8 @@
 // // const baseURL = "${apiURL}" + "/" + "${endpoints.employees.en}";
-// var baseURL = "https://localhost:9443/employees";
-// var homeURL = "https://localhost:8443/employees";
-const baseURL = "https://tdd-playwright-example-api.herokuapp.com/employees"
-const homeURL = "https://tdd-playwright-example-server.herokuapp.com/employees"
+var baseURL = "https://localhost:9443/employees";
+var homeURL = "https://localhost:8443/employees";
+// const baseURL = "https://tdd-playwright-example-api.herokuapp.com/employees"
+// const homeURL = "https://tdd-playwright-example-server.herokuapp.com/employees"
 
 async function submitInstead(event) {
   event.preventDefault();
