@@ -4,6 +4,7 @@
 
 <head>
   <title>YOLO</title>
+  <!-- <script type="text/javascript" src="js/index.js"></script> -->
 </head>
 
 <body>
@@ -32,7 +33,7 @@
 
     <h2>Client-side generated</h2>
 
-    <form>
+    <form id="form">
       <!-- <label for="request">Choose a request:</label> -->
       <select name="request" id="request">
         <option value="GET">GET</option>
@@ -48,9 +49,11 @@
       <input type="text" id="role" name="role">
 
       <!-- <input type="submit" value="Submit" onclick="getData()"> -->
-      <button onclick="getData();">Send</button>
+      <!-- <button onclick="getData();">Send</button> -->
+      <!-- <button type='submit' onsubmit="(event) => event.preventDefault(); getAll()">Send</button> -->
+      <button type='submit'>Send</button>
     </form>
-
+    <!-- fetch(endpoint).then(response  => response.json()).then(data => console.log(data)) -->
     <table id="js-employees">
       <thead>
         <tr>
@@ -63,7 +66,7 @@
         <!-- This will be populated by JS -->
       </tbody>
     </table>
-    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="/js/index.js"></script>
   </div>
 </body>
 

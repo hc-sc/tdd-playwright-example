@@ -1,37 +1,23 @@
 import { it, describe, expect } from "@playwright/test"
 
-const baseURL = "https://tdd-playwright-example-server.herokuapp.com";
+// const { endpoint } = require('./config');
+// const baseURL = process.env.endpoint;
+// const baseURL = "https://tdd-playwright-example-server.herokuapp.com";
+const baseURL = "https://localhost:8443"
 
 //Root 
-describe("Check for Elements, ", () => {
-    it("Endpoint: Root", async ({ page }) => {
-        await page.goto(baseURL);
-
-        const serverTable = await page.$('table');
-        expect(serverTable).toBeDefined();
-
-        const clientTable = await page.$('#js-employees');
-        expect(clientTable).toBeDefined();
-    });
-
-    it("Endpoint: Get Employees", async ({ page }) => {
-        await page.goto(baseURL + "/employees");
-
-        const serverTable = await page.textContent('table');
-        expect(serverTable).toBeDefined();
-
-        const clientTable = await page.$('#js-employees');
-        expect(clientTable).toBeDefined();
-    });
+describe("Check for Client Table, ", () => {
 
     it("Endpoint: Get Employee by ID", async ({ page }) => {
-        await page.goto(baseURL + "/employees/1");
+        await page.goto(baseURL);
 
-        const serverTable = await page.textContent('table');
-        expect(serverTable).toBeDefined();
 
-        const clientTable = await page.$('#js-employees');
-        expect(clientTable).toBeDefined();
+        const clientTable = await page.$("#js-employees > tbody");
+        console.log("TABLE: " + clientTable);
+
+        // expect(clientTable.length !== 0).toBeTruthy();
+        // expect(null).toBeDefined();
+        expect(clientTable).toBeUndefined();
     });
 
     // it("Endpoint: POST Employee by ID", async ({ page }) => {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
 
     // @Query("SELECT u FROM Employees u WHERE u.name = :name and u.role = :role")
-    // List<EmployeeEntity> findByNameOrderByNameAndRole(@Param("name") String name, @Param("role") String role); //ascending order default
+    // List<EmployeeEntity> findByNameOrderByNameAndRole(@Param("name") String name,
+    // @Param("role") String role); //ascending order default
 
 }

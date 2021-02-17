@@ -66,13 +66,6 @@ public class EntityUnitTests { // make it abstract so it isn't instantiated by S
     public void test_addEmployee() throws JSONException {
         given().header("Content-Type", "application/json").body(createProfile("Patty", "Minister of Health").toString())
                 .when().post("/employees").then().statusCode(200);
-
-        // given().get("/employees/add").then().statusCode(200).body("employees.name[2]",
-        // equalTo("Patty"));
-
-        // given().get("/yolos").then().statusCode(200).body("employees.name[2]",
-        // equalTo("Patty"));
-
     }
 
     @Test

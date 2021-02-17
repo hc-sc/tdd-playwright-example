@@ -89,7 +89,7 @@ jobs: # a collection of steps
             - .
             
 
-  build_playwright:
+  playwright:
     working_directory: ~/project/
     docker:
       - image: mcr.microsoft.com/playwright:bionic
@@ -106,11 +106,9 @@ jobs: # a collection of steps
       - run:
           name: Playwright Installation and Testing
           command: |
-            echo $PWD
             cd e2e
-            echo $PWD
             npm ci
-            npx folio
+            endpoint=$HEROKU_APP_NAME_SERVER npx folio
       - save_cache:
           paths:
             - ~/project/e2e/cache
@@ -127,9 +125,10 @@ workflows:
           filters:
             branches:
               only: dev
-      - build_playwright:
+      - playwright: # Make sure to add colon back in when adding conditions
           requires:
             - build
+            # - deploy
           filters:
             branches:
               only: dev
