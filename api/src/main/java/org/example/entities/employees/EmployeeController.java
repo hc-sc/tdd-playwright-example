@@ -46,6 +46,7 @@ public class EmployeeController {
     return employeeService.addEmployees(employees);
   }
 
+  @CrossOrigin("https://localhost:8443")
   @PutMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
   public EmployeeDTO updateEmployee(@PathVariable String id, @RequestBody EmployeeDTO employee) {
     // return RestPreconditions.checkFound(employeeService.updateEmployee(id,
@@ -53,6 +54,7 @@ public class EmployeeController {
     return employeeService.updateEmployee(id, employee);
   }
 
+  @CrossOrigin("https://localhost:8443")
   @DeleteMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
   public Boolean deleteEmployee(@PathVariable String id) {
     return RestPreconditions.checkFound(employeeService.deleteEmployee(id));

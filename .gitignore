@@ -2,7 +2,7 @@
 build/
 bin/
 .env
-node_modules/*
+node_modules/
 e2e/
 
 # Ignore Gradle GUI config

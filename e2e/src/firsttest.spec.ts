@@ -1,9 +1,11 @@
 import { it, describe, expect } from "@playwright/test"
-
+require('dotenv').config();
 // const { endpoint } = require('./config');
 // const baseURL = process.env.endpoint;
 // const baseURL = "https://tdd-playwright-example-server.herokuapp.com";
-const baseURL = "https://localhost:8443"
+// const baseURL = "https://localhost:8443"
+const baseURL = process.env.LOCAL_SITE_URL;
+console.debug(baseURL);
 
 //Root 
 describe("Check for Client Table, ", () => {

@@ -10,8 +10,8 @@ async function submitInstead(event) {
 }
 
 function setup() {
-  const form = document.getElementById('form');
-  form.addEventListener('submit', submitInstead);
+  const clientForm = document.getElementById('form');
+  clientForm.addEventListener('submit', submitInstead);
   debugCache();
 }
 
@@ -19,70 +19,89 @@ function setup() {
 (async () => {
   try {
     setup();
-    await tableHandler();
+    // await tableHandler();
+    // await form();
   } catch (err) {
     throw err;
   }
 })();
 
 async function getData() {
-  // clearCache();
   const request = document.getElementById('request').value;
   const id = document.getElementById('id').value;
   const name = document.getElementById('name').value;
   const role = document.getElementById('role').value;
-  await requestHandler(request, id, name, role);
+  requestHandler(request, id, name, role);
 }
 
 async function requestHandler(request, id, name, role) {
   console.debug("REQUEST HANDLER RUNNING: " + request + " " + id + " " + name + " " + role);
+  let endpoint;
+  let response;
+  let tableFiller;
   try {
-    let endpoint;
-    // const response;
+
     switch (request) {
       case "GET":
-        let tableFiller;
         if (id === "") {
-          // await manyItemTable(await fetchRequest(request, baseURL));
           endpoint = "";
           tableFiller = "MANY";
-          console.debug("GET ALL");
         } else {
           endpoint = "/" + id;
           tableFiller = "ONE";
-          console.debug("GET ONE");
         }
-
+        response = await fetchRequest(request, baseURL + endpoint);
         console.debug(tableFiller);
-        await cacheAndGo(await fetchRequest(request, baseURL + endpoint), endpoint, tableFiller);
+        // await cacheAndGo(await fetchRequest(request, baseURL + endpoint), endpoint, tableFiller);
         break;
       case "POST":
         endpoint = "";
-        await cacheAndGo(await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role)), endpoint, "ONE");
-        // TODO: elseif for posting many
+        response = await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role));
+        tablefiller = "ONE";
+        // await cacheAndGo(await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role)), endpoint, "ONE");
+
+        // TODO: elseif for posting many -> new bodyBuilder to handle list of DTO items
+        //  } else {
+        //  endpoint = "/bulk";
+        //  response = await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role));
+        //  tablefiller = "MANY";
+        // }
         break;
-      case "DELETE": //CORS ERRORS
-        // TODO:
+      case "DELETE":
         endpoint = "/" + id;
-        await cacheAndGo(await fetchRequest(request, baseURL + endpoint), endpoint, "ONE");
+        response = await fetchRequest(request, baseURL + endpoint)
+        tablefiller = "ONE";
+        // await cacheAndGo(await fetchRequest(request, baseURL + endpoint), endpoint, "ONE");
         break;
-      case "PUT": //CORS ERRORS
+      case "PUT":
         endpoint = "/" + id;
-        await cacheAndGo(await fetchRequest(request, baseURL + endpoint, bodyBuilder(id, name, role)), endpoint, "ONE");
+        response = await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role));
+        tablefiller = "ONE";
+        // await cacheAndGo(await fetchRequest(request, baseURL + endpoint, bodyBuilder(id, name, role)), endpoint, "ONE");
         break;
       default:
         break;
     }
-  }
-  catch (err) {
-    // clearCache();
+  } catch (err) {
     throw err;
+  } finally {
+    switch (await document.getElementById('request-side').value) {
+      case "CLIENT":
+        await tableHandler(response, tableFiller);
+        break;
+      case "SERVER":
+        window.location.replace(homeURL + endpoint);
+        break;
+    }
   }
 }
 
-async function tableHandler() {
-  const response = JSON.parse(sessionStorage.getItem('response'));
-  const tableFiller = sessionStorage.getItem('filler');
+
+
+
+// ---------------- Client Table Methods ----------------//
+
+async function tableHandler(response, tableFiller) {
   console.debug("TABLE HANDLER: ");
   debugCache();
   switch (tableFiller) {
@@ -92,13 +111,27 @@ async function tableHandler() {
     case "MANY":
       await manyItemTable(response);
       break;
-    default:
+    default: //alert based --> for DELETE requests
       break;
   }
 }
 
-
-// ---------------- Client Table Methods ----------------//
+// async function tableHandler() {
+//   const response = JSON.parse(sessionStorage.getItem('response'));
+//   const tableFiller = sessionStorage.getItem('filler');
+//   console.debug("TABLE HANDLER: ");
+//   debugCache();
+//   switch (tableFiller) {
+//     case "ONE":
+//       await oneItemTable(response);
+//       break;
+//     case "MANY":
+//       await manyItemTable(response);
+//       break;
+//     default:
+//       break;
+//   }
+// }
 
 async function newTable() {
   const table = document.querySelector("#js-employees > tbody")
@@ -122,6 +155,10 @@ async function manyItemTable(employeeList) {
 };
 
 async function populateTable(table, employees) {
+  if (errorItem(employees)) {
+    alert("Invalid Fields or employee not found");
+    return;
+  }
   const row = document.createElement("tr");
   console.debug(employees);
   for (let key of Object.keys(employees)) {
@@ -135,16 +172,16 @@ async function populateTable(table, employees) {
 
 // ---------------- Sequence Methods ----------------//
 
-async function cacheAndGo(response, endpoint, tableType) {
-  console.debug("CACHE AND GO");
-  debugCache();
-  if (!errorItem(response)) {
-    sessionStorage.setItem("filler", tableType);
-    window.location.replace(homeURL + endpoint);
-  } else {
-    alert("Input invalid");
-  }
-}
+// async function cacheAndGo(response, endpoint, tableType) {
+//   console.debug("CACHE AND GO");
+//   debugCache();
+//   if (!errorItem(response)) {
+//     sessionStorage.setItem("filler", tableType);
+//     window.location.replace(homeURL + endpoint);
+//   } else {
+//     alert("Input invalid");
+//   }
+// }
 
 async function fetchRequest(request, endpoint) {
   const answer = await fetch(
@@ -152,8 +189,8 @@ async function fetchRequest(request, endpoint) {
     {
       method: request,
       headers: {
-        'Content-Type': 'application/json',
-      }
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
     }).then((response) => response.json())
     .catch((error) => {
       console.error("Error: ", error);
@@ -205,4 +242,21 @@ function clearCache() {
 }
 function debugCache() {
   console.debug("CACHE: response - " + sessionStorage.getItem('response') + ", tableFillerType - " + sessionStorage.getItem('filler'));
+}
+
+// ---------------- Input Validation ----------------//
+
+function validatorHandler(id, name, role) {
+  return (
+    inputValidator(new RegExp('/^\d+$/'), id, "ID") ||
+    inputValidator(new RegExp("^[a-zA-Z]+$"), name, "Name") ||
+    inputValidator(new RegExp("^[a-zA-Z]+$"), role, "Role"))
+}
+
+function inputValidator(pattern, input, inputName) {
+  if (pattern.test(input.replace(/\s/g, ''))) {
+    alert(inputName + ": " + input + " is not a valid input.");
+    return false;
+  }
+  return true;
 }
