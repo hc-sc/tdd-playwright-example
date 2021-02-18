@@ -18,7 +18,7 @@ describe("Check for Client Table, ", () => {
 
         // expect(clientTable.length !== 0).toBeTruthy();
         // expect(null).toBeDefined();
-        expect(clientTable).toBeUndefined();
+        expect(clientTable).toBeDefined();
     });
 
     // it("Endpoint: POST Employee by ID", async ({ page }) => {

@@ -108,7 +108,7 @@ jobs: # a collection of steps
           command: | # BASE_URL=$HEROKU_APP_NAME_SERVER is the env variable being tested upon
             cd e2e
             npm ci
-            BASE_URL=$HEROKU_APP_NAME_SERVER npx folio 
+            BASE_URL="https://"$HEROKU_APP_NAME_SERVER".herokuapp.com" npx folio 
       - save_cache:
           paths:
             - ~/project/e2e/cache
