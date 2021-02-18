@@ -1,8 +1,7 @@
-// // const baseURL = "${apiURL}" + "/" + "${endpoints.employees.en}";
-var baseURL = "https://localhost:9443/employees";
-var homeURL = "https://localhost:8443/employees";
-// const baseURL = "https://tdd-playwright-example-api.herokuapp.com/employees"
-// const homeURL = "https://tdd-playwright-example-server.herokuapp.com/employees"
+// var apiURL = "https://localhost:9443/employees";
+// var siteURL = "https://localhost:8443/employees";
+const apiURL = "https://tdd-playwright-example-api.herokuapp.com/employees"
+const siteURL = "https://tdd-playwright-example-server.herokuapp.com/employees"
 
 async function submitInstead(event) {
   event.preventDefault();
@@ -50,34 +49,34 @@ async function requestHandler(request, id, name, role) {
           endpoint = "/" + id;
           tableFiller = "ONE";
         }
-        response = await fetchRequest(request, baseURL + endpoint);
+        response = await fetchRequest(request, apiURL + endpoint);
         console.debug(tableFiller);
-        // await cacheAndGo(await fetchRequest(request, baseURL + endpoint), endpoint, tableFiller);
+        // await cacheAndGo(await fetchRequest(request, apiURL + endpoint), endpoint, tableFiller);
         break;
       case "POST":
         endpoint = "";
-        response = await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role));
+        response = await fetchRequest(request, apiURL + endpoint, bodyBuilder(undefined, name, role));
         tablefiller = "ONE";
-        // await cacheAndGo(await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role)), endpoint, "ONE");
+        // await cacheAndGo(await fetchRequest(request, apiURL + endpoint, bodyBuilder(undefined, name, role)), endpoint, "ONE");
 
         // TODO: elseif for posting many -> new bodyBuilder to handle list of DTO items
         //  } else {
         //  endpoint = "/bulk";
-        //  response = await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role));
+        //  response = await fetchRequest(request, apiURL + endpoint, bodyBuilder(undefined, name, role));
         //  tablefiller = "MANY";
         // }
         break;
       case "DELETE":
         endpoint = "/" + id;
-        response = await fetchRequest(request, baseURL + endpoint)
+        response = await fetchRequest(request, apiURL + endpoint)
         tablefiller = "ONE";
-        // await cacheAndGo(await fetchRequest(request, baseURL + endpoint), endpoint, "ONE");
+        // await cacheAndGo(await fetchRequest(request, apiURL + endpoint), endpoint, "ONE");
         break;
       case "PUT":
         endpoint = "/" + id;
-        response = await fetchRequest(request, baseURL + endpoint, bodyBuilder(undefined, name, role));
+        response = await fetchRequest(request, apiURL + endpoint, bodyBuilder(undefined, name, role));
         tablefiller = "ONE";
-        // await cacheAndGo(await fetchRequest(request, baseURL + endpoint, bodyBuilder(id, name, role)), endpoint, "ONE");
+        // await cacheAndGo(await fetchRequest(request, apiURL + endpoint, bodyBuilder(id, name, role)), endpoint, "ONE");
         break;
       default:
         break;
@@ -90,7 +89,7 @@ async function requestHandler(request, id, name, role) {
         await tableHandler(response, tableFiller);
         break;
       case "SERVER":
-        window.location.replace(homeURL + endpoint);
+        window.location.replace(siteURL + endpoint);
         break;
     }
   }
@@ -177,7 +176,7 @@ async function populateTable(table, employees) {
 //   debugCache();
 //   if (!errorItem(response)) {
 //     sessionStorage.setItem("filler", tableType);
-//     window.location.replace(homeURL + endpoint);
+//     window.location.replace(siteURL + endpoint);
 //   } else {
 //     alert("Input invalid");
 //   }
