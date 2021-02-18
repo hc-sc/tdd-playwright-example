@@ -4,8 +4,7 @@ require('dotenv').config();
 // const baseURL = process.env.endpoint;
 // const baseURL = "https://tdd-playwright-example-server.herokuapp.com";
 // const baseURL = "https://localhost:8443"
-const baseURL = process.env.LOCAL_SITE_URL;
-console.debug(baseURL);
+const baseURL = process.env.BASE_URL;
 
 //Root 
 describe("Check for Client Table, ", () => {
