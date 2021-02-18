@@ -105,10 +105,10 @@ jobs: # a collection of steps
             - v2-npm-deps-{{ checksum "package-lock.json" }}
       - run:
           name: Playwright Installation and Testing
-          command: |
+          command: | # BASE_URL=$HEROKU_APP_NAME_SERVER is the env variable being tested upon
             cd e2e
             npm ci
-            endpoint=$HEROKU_APP_NAME_SERVER npx folio
+            BASE_URL=$HEROKU_APP_NAME_SERVER npx folio 
       - save_cache:
           paths:
             - ~/project/e2e/cache
