@@ -2,20 +2,14 @@ package org.example.pages.index;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.http.HttpRequest;
-import static java.net.http.HttpRequest.BodyPublisher;
-import static java.net.http.HttpRequest.BodyPublishers;
-import java.nio.charset.StandardCharsets;
+import java.net.http.HttpRequest.BodyPublishers;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.example.entities.employees.EmployeeDTO;
 import org.example.util.ApiClient;
@@ -24,9 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 @Service
