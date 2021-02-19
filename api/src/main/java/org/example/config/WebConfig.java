@@ -10,10 +10,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @PropertySource(value = "endpoints.properties", name = "endpoints")
 public class WebConfig implements WebMvcConfigurer {
   // @Override
-  // public void addCorsMappings(CorsRegistry registry) {
-  // registry.addMapping("/**") // all endpoints
-  // .allowedOrigins("https://localhost:8443"); // specific origins
-  // }
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/**") // all endpoints
+        .allowedOrigins("${service.url}").allowedMethods("GET", "POST", "PUT", "DELETE");
+
+    // TODO: Inject application property server.url in allowedOrigins
+  }
 
   // ignore 'Accept' header (we use CustomContentNegotiationStrategy instead)
   @Override

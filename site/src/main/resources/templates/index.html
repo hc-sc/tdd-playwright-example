@@ -19,8 +19,8 @@
       <select name="request" id="request">
         <option value="GET">GET</option>
         <option value="POST">POST</option>
-        <option value="DELETE">DELETE</option>
         <option value="PUT">PUT</option>
+        <option value="DELETE">DELETE</option>
       </select>
       <!-- <label for="id">ID:</label> -->
       <input type="text" id="id" name="id" placeholder="ID">
@@ -41,9 +41,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr th:each="item, index : ${successful}">
+        <!-- <tr th:each="item, index : ${successful}">
           <td th:text="${item.successful}"></td>
-        </tr>
+        </tr> -->
         <tr th:each="item, index : ${employees}">
           <td th:text="${item.id}"></td>
           <td th:text="${item.name}"></td>

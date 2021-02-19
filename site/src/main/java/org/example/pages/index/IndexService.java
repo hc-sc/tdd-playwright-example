@@ -106,7 +106,7 @@ public class IndexService {
     return dtoRequest(request);
   }
 
-  public String deleteEmployee(Long id) throws JsonProcessingException {
+  public String deleteEmployee(String id) throws JsonProcessingException {
     log.debug("Deleting employee");
 
     HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")

@@ -1,17 +1,18 @@
-// var apiURL = "https://localhost:9443/employees";
-// var siteURL = "https://localhost:8443/employees";
-const apiURL = "https://tdd-playwright-example-api.herokuapp.com/employees"
-const siteURL = "https://tdd-playwright-example-server.herokuapp.com/employees"
+var host;
+var backend;
+
+// const backend = "https://tdd-playwright-example-api.herokuapp.com/employees"
+// const host = "https://tdd-playwright-example-server.herokuapp.com/employees"
 
 async function submitInstead(event) {
   event.preventDefault();
-  await getData();
+  await parseFormQuery();
 }
 
 function setup() {
-  const clientForm = document.getElementById('form');
-  clientForm.addEventListener('submit', submitInstead);
-  debugCache();
+  setURL();
+  const form = document.getElementById('form');
+  form.addEventListener('submit', submitInstead);
 }
 
 // Populates client table once
@@ -25,7 +26,22 @@ function setup() {
   }
 })();
 
-async function getData() {
+function setURL() { // For now
+  host = window.location.host;
+  switch (host) {
+    case ("https://localhost:8443"):
+      backend = "https://localhost:9443";
+      break;
+    case ("https://tdd-playwright-example-server.herokuapp.com"):
+      backend = "https://tdd-playwright-example-api.herokuapp.com";
+      break;
+    default:
+      backend = "https://localhost:9443";
+  }
+
+}
+
+async function parseFormQuery() {
   const request = document.getElementById('request').value;
   const id = document.getElementById('id').value;
   const name = document.getElementById('name').value;
@@ -35,48 +51,58 @@ async function getData() {
 
 async function requestHandler(request, id, name, role) {
   console.debug("REQUEST HANDLER RUNNING: " + request + " " + id + " " + name + " " + role);
-  let endpoint;
+
+  let formMethod;
+  let serverEndpoint = "/employees";
+
+  let clientEndpoint = "/employees";
+  let body;
   let response;
   let tableFiller;
-  try {
 
+
+
+  try {
     switch (request) {
+
       case "GET":
-        if (id === "") {
-          endpoint = "";
+        formMethod = request;
+        if (id === "" || id === "/employees") {
           tableFiller = "MANY";
         } else {
-          endpoint = "/" + id;
+          serverEndpoint = serverEndpoint.concat("/" + id);
           tableFiller = "ONE";
         }
-        response = await fetchRequest(request, apiURL + endpoint);
-        console.debug(tableFiller);
-        // await cacheAndGo(await fetchRequest(request, apiURL + endpoint), endpoint, tableFiller);
+        clientEndpoint = serverEndpoint;
         break;
-      case "POST":
-        endpoint = "";
-        response = await fetchRequest(request, apiURL + endpoint, bodyBuilder(undefined, name, role));
-        tablefiller = "ONE";
-        // await cacheAndGo(await fetchRequest(request, apiURL + endpoint, bodyBuilder(undefined, name, role)), endpoint, "ONE");
 
-        // TODO: elseif for posting many -> new bodyBuilder to handle list of DTO items
-        //  } else {
-        //  endpoint = "/bulk";
-        //  response = await fetchRequest(request, apiURL + endpoint, bodyBuilder(undefined, name, role));
-        //  tablefiller = "MANY";
-        // }
+      case "POST": //TODO: Post /bulk
+        formMethod = request;
+        if (name === "" || role === "") { return; }
+        serverEndpoint = serverEndpoint.concat("/add");
+
+        body = bodyBuilder(undefined, name, role)
+        tableFiller = "ONE";
+        id = undefined;
         break;
-      case "DELETE":
-        endpoint = "/" + id;
-        response = await fetchRequest(request, apiURL + endpoint)
-        tablefiller = "ONE";
-        // await cacheAndGo(await fetchRequest(request, apiURL + endpoint), endpoint, "ONE");
-        break;
+
       case "PUT":
-        endpoint = "/" + id;
-        response = await fetchRequest(request, apiURL + endpoint, bodyBuilder(undefined, name, role));
-        tablefiller = "ONE";
-        // await cacheAndGo(await fetchRequest(request, apiURL + endpoint, bodyBuilder(id, name, role)), endpoint, "ONE");
+        formMethod = "POST"; // Form only supports GET or POST. Controller maps to proper API methods.
+        if (id == "" || name == "" || role == "") { return; }
+        serverEndpoint = serverEndpoint.concat("/update");
+
+        clientEndpoint = clientEndpoint.concat("/" + id);
+        body = bodyBuilder(id, name, role)
+        tableFiller = "ONE";
+        break;
+
+      case "DELETE":
+        formMethod = "POST"; // Form only supports GET or POST. Controller maps to proper API methods.
+        if (id == "") { return; }
+        serverEndpoint = serverEndpoint.concat("/delete");
+
+        clientEndpoint = clientEndpoint.concat("/" + id);
+        tableFiller = "ONE";
         break;
       default:
         break;
@@ -84,12 +110,19 @@ async function requestHandler(request, id, name, role) {
   } catch (err) {
     throw err;
   } finally {
+    console.debug("REQUEST: " + request + " ID: " + id + " BODY: " + body + " FILLER: " + tableFiller + " SERVER ENDPOINT: " + serverEndpoint + " CLIENT ENDPOINT: " + clientEndpoint);
     switch (await document.getElementById('request-side').value) {
+
       case "CLIENT":
+        response = await fetchBodyRequest(request, backend + clientEndpoint, body);
         await tableHandler(response, tableFiller);
         break;
       case "SERVER":
-        window.location.replace(siteURL + endpoint);
+        const form = document.getElementById("form");
+        form.setAttribute("method", formMethod);
+        form.setAttribute("action", serverEndpoint);
+        form.submit();
+        // await sendForm(request, id, name, role, endpoint);
         break;
     }
   }
@@ -101,8 +134,7 @@ async function requestHandler(request, id, name, role) {
 // ---------------- Client Table Methods ----------------//
 
 async function tableHandler(response, tableFiller) {
-  console.debug("TABLE HANDLER: ");
-  debugCache();
+  console.debug("TABLE HANDLER: " + tableFiller);
   switch (tableFiller) {
     case "ONE":
       await oneItemTable(response);
@@ -114,23 +146,6 @@ async function tableHandler(response, tableFiller) {
       break;
   }
 }
-
-// async function tableHandler() {
-//   const response = JSON.parse(sessionStorage.getItem('response'));
-//   const tableFiller = sessionStorage.getItem('filler');
-//   console.debug("TABLE HANDLER: ");
-//   debugCache();
-//   switch (tableFiller) {
-//     case "ONE":
-//       await oneItemTable(response);
-//       break;
-//     case "MANY":
-//       await manyItemTable(response);
-//       break;
-//     default:
-//       break;
-//   }
-// }
 
 async function newTable() {
   const table = document.querySelector("#js-employees > tbody")
@@ -146,7 +161,7 @@ async function oneItemTable(employees) {
 };
 
 async function manyItemTable(employeeList) {
-  console.debug("FILLING MANY TABLE:");
+  console.debug("FILLING MANY TABLE:" + JSON.stringify(employeeList));
   const table = await newTable();
   employeeList.employees.forEach((employee) => {
     populateTable(table, employee);
@@ -171,16 +186,15 @@ async function populateTable(table, employees) {
 
 // ---------------- Sequence Methods ----------------//
 
-// async function cacheAndGo(response, endpoint, tableType) {
-//   console.debug("CACHE AND GO");
-//   debugCache();
-//   if (!errorItem(response)) {
-//     sessionStorage.setItem("filler", tableType);
-//     window.location.replace(siteURL + endpoint);
-//   } else {
-//     alert("Input invalid");
-//   }
-// }
+//https://www.geeksforgeeks.org/how-to-create-a-form-dynamically-with-the-javascript/
+function createFormInput(form, name, value) {
+  if (value === undefined || value === null || value == "") return;
+  const attribute = document.createElement("input");
+  attribute.setAttribute("type", "text");
+  attribute.setAttribute("name", name);
+  attribute.setAttribute("value", value);
+  form.appendChild(attribute);
+}
 
 async function fetchRequest(request, endpoint) {
   const answer = await fetch(
@@ -198,8 +212,9 @@ async function fetchRequest(request, endpoint) {
   return answer;
 }
 
-async function fetchRequest(request, endpoint, data) {
-  console.debug("DATA: " + JSON.stringify(data));
+async function fetchBodyRequest(request, endpoint, data) {
+  if (data === undefined) return await fetchRequest(request, endpoint);
+
   const answer = await fetch(
     (endpoint),
     {
@@ -235,13 +250,6 @@ function errorItem(response) {
   return (response.hasOwnProperty("error") || response.hasOwnProperty("errors"))
 }
 
-function clearCache() {
-  sessionStorage.removeItem('response');
-  sessionStorage.removeItem('filler');
-}
-function debugCache() {
-  console.debug("CACHE: response - " + sessionStorage.getItem('response') + ", tableFillerType - " + sessionStorage.getItem('filler'));
-}
 
 // ---------------- Input Validation ----------------//
 

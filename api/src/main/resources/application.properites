@@ -4,4 +4,5 @@ spring.jpa.open-in-view=false
 spring.mvc.throw-exception-if-no-handler-found=true
 spring.web.resources.add-mappings=false
 
-api.url=${apiURL}
+api.url="https://"${API_URL}".herokuapp.com"
+service.url="https://"${SERVICE_URL}".herokuapp.com"

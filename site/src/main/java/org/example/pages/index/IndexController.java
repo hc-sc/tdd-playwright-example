@@ -44,28 +44,53 @@ public class IndexController {
     return "index";
   }
 
-  @PostMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
-  public String addOne(Model model, @RequestBody EmployeeDTO employee) throws JsonProcessingException {
-    model.addAttribute("employees", indexService.addEmployee(employee));
+  @PostMapping({ "${endpoints.employees.en}/add", "${endpoints.employees.fr}/add" })
+  public String addOne(Model model, @RequestParam(name = "name") String name, @RequestParam(name = "role") String role)
+      throws JsonProcessingException {
+    model.addAttribute("employees", indexService.addEmployee(createEmployeeDto(name, role)));
     return "index";
   }
 
-  @PostMapping({ "${endpoints.employees.en}/bulk", "${endpoints.employees.fr}/vrac" })
-  public String addMany(Model model, @RequestBody List<EmployeeDTO> employees) throws JsonProcessingException {
-    model.addAttribute("employees", indexService.addEmployees(employees));
+  // @PostMapping({ "${endpoints.employees.en}/bulk",
+  // "${endpoints.employees.fr}/vrac" })
+  // public String addMany(Model model, @RequestBody List<EmployeeDTO> employees)
+  // throws JsonProcessingException {
+  // model.addAttribute("employees", indexService.addEmployees(employees));
+  // return "index";
+  // }
+
+  // UPDATE
+  @PostMapping({ "${endpoints.employees.en}/update", "${endpoints.employees.fr}/update" })
+  public String updateEmployee(Model model, @RequestParam(name = "id") String id,
+      @RequestParam(name = "name") String name, @RequestParam(name = "role") String role)
+      throws JsonProcessingException {
+    model.addAttribute("employees", indexService.updateEmployee(createEmployeeDto(id, name, role)));
     return "index";
   }
 
-  @PutMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public String updateEmployee(Model model, @RequestBody EmployeeDTO employee) throws JsonProcessingException {
-    model.addAttribute("employees", indexService.updateEmployee(employee));
-    return "index";
-  }
-
-  @DeleteMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public String deleteEmployee(Model model, @PathVariable Long id) throws JsonProcessingException {
+  // DELETE
+  @PostMapping({ "${endpoints.employees.en}/delete", "${endpoints.employees.fr}/delete" })
+  public String deleteOne(Model model, @RequestParam(name = "id") String id) throws JsonProcessingException {
     model.addAttribute("successful", indexService.deleteEmployee(id));
+    System.out.println(model.getAttribute("successful"));
     return "index";
+  }
+
+  private EmployeeDTO createEmployeeDto(String name, String role) {
+    EmployeeDTO employee = new EmployeeDTO();
+    employee.setName(name);
+    employee.setRole(role);
+    System.out.println(employee.toString());
+    return employee;
+  }
+
+  private EmployeeDTO createEmployeeDto(String id, String name, String role) {
+    EmployeeDTO employee = new EmployeeDTO();
+    employee.setId(Long.valueOf(id));
+    employee.setName(name);
+    employee.setRole(role);
+    System.out.println(employee.toString());
+    return employee;
   }
 
 }
