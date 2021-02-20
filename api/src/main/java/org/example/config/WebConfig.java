@@ -12,7 +12,9 @@ public class WebConfig implements WebMvcConfigurer {
   // @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**") // all endpoints
-        .allowedOrigins("${service.url}").allowedMethods("GET", "POST", "PUT", "DELETE");
+        .allowedOrigins("*") // Won't work with "${api.url}" nor
+                             // https://tdd-playright-example-server.herokuapp.com ??
+        .allowedMethods("GET", "POST", "PUT", "DELETE");
 
     // TODO: Inject application property server.url in allowedOrigins
   }
