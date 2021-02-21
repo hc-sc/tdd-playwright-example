@@ -141,7 +141,4 @@ task checkEnvironment {
   }
 }
 
-// task stage(dependsOn: ["build", "clean"])
-// build.mustRunAfter clean
-
 compileJava.dependsOn checkEnvironment
