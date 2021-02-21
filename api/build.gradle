@@ -1,7 +1,6 @@
 plugins {
-  id 'maven-publish'
   id 'war'
-  id 'org.springframework.boot' version '2.2.0.RELEASE'
+  id 'org.springframework.boot' version '2.2.1.RELEASE'
   id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 }
 
@@ -26,13 +25,6 @@ def archiveName = "${applicationName}##${version + '.' + buildNumber}"
 
 def profiles
 
-// configure tasks
-// bootRun {
-//   args = [
-//     "--spring.profiles.active=${profiles}",
-//   ]
-// }
-
 bootJar {
   archiveFileName = "${archiveName}.jar"
 }
@@ -43,9 +35,6 @@ bootWar {
 
 test {
   useJUnitPlatform()
-
-  // need to be able to pass through the active profile supplied in gradle task
-  // systemProperty 'spring.profiles.active', profiles
 }
 
 configurations {
@@ -72,7 +61,6 @@ compileJava {
 
 dependencies {
   runtimeOnly "com.h2database:h2"
-
   implementation project(':common')
   annotationProcessor "jakarta.xml.bind:jakarta.xml.bind-api:$XML_VERSION" // JAXB annotations
   annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
@@ -94,40 +82,6 @@ dependencies {
 		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
 	}
 }
-
-// publishing {
-//   publications {
-//     maven(MavenPublication) {
-//       groupId = project.group
-//       artifactId = applicationName
-//       version = "${project.version}.${buildNumber}"
-//       artifact bootJar
-//     }
-//   }
-// }
-
-// artifactory {
-//   contextUrl = "https://jack.hc-sc.gc.ca/artifactory/"
-//   publish {
-//     repository {
-//       repoKey = 'gradle-local'
-//       maven = true
-//     }
-
-//     defaults {
-//       publications('maven')
-//       publishArtifacts = true
-//       publishPom = true
-//     }
-//   }
-
-//   resolve {
-//     repository {
-//       repoKey = 'maven-central-cache'
-//       maven = true
-//     }
-//   }
-// }
 
 // make sure your environment is set up correctly!
 task checkEnvironment {
