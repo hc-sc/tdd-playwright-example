@@ -6,7 +6,7 @@ import java.util.Map;
 import org.example.http.util.RestPreconditions;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +28,7 @@ public class EmployeeController {
   }
 
   @GetMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public EmployeeDTO findEmployeeByID(@PathVariable String id) {
+  public EmployeeDTO findEmployeeByID(@PathVariable Long id) {
     return RestPreconditions.checkFound(employeeService.findEmployeeByID(id));
   }
 
@@ -45,14 +45,14 @@ public class EmployeeController {
   }
 
   @PutMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public EmployeeDTO updateEmployee(@PathVariable String id, @RequestBody EmployeeDTO employee) {
+  public EmployeeDTO updateEmployee(@PathVariable Long id, @RequestBody EmployeeDTO employee) {
     // return RestPreconditions.checkFound(employeeService.updateEmployee(id,
     // employee));
     return employeeService.updateEmployee(id, employee);
   }
 
   @DeleteMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public Boolean deleteEmployee(@PathVariable String id) {
+  public Boolean deleteEmployee(@PathVariable Long id) {
     return RestPreconditions.checkFound(employeeService.deleteEmployee(id));
     // return ("Employee with " + id + " successfully deleted."); //?
   }

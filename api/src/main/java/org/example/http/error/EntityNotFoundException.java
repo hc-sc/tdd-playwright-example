@@ -13,34 +13,31 @@ public final class EntityNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
     public static final String MSG_KEY_ENTITY_NOT_FOUND = "entityNotFound";
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private HttpStatus status;
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private String message;
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private Throwable cause;
-
+    
     public EntityNotFoundException() {
         super();
     }
 
     public EntityNotFoundException(final String message, final Throwable cause) {
-        super(message, cause); // does not set?
+        super(message, cause); //does not set?
         this.setMessage(message);
     }
 
     public EntityNotFoundException(final String message) {
-        super(message); // does not set?
+        super(message); //does not set?
         this.setMessage(message);
     }
 
     public EntityNotFoundException(HttpStatus status, final String message) {
-        super(message); // does not set?
+        super(message); //does not set?
         this.setStatus(status);
         this.setMessage(message);
     }
@@ -50,3 +47,4 @@ public final class EntityNotFoundException extends RuntimeException {
     }
 
 }
+

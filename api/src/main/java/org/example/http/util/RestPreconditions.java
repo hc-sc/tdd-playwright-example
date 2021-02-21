@@ -8,9 +8,7 @@ import org.springframework.http.HttpStatus;
 import java.util.NoSuchElementException;
 
 /**
- * Simple static methods to be called at the start of your own methods to verify
- * correct arguments and state. If the Precondition fails, an {@link HttpStatus}
- * code is thrown
+ * Simple static methods to be called at the start of your own methods to verify correct arguments and state. If the Precondition fails, an {@link HttpStatus} code is thrown
  */
 public final class RestPreconditions {
 
@@ -23,9 +21,10 @@ public final class RestPreconditions {
     /**
      * Check if some value was found, otherwise throw exception.
      * 
-     * @param expression has value true if found, otherwise false
-     * @throws EntityNotFoundException if expression is false, means value not
-     *                                 found.
+     * @param expression
+     *            has value true if found, otherwise false
+     * @throws EntityNotFoundException
+     *             if expression is false, means value not found.
      */
     public static boolean checkFound(final boolean expression) {
         if (!expression) {
@@ -37,9 +36,10 @@ public final class RestPreconditions {
     /**
      * Check if some value was found, otherwise throw exception.
      * 
-     * @param expression has value true if found, otherwise false
-     * @throws EntityNotFoundException if expression is false, means value not
-     *                                 found.
+     * @param expression
+     *            has value true if found, otherwise false
+     * @throws EntityNotFoundException
+     *             if expression is false, means value not found.
      */
     public static <T> T checkFound(final T resource) {
         if (resource == null || resource.equals(null)) {

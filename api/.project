@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>api</name>
+	<name>deploys-api</name>
 	<comment>Project api created by Buildship.</comment>
 	<projects>
 	</projects>
@@ -32,7 +32,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1611267653375</id>
+			<id>0</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
