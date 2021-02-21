@@ -4,6 +4,11 @@ bin/
 .env
 node_modules/
 
+localhost.p12
+
+.project
+.classpath
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
@@ -11,7 +16,7 @@ gradle-app.setting
 !gradle-wrapper.jar
 
 # Needed for Heroku
-!gradle-wrapper.properties 
+!gradle-wrapper.properties
 
 # Cache of project
 .gradletasknamecache

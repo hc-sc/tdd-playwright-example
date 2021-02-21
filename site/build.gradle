@@ -1,5 +1,6 @@
 plugins {
   id 'org.springframework.boot' version '2.2.1.RELEASE'
+  id 'io.reflectoring.spring-boot-devtools' version '0.0.2'
 }
 
 apply plugin: 'war'
@@ -41,9 +42,6 @@ bootWar {
 
 test {
   useJUnitPlatform()
-
-  // need to be able to pass through the active profile supplied in gradle task
-  // systemProperty 'spring.profiles.active', profiles
 }
 
 configurations {
@@ -73,10 +71,6 @@ compileJava {
 
 dependencies {
   implementation project(':common')
-  // implementation "ca.gc.gocwebtemplate:gocwebtemplate-core:$CDTS_VERSION"
-  // implementation "ca.gc.gocwebtemplate:gocwebtemplate-core-base:$CDTS_VERSION"
-  // implementation "ca.gc.gocwebtemplate:gocwebtemplate-core-spring:$CDTS_VERSION"
-
   implementation fileTree(include: ["*.jar"], dir: "libs")
   annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
@@ -103,11 +97,6 @@ task checkEnvironment {
       throw new GradleException("Configured version of Java (${javaVersion}) is different than the host version (${JavaVersion.current()})")
     }
 
-    if(gradle.gradleVersion != gradleVersion) {
-      throw new GradleException("Configured version of Gradle (${gradleVersion}) is different than the one used in the build (${gradle.gradleVersion})")
-    }
-
-    println "Gradle: ${gradle.gradleVersion}"
     println "Spring Boot profiles: ${profiles}"
     println "Java: ${javaVersion} (${env.JAVA_VERSION})"
   }
