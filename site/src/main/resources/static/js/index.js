@@ -28,11 +28,12 @@ function setup() {
 
 function setURL() { // For now
   host = window.location.host;
+  console.debug(host);
   switch (host) {
-    case ("https://localhost:8443"):
+    case ("localhost:8443"):
       backend = "https://localhost:9443";
       break;
-    case ("https://tdd-playwright-example-server.herokuapp.com"):
+    case ("tdd-playwright-example-server.herokuapp.com"):
       backend = "https://tdd-playwright-example-api.herokuapp.com";
       break;
     default:
