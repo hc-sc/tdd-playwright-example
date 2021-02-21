@@ -1,15 +1,20 @@
 package org.example.beans;
 
 import org.example.config.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import goc.webtemplate.component.spring.DefaultTemplateCoreBean;
 
 @Component("defaultmodelbean")
 public class DefaultModelBean extends DefaultTemplateCoreBean {
+  private static final Logger log = LoggerFactory.getLogger(DefaultModelBean.class);
 
+  @Override
   public void onWebTemplateInitialize() {
-
+    log.debug("Loading bean...");
+    log.debug("Another thing...");
   }
 
   @Override

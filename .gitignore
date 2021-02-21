@@ -4,6 +4,8 @@ bin/
 .env
 node_modules/
 
+localhost.p12
+
 .project
 .classpath
 
