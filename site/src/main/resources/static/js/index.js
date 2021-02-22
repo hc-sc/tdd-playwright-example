@@ -115,7 +115,7 @@ async function requestHandler(request, id, name, role) {
     switch (await document.getElementById('request-side').value) {
 
       case "CLIENT":
-        response = await fetchBodyRequest(request, backend + clientEndpoint, body);
+        response = await fetchBodyRequest(request, backend.concat(clientEndpoint), body);
         await tableHandler(response, tableFiller);
         break;
       case "SERVER":

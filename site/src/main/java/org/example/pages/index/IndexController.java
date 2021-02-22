@@ -20,6 +20,14 @@ public class IndexController {
   @Autowired
   private IndexService indexService;
 
+  // For re-directing
+  // @RequestMapping(value="/forwardWithParams", method = RequestMethod.GET)
+  // public ModelAndView forwardWithParams(HttpServletRequest request) {
+  // request.setAttribute("param1", "one");
+  // request.setAttribute("param2", "two");
+  // return new ModelAndView("forward:/forwardedWithParams");
+  // }
+
   @GetMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
   public String findAll(Model model) {
 
@@ -36,7 +44,7 @@ public class IndexController {
     return "index";
   }
 
-  @PostMapping({ "${endpoints.employees.en}/add", "${endpoints.employees.fr}/add" })
+  @PostMapping({ "${endpoints.employees.en}/add", "${endpoints.employees.fr}/ajouter" })
   public String addOne(Model model, @RequestParam(name = "name") String name, @RequestParam(name = "role") String role)
       throws JsonProcessingException {
     model.addAttribute("employees", indexService.addEmployee(createEmployeeDto(name, role)));
@@ -52,7 +60,7 @@ public class IndexController {
   // }
 
   // UPDATE
-  @PostMapping({ "${endpoints.employees.en}/update", "${endpoints.employees.fr}/update" })
+  @PostMapping({ "${endpoints.employees.en}/update", "${endpoints.employees.fr}/reviser" })
   public String updateEmployee(Model model, @RequestParam(name = "id") String id,
       @RequestParam(name = "name") String name, @RequestParam(name = "role") String role)
       throws JsonProcessingException {
@@ -61,7 +69,7 @@ public class IndexController {
   }
 
   // DELETE
-  @PostMapping({ "${endpoints.employees.en}/delete", "${endpoints.employees.fr}/delete" })
+  @PostMapping({ "${endpoints.employees.en}/delete", "${endpoints.employees.fr}/supprimer" })
   public String deleteOne(Model model, @RequestParam(name = "id") String id) throws JsonProcessingException {
     model.addAttribute("successful", indexService.deleteEmployee(id));
     System.out.println(model.getAttribute("successful"));

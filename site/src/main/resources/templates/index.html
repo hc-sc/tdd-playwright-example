@@ -1,74 +1,72 @@
 <!DOCTYPE html>
-<html
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{master-template}"
-  th:with="goctemplateclientbean=${@defaultmodelbean}"
->
-  <head>
-    <!-- <title layout:fragment="title" th:text="#{index.title}"></title> -->
-  </head>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{master-template}" th:with="goctemplateclientbean=${@defaultmodelbean}">
 
-  <body>
-    <h1>Employees</h1>
-    <div layout:fragment="content">
-      <h1 th:text="#{index.title}"></h1>
-      <h2 th:text="#{request-wizard.heading}"></h2>
-      <form id="form">
-        <select name="request-side" id="request-side">
-          <option value="SERVER">SERVER</option>
-          <option value="CLIENT">CLIENT</option>
-        </select>
-        <select name="request" id="request">
-          <option value="GET">GET</option>
-          <option value="POST">POST</option>
-          <option value="PUT">PUT</option>
-          <option value="DELETE">DELETE</option>
-        </select>
-        <!-- <label for="id">ID:</label> -->
-        <input type="text" id="id" name="id" placeholder="ID" />
-        <!-- <label for="name">Name:</label> -->
-        <input type="text" id="name" name="name" placeholder="Name" />
-        <!-- <label for="role">Role:</label> -->
-        <input type="text" id="role" name="role" placeholder="Role" />
-        <button type="submit" id="button">Send</button>
-      </form>
+<head>
+  <!-- <title layout:fragment="title" th:text="#{index.title}"></title> -->
+</head>
 
-      <h2 th:text="#{server-side-table.heading}">Server-Side Generated</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>id</th>
-            <th>Name</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- <tr th:each="item, index : ${successful}">
+<body>
+  <h1>Employees</h1>
+  <div layout:fragment="content">
+    <h1 th:text="#{index.title}"></h1>
+    <h2 th:text="#{request-wizard.heading}"></h2>
+    <form id="form">
+      <select name="request-side" id="request-side">
+        <option value="SERVER" th:text="#{server}">SERVER</option>
+        <option value="CLIENT" th:text="#{client}">CLIENT</option>
+      </select>
+      <select name="request" id="request">
+        <option value="GET" th:text="#{get}">GET</option>
+        <option value="POST" th:text="#{post}">POST</option>
+        <option value="PUT" th:text="#{put}">PUT</option>
+        <option value="DELETE" th:text="#{delete}">DELETE</option>
+      </select>
+      <!-- <label for="id">ID:</label> -->
+      <input type="text" id="id" name="id" placeholder="ID" />
+      <!-- <label for="name">Name:</label> -->
+      <input type="text" id="name" name="name" th:placeholder="#{name}" />
+      <!-- <label for="role">Role:</label> -->
+      <input type="text" id="role" name="role" th:placeholder="#{role}" />
+      <button type="submit" id="button" th:text="#{send}">Send</button>
+    </form>
+
+    <h2 th:text="#{server-side-table.heading}">Server-Side Generated</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th th:text="#{name}">Name</th>
+          <th th:text=#{role}>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- <tr th:each="item, index : ${successful}">
           <td th:text="${item.successful}"></td>
         </tr> -->
-          <tr th:each="item, index : ${employees}">
-            <td th:text="${item.id}"></td>
-            <td th:text="${item.name}"></td>
-            <td th:text="${item.role}"></td>
-          </tr>
-        </tbody>
-      </table>
+        <tr th:each="item, index : ${employees}">
+          <td th:text="${item.id}"></td>
+          <td th:text="${item.name}"></td>
+          <td th:text="${item.role}"></td>
+        </tr>
+      </tbody>
+    </table>
 
-      <h2 th:text="#{client-side-table.heading}">Client-Side Generated</h2>
-      <table id="js-employees">
-        <thead>
-          <tr>
-            <th>id</th>
-            <th>Name</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- This will be populated by JS -->
-        </tbody>
-      </table>
-      <script type="text/javascript" src="/js/index.js"></script>
-    </div>
-  </body>
+    <h2 th:text="#{client-side-table.heading}">Client-Side Generated</h2>
+    <table id="js-employees">
+      <thead>
+        <tr>
+          <th>id</th>
+          <th th:text="#{name}">Name</th>
+          <th th:text=#{role}>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- This will be populated by JS -->
+      </tbody>
+    </table>
+    <script type="text/javascript" src="/js/index.js"></script>
+  </div>
+</body>
+
 </html>

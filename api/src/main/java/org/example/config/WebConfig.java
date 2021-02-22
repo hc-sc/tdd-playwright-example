@@ -13,8 +13,10 @@ public class WebConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**") // all endpoints
-        .allowedOrigins("*").allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS"); // specific origins; // specific
-                                                                                        // origins
+        .allowedOrigins("*").allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS"); // specific
+    // origins; //
+    // specific
+    // origins
   }
 
   // ignore 'Accept' header (we use CustomContentNegotiationStrategy instead)
