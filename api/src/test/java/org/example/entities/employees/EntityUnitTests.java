@@ -109,17 +109,8 @@ public class EntityUnitTests { // make it abstract so it isn't instantiated by S
     @Test
     public void test_deleteEmployee() {
         given().header("Content-Type", "application/json").when().delete("/employees/2").then().statusCode(200);
+        given().get("/employees/2").then().statusCode(404);
     }
-
-    // @Test
-    // public void whenMethodArgumentMismatch_thenBadRequest(){
-    // Response response = given().get("/employees/2");
-    // ApiError error = response.as(ApiError.class);
-
-    // assertEquals(HttpStatus.BAD_REQUEST, error.getStatus());
-    // assertEquals(1, error.getErrors().size());
-    // assertTrue(error.getErrors().get(0).contains("should be of type"));
-    // }
 
     private JSONObject createProfile(String name, String role) throws JSONException {
         JSONObject anEmployee = new JSONObject();
