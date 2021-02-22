@@ -19,8 +19,6 @@ function setup() {
 (async () => {
   try {
     setup();
-    // await tableHandler();
-    // await form();
   } catch (err) {
     throw err;
   }
@@ -171,7 +169,7 @@ async function manyItemTable(employeeList) {
 
 async function populateTable(table, employees) {
   if (errorItem(employees)) {
-    alert("Invalid Fields or employee not found");
+    alertLang("Invalid fields or employee not found.", "Champs non valides ou employé introuvable.");
     return;
   }
   const row = document.createElement("tr");
@@ -267,4 +265,17 @@ function inputValidator(pattern, input, inputName) {
     return false;
   }
   return true;
+}
+
+function alertLang(english, french) {
+  switch (document.documentElement.lang) {
+    case "en":
+      alert(english);
+      break;
+    case "fr":
+      alert(french)
+      break;
+    default:
+      alert("[FR]" + english);
+  }
 }

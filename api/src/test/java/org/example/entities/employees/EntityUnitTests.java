@@ -45,6 +45,8 @@ public class EntityUnitTests { // make it abstract so it isn't instantiated by S
     public void init() {
         RestAssured.port = port; // need to tell rest-assured which port to listen on
         RestAssuredMockMvc.webAppContextSetup(webApplicationContext); // stand up the whole application
+        System.out.println("PORT: " + port);
+        System.out.println("env: " + webApplicationContext.toString());
     }
 
     @Test

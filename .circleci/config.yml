@@ -22,7 +22,7 @@ jobs: # a collection of steps
           name: Run tests in parallel # See: https://circleci.com/docs/2.0/parallelism-faster-jobs/
           # Use "./gradlew test" instead if tests are not run in parallel
           command: |
-            ./gradlew test
+            SERVER_URL=https://$HEROKU_APP_NAME_SERVER.herokuapp.com ./gradlew test
       - run:
           name: Save test results
           command: |
@@ -36,8 +36,8 @@ jobs: # a collection of steps
       - run:
           name: Assembling JARs
           command: |
-              ./gradlew :api:bootJar
-              ./gradlew :site:bootJar
+             SERVER_URL=https://$HEROKU_APP_NAME_SERVER.herokuapp.com ./gradlew :api:bootJar
+             API_URL=https://$HEROKU_APP_NAME_API.herokuapp.com  ./gradlew :site:bootJar
       - store_artifacts:
           path: api/build/libs
       - save_cache:
@@ -70,12 +70,8 @@ jobs: # a collection of steps
           name: Setup Heroku and Deploy
           command: |
             bash .circleci/setup-heroku.sh
-            heroku config:set API_NAME=$HEROKU_APP_NAME_API --app $HEROKU_APP_NAME_SERVER
-            heroku config:set SERVER_NAME=$HEROKU_APP_NAME_SERVER --app $HEROKU_APP_NAME_API
-
+            heroku config:set SERVER_URL=https://$HEROKU_APP_NAME_SERVER.herokuapp.com --app $HEROKU_APP_NAME_API
             heroku config:set API_URL=https://$HEROKU_APP_NAME_API.herokuapp.com --app $HEROKU_APP_NAME_SERVER
-            heroku config:set SERVER_URL=$HEROKU_APP_NAME_SERVER.herokuapp.com --app $HEROKU_APP_NAME_API
-            
 
             cd api
             heroku deploy:jar "build/libs/api##1.0.0.1.jar" --app $HEROKU_APP_NAME_API
