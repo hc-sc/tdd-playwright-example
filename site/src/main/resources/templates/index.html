@@ -7,7 +7,7 @@
 </head>
 
 <body>
-  <h1>Employees</h1>
+  <h1 name=greeting>Employees</h1>
   <div layout:fragment="content">
     <h1 th:text="#{index.title}"></h1>
     <h2 th:text="#{request-wizard.heading}"></h2>
@@ -32,7 +32,7 @@
     </form>
 
     <h2 th:text="#{server-side-table.heading}">Server-Side Generated</h2>
-    <table>
+    <table id="server-side-employees">
       <thead>
         <tr>
           <th>id</th>
