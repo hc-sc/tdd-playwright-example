@@ -110,7 +110,18 @@ jobs: # a collection of steps
           command: | # BASE_URL=$HEROKU_APP_NAME_SERVER is the env variable being tested upon
             cd e2e
             npm ci
-            BASE_URL="https://"$HEROKU_APP_NAME_SERVER".herokuapp.com" npx folio 
+            export BASE_URL="https://"$HEROKU_APP_NAME_SERVER".herokuapp.com"
+            FOLIO_JUNIT_OUTPUT_NAME=playwright_e2e_junit.xml npx folio --reporter=junit,line --param screenshotOnFailure
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/e2e/
+            find . -type f -regex ".*/.*xml" -exec cp {} ~/test-results/e2e/ \;
+          when: always
+      - store_test_results:  # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data
+          path: ~/test-results
+      - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: ~/test-results/e2e
       - save_cache:
           paths:
             - ~/project/e2e/cache

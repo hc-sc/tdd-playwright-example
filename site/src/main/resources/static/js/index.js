@@ -1,28 +1,21 @@
+
+
+// ------------ Start of: Initiialization ------------//
 var host;
 var backend;
 
-// const backend = "https://tdd-playwright-example-api.herokuapp.com/employees"
-// const host = "https://tdd-playwright-example-server.herokuapp.com/employees"
-
-async function submitInstead(event) {
-  event.preventDefault();
-  await parseFormQuery();
-}
-
-function setup() {
-  setURL();
-  const form = document.getElementById('form');
-  form.addEventListener('submit', submitInstead);
-}
-
-// Populates client table once
 (async () => {
   try {
-    setup();
+    await initialization();
   } catch (err) {
     throw err;
   }
 })();
+
+async function initialization() {
+  setURL();
+  await setForm();
+}
 
 function setURL() { // For now
   host = window.location.host;
@@ -40,15 +33,147 @@ function setURL() { // For now
 
 }
 
-async function parseFormQuery() {
+async function setForm() {
+  const form = document.getElementById('form');
+  form.addEventListener('submit', submitInstead);
+
+  const idInputField = document.getElementById("id");
+  const nameInputField = document.getElementById("name");
+  const roleInputField = document.getElementById("role");
+
+
+  // Inputted ID must be greater than 0.
+  await setFormInputFilter(idInputField, function (value) {
+    return /^\d*$/.test(value);
+  });
+
+  // Inputted NAME must only be alpha
+  await setFormInputFilter(nameInputField, function (value) {
+    return /^[-a-z\s]*$/i.test(value);
+  });
+
+
+  // Inputted ROLE must only be alpha
+  await setFormInputFilter(roleInputField, function (value) {
+    return /^[-a-z\s]*$/i.test(value);
+  });
+
+  nameInputField.addEventListener('blur', scrubText);
+  roleInputField.addEventListener('blur', scrubText);
+
+  inputRequiredHandler();
+
+}
+
+/**
+ * Supports Copy+Paste, Drag+Drop, keyboard shortcuts, context menu operations, non-typeable keys,
+ * the caret position, different keyboard layouts, and all browsers since IE 9.
+ * @param {*} textbox 
+ * @param {*} inputFilter 
+ * @Author https://jsfiddle.net/emkey08/zgvtjc51
+ */
+async function setFormInputFilter(textbox, inputFilter) {
+  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+    textbox.addEventListener(event, function () {
+      if (inputFilter(this.value)) {
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      } else {
+        this.value = "";
+      }
+    });
+  });
+}
+
+
+function inputRequiredHandler() {
+
+  const request = document.getElementById("request");
+  const id = document.getElementById("id");
+  const name = document.getElementById("name");
+  const role = document.getElementById("role");
+
+  switch (request.value) {
+
+    case "GET":
+
+      id.required = false;
+      name.required = false;
+      role.required = false;
+
+      id.disabled = id.required;
+      name.disabled = !name.required;
+      role.disabled = !role.required;
+
+      break;
+
+    case "POST":
+
+      id.required = false;
+      name.required = true;
+      role.required = true;
+
+      id.disabled = !id.required;
+      name.disabled = !name.required;
+      role.disabled = !role.required;
+
+      break;
+
+    case "PUT":
+
+      id.required = true;
+      name.required = true;
+      role.required = true;
+
+      id.disabled = !id.required;
+      name.disabled = !name.required;
+      role.disabled = !role.required;
+
+      break;
+
+    case "DELETE":
+
+      id.required = true;
+      name.required = false;
+      role.required = false;
+
+      id.disabled = !id.required;
+      name.disabled = !name.required;
+      role.disabled = !role.required;
+
+      break;
+
+    default:
+      break;
+
+  }
+
+}
+
+function scrubText() {
+  this.value = this.value.replace(/\b./g, c => c.toUpperCase()).trim();
+}
+
+async function submitInstead(event) {
+  event.preventDefault();
+  await requestHandler();
+}
+
+
+// ------------ End of: Initiialization ------------//
+
+// ------------ Start of: Submitting Form ------------//
+
+async function requestHandler() {
   const request = document.getElementById('request').value;
   const id = document.getElementById('id').value;
   const name = document.getElementById('name').value;
   const role = document.getElementById('role').value;
-  requestHandler(request, id, name, role);
-}
 
-async function requestHandler(request, id, name, role) {
   console.debug("REQUEST HANDLER RUNNING: " + request + " " + id + " " + name + " " + role);
 
   let formMethod;
@@ -58,7 +183,6 @@ async function requestHandler(request, id, name, role) {
   let body;
   let response;
   let tableFiller;
-
 
 
   try {
@@ -76,8 +200,8 @@ async function requestHandler(request, id, name, role) {
         break;
 
       case "POST": //TODO: Post /bulk
+
         formMethod = request;
-        if (name === "" || role === "") { return; }
         serverEndpoint = serverEndpoint.concat("/add");
 
         body = bodyBuilder(undefined, name, role)
@@ -86,8 +210,11 @@ async function requestHandler(request, id, name, role) {
         break;
 
       case "PUT":
+
+
+
         formMethod = "POST"; // Form only supports GET or POST. Controller maps to proper API methods.
-        if (id == "" || name == "" || role == "") { return; }
+
         serverEndpoint = serverEndpoint.concat("/update");
 
         clientEndpoint = clientEndpoint.concat("/" + id);
@@ -96,8 +223,10 @@ async function requestHandler(request, id, name, role) {
         break;
 
       case "DELETE":
+
+
+
         formMethod = "POST"; // Form only supports GET or POST. Controller maps to proper API methods.
-        if (id == "") { return; }
         serverEndpoint = serverEndpoint.concat("/delete");
 
         clientEndpoint = clientEndpoint.concat("/" + id);
@@ -109,6 +238,7 @@ async function requestHandler(request, id, name, role) {
   } catch (err) {
     throw err;
   } finally {
+
     console.debug("REQUEST: " + request + " ID: " + id + " BODY: " + body + " FILLER: " + tableFiller + " SERVER ENDPOINT: " + serverEndpoint + " CLIENT ENDPOINT: " + clientEndpoint);
     switch (await document.getElementById('request-side').value) {
 
@@ -127,10 +257,45 @@ async function requestHandler(request, id, name, role) {
   }
 }
 
+async function fetchRequest(request, endpoint) {
+  const answer = await fetch(
+    (endpoint),
+    {
+      method: request,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    }).then((response) => response.json())
+    .catch((error) => {
+      console.error("Error: ", error);
+    });
+  sessionStorage.setItem("response", JSON.stringify(answer));
+  return answer;
+}
+
+async function fetchBodyRequest(request, endpoint, data) {
+  if (data === undefined) return await fetchRequest(request, endpoint);
+
+  const answer = await fetch(
+    (endpoint),
+    {
+      method: request,
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: data
+    }).then((response) => response.json())
+    .catch((error) => {
+      console.error("Error: ", error);
+    });
+  sessionStorage.setItem("response", JSON.stringify(answer));
+  return answer;
+}
+
+// ------------ End of: Preparing Form Submission ------------//
 
 
-
-// ---------------- Client Table Methods ----------------//
+// ---------------- Start of: Client Table Methods ---------------- //
 
 async function tableHandler(response, tableFiller) {
   console.debug("TABLE HANDLER: " + tableFiller);
@@ -182,55 +347,11 @@ async function populateTable(table, employees) {
   table.appendChild(row);
 }
 
+// ---------------- End of: Client Table Methods ---------------- //
 
-// ---------------- Sequence Methods ----------------//
 
-//https://www.geeksforgeeks.org/how-to-create-a-form-dynamically-with-the-javascript/
-function createFormInput(form, name, value) {
-  if (value === undefined || value === null || value == "") return;
-  const attribute = document.createElement("input");
-  attribute.setAttribute("type", "text");
-  attribute.setAttribute("name", name);
-  attribute.setAttribute("value", value);
-  form.appendChild(attribute);
-}
+// ---------------- Start of: Util Methods ---------------- //
 
-async function fetchRequest(request, endpoint) {
-  const answer = await fetch(
-    (endpoint),
-    {
-      method: request,
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    }).then((response) => response.json())
-    .catch((error) => {
-      console.error("Error: ", error);
-    });
-  sessionStorage.setItem("response", JSON.stringify(answer));
-  return answer;
-}
-
-async function fetchBodyRequest(request, endpoint, data) {
-  if (data === undefined) return await fetchRequest(request, endpoint);
-
-  const answer = await fetch(
-    (endpoint),
-    {
-      method: request,
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
-      body: data
-    }).then((response) => response.json())
-    .catch((error) => {
-      console.error("Error: ", error);
-    });
-  sessionStorage.setItem("response", JSON.stringify(answer));
-  return answer;
-}
-
-// ---------------- Util Methods ----------------//
 
 function bodyBuilder(id, name, role) {
   let body = ("{");
@@ -249,24 +370,6 @@ function errorItem(response) {
   return (response.hasOwnProperty("error") || response.hasOwnProperty("errors"))
 }
 
-
-// ---------------- Input Validation ----------------//
-
-function validatorHandler(id, name, role) {
-  return (
-    inputValidator(new RegExp('/^\d+$/'), id, "ID") ||
-    inputValidator(new RegExp("^[a-zA-Z]+$"), name, "Name") ||
-    inputValidator(new RegExp("^[a-zA-Z]+$"), role, "Role"))
-}
-
-function inputValidator(pattern, input, inputName) {
-  if (pattern.test(input.replace(/\s/g, ''))) {
-    alert(inputName + ": " + input + " is not a valid input.");
-    return false;
-  }
-  return true;
-}
-
 function alertLang(english, french) {
   switch (document.documentElement.lang) {
     case "en":
@@ -279,3 +382,11 @@ function alertLang(english, french) {
       alert("[FR]" + english);
   }
 }
+
+// ---------------- End of: Util Methods ---------------- //
+
+
+
+
+
+

@@ -11,39 +11,24 @@ describe("Language Test, ", () => {
     it("EN/FR", async ({ page }) => {
 
         await page.goto(baseURL);
+        // const lang = await page.evaluate(() => document.documentElement.lang.toString());
+        // console.log(lang);
 
-        let greeting;
+        let changeLangButton = await page.$eval('#wb-bnr > #wb-lng > ul > li > a', e => e.innerHTML);
+        await assertGreetingLanguage(page, changeLangButton);
 
-        const lang = await page.evaluate(() => document.documentElement.lang.toString());
-        console.log(lang);
-        switch (lang) {
-            case "fr":
-                greeting = await page.$eval('h1', e => e.innerHTML);
-                expect(greeting).toBe("Bienvenue!");
-                // await Promise.all([
-                //     page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/' }*/),
-                //     page.click('text="Français"')
-                // ]);
-                break;
-            case "en":
+        // Change language on page
+        await Promise.all([
+            page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/' }*/),
+            page.click('text=' + changeLangButton)
+        ]);
 
-
-                greeting = await page.$eval('h1', e => e.innerHTML);
-                // console.log(greeting);
-
-                expect(greeting).toBe("Welcome!");
-                // await Promise.all([
-                //     page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/' }*/),
-                //     page.click('text="English"')
-                // ]);
-                // greeting = await page.$eval('h1', e => e.innerHTML);
-                // console.log(greeting);
-                break;
-        }
-
+        changeLangButton = await page.$eval('#wb-bnr > #wb-lng > ul > li > a', e => e.innerHTML);
+        await assertGreetingLanguage(page, changeLangButton);
 
     });
 })
+
 
 
 describe("Test Wizard: Client Side, ", () => {
@@ -52,7 +37,7 @@ describe("Test Wizard: Client Side, ", () => {
     let inputRole = "Director";
     let inputId;
 
-    it("Service Methods: Post One", async ({ page }) => {
+    it("Client Methods: Post One", async ({ page }) => {
 
         await page.goto(baseURL);
 
@@ -71,13 +56,13 @@ describe("Test Wizard: Client Side, ", () => {
 
     });
 
-    it("Service Methods: Get One", async ({ page }) => {
+    it("Client Methods: Get One", async ({ page }) => {
 
         await page.goto(baseURL);
 
         await page.selectOption('select[id="request-side"]', 'CLIENT');
 
-        await getOne(page, 'SERVER', inputId, inputName, inputRole);
+        await getOne(page, 'CLIENT', inputId, inputName, inputRole);
 
         const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
         const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
@@ -89,54 +74,13 @@ describe("Test Wizard: Client Side, ", () => {
 
     });
 
-})
-
-describe("Test Wizard: Service Side, ", () => {
-
-    let inputName = "Jane";
-    let inputRole = "Manager";
-    let inputId;
-
-
-    it("Service Methods: Post One", async ({ page }) => {
-
-        await page.goto(baseURL);
-
-        await postOne(page, 'SERVER', inputName, inputRole);
-
-        const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
-        const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
-
-        expect(htmlName).toBe(inputName);
-        expect(htmlRole).toBe(inputRole);
-
-        inputId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
-
-    });
-
-    it("Service Methods: Get One", async ({ page }) => {
-
-        await page.goto(baseURL);
-
-        await getOne(page, 'SERVER', inputId, inputName, inputRole);
-
-        const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
-        const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
-        const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
-
-        expect(htmlId).toBe(inputId);
-        expect(htmlName).toBe(inputName);
-        expect(htmlRole).toBe(inputRole);
-
-    });
-
-    it("Service Methods: Update One", async ({ page }) => {
+    it("Client Methods: Update One", async ({ page }) => {
 
         await page.goto(baseURL);
 
         inputRole = swapRoles(inputRole);
 
-        await updateOne(page, 'SERVICE', inputId, inputName, inputRole);
+        await updateOne(page, 'CLIENT', inputId, inputName, inputRole);
 
         const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
         const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
@@ -148,96 +92,129 @@ describe("Test Wizard: Service Side, ", () => {
 
     });
 
-
-    it("Service Methods: Get All", async ({ page }) => {
-
-        await page.goto(baseURL);
-
-        await getAll(page, 'SERVICE');
-
-    });
-
-    it("Service Methods: Delete One", async ({ page }) => {
+    it("Client Methods: Delete One", async ({ page }) => {
 
         await page.goto(baseURL);
 
-        await deleteOne(page, 'SERVICE', inputId);
+        await deleteOne(page, 'CLIENT', inputId);
 
-        const htmlId = await page.$("#server-side-employees > tbody > td");
+        const htmlId = await page.$("#js-employees > tbody > td");
 
         expect(htmlId).toBe(null);
 
     });
 
 
+    it("Client Methods: Not Found Alert", async ({ page }) => {
+
+        await page.goto(baseURL);
+
+        await page.selectOption('select[id="request-side"]', 'CLIENT');
+
+        await page.selectOption('select[id="request"]', 'GET');
+
+        // Click input[name="id"]
+        await page.click('input[name="id"]');
+
+        // Fill input[name="id"]
+        await page.fill('input[name="id"]', inputId);
+
+        await clickSend(page, 'ALERT');
+
+
+    });
+
 })
 
+// describe("Test Wizard: Service Side, ", () => {
 
-// ------------------ SERVICE TEST FUNCTIONS --------------------- //
-
-
-
-// async function getAllService(page) {
-
-//     await page.goto(baseURL);
-
-//     // Click text="Send"
-//     await Promise.all([
-//         page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/employees?request-side=SERVER&request=GET&id=&name=&role=' }*/),
-//         page.click('text="Send"')
-//     ]);
-
-//     const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
-//     const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
-//     const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
-
-//     expect(htmlId).not.toBe(null);
-//     expect(htmlName).not.toBe(null);
-//     expect(htmlRole).not.toBe(null);
-
-// }
-
-// async function deleteOneService(page, inputId, inputName, inputRole) {
-
-//     await page.goto(baseURL);
-
-//     // Select DELETE
-//     await page.selectOption('select[id="request"]', 'DELETE');
-
-//     // Click input[name="id"]
-//     await page.click('input[name="id"]');
-
-//     // Fill input[name="id"]
-//     await page.fill('input[name="id"]', "6");
-
-//     // Click text="Send"
-//     await Promise.all([
-//         page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/employees/delete' }*/),
-//         page.click('text="Send"')
-//     ]);
-
-//     const htmlId = await page.$("#server-side-employees > tbody > td");
-
-//     expect(htmlId).toBe(null);
-// }
-
-// async function postOneClient(page, inputName, inputRole) {
-//     // Go to https://tdd-playwright-example-server.herokuapp.com/
-//     await page.goto('https://tdd-playwright-example-server.herokuapp.com/');
+//     let inputName = "Jane";
+//     let inputRole = "Manager";
+//     let inputId;
 
 
-//     await postOne(page, 'CLIENT', inputName, inputRole);
+//     it("Service Methods: Post One", async ({ page }) => {
 
-//     const htmlId = await page.$eval('td:nth-last-child(3)', e => e.innerHTML);
+//         await page.goto(baseURL);
+
+//         await postOne(page, 'SERVER', inputName, inputRole);
+
+//         const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
+//         const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
+
+//         expect(htmlName).toBe(inputName);
+//         expect(htmlRole).toBe(inputRole);
+
+//         inputId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
+
+//     });
+
+//     it("Service Methods: Get One", async ({ page }) => {
 
 
-//     console.log(await htmlId);
 
-//     // const clientTable = await page.$("#js-employees > tbody > tr");
-//     // console.log("TABLE: " + clientTable.innerHTML);
+//         // INSERT USER STORY HERE:
+
+//         await page.goto(baseURL);
+//         await getOne(page, 'SERVER', inputId, inputName, inputRole);
+
+//         //
 
 
-// }
+//         const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
+//         const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
+//         const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
+
+//         expect(htmlId).toBe(inputId);
+//         expect(htmlName).toBe(inputName);
+//         expect(htmlRole).toBe(inputRole);
+
+//     });
+
+//     it("Service Methods: Update One", async ({ page }) => {
+
+//         await page.goto(baseURL);
+
+//         inputRole = swapRoles(inputRole);
+
+//         await updateOne(page, 'SERVICE', inputId, inputName, inputRole);
+
+//         const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
+//         const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
+//         const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
+
+//         expect(htmlId).toBe(inputId);
+//         expect(htmlName).toBe(inputName);
+//         expect(htmlRole).toBe(inputRole);
+
+//     });
+
+
+//     it("Service Methods: Get All", async ({ page }) => {
+
+//         await page.goto(baseURL);
+
+//         await getAll(page, 'SERVICE');
+
+//     });
+
+//     it("Service Methods: Delete One", async ({ page }) => {
+
+//         await page.goto(baseURL);
+
+//         await deleteOne(page, 'SERVICE', inputId);
+
+//         const htmlId = await page.$("#server-side-employees > tbody > td");
+
+//         expect(htmlId).toBe(null);
+
+//     });
+
+
+// })
+
+
+// ------------- Test Utility Functions --------------- //
 
 async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -290,6 +267,10 @@ async function getAll(page, side) {
     await clickSend(page, side);
 }
 
+function swapRoles(inputRole) {
+    return (inputRole === 'Manager' ? 'Director' : 'Manager');
+}
+
 async function updateOne(page, side, inputId, inputName, inputRole) {
 
     // await page.selectOption('select[id="request-side"]', side);
@@ -337,23 +318,54 @@ async function deleteOne(page, side, inputId) {
 }
 
 async function clickSend(page, side) {
+    switch (side) {
+        case 'CLIENT':
+            // Click text="Send"
+            await page.click('text="Send"');
+            await sleep(2500);
+            break;
+        case 'SERVER':
+            // Click text="Send"
+            await Promise.all([
+                page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/employees/add' }*/),
+                page.click('text="Send"')
+            ]);
+        case 'ALERT':
+            // Click text="Send"
+            page.once('dialog', dialog => {
+                console.log(`Dialog message: ${dialog.message()}`);
+                dialog.dismiss().catch(() => { });
+            });
+            await page.click('text="Send"');
+
+    }
+
     // Click text="Send"
     if (side === 'CLIENT') {
-        // Click text="Send"
-        await page.click('text="Send"');
-        await sleep(2500);
+
     } else {
-        // Click text="Send"
-        await Promise.all([
-            page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/employees/add' }*/),
-            page.click('text="Send"')
-        ]);
+
     }
 }
 
-function swapRoles(inputRole) {
-    return (inputRole === 'Manager' ? 'Director' : 'Manager');
+function greetingToLanguage(language) {
+    switch (language) {
+        case 'English':
+            return "Bienvenue!";
+        case 'Français':
+            return "Welcome!";
+    }
 }
+
+async function assertGreetingLanguage(page, changeLangButton) {
+    console.log(changeLangButton);
+    let greeting = await page.$eval('h1', e => e.innerHTML);
+    console.debug(greeting);
+    expect(greeting).toBe(greetingToLanguage(changeLangButton));
+}
+
+
+
         // const form = await page.$("#form");
         // expect(form).not.toBe(null);
 

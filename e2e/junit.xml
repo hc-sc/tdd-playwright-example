@@ -1,0 +1,133 @@
+<testsuites id="" name="" tests="6" failures="4" skipped="0" errors="0" time="17.701">
+<testsuite name="src/test.spec.ts" timestamp="1614203316127" hostname="" tests="6" failures="4" skipped="0" time="16.587" errors="0">
+<testcase name="Language Test,  EN/FR" classname="src/test.spec.ts Language Test, " time="2.573">
+</testcase>
+<system-out>
+Français
+
+</system-out>
+<system-out>
+Welcome!
+
+</system-out>
+<system-out>
+English
+
+</system-out>
+<system-out>
+Bienvenue!
+
+</system-out>
+<testcase name="Test Wizard: Client Side,  Client Methods: Post One" classname="src/test.spec.ts Test Wizard: Client Side, " time="4.102">
+</testcase>
+<testcase name="Test Wizard: Client Side,  Client Methods: Get One" classname="src/test.spec.ts Test Wizard: Client Side, " time="4.369">
+<failure message="test.spec.ts:59:5 Client Methods: Get One" type="FAILURE">
+  src/test.spec.ts:59:5 › Test Wizard: Client Side,  Client Methods: Get One =======================
+  browserName=chromium, headful=false, slowMo=0, video=false, screenshotOnFailure=true
+
+    ReferenceError: inputIds is not defined
+
+      69 |         const htmlRole = await page.$eval('td:nth-child(3)', e =&gt; e.innerHTML);
+      70 |
+    &gt; 71 |         expect(htmlId).toBe(inputIds);
+         |                             ^
+      72 |         expect(htmlName).toBe(inputName);
+      73 |         expect(htmlRole).toBe(inputRole);
+      74 |
+
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/src/test.spec.ts:71:29
+        at WorkerRunner._runTestWithFixturesAndHooks (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/workerRunner.js:187:17)
+
+</failure>
+</testcase>
+<testcase name="Test Wizard: Client Side,  Client Methods: Update One" classname="src/test.spec.ts Test Wizard: Client Side, " time="1.844">
+<failure message="test.spec.ts:77:5 Client Methods: Update One" type="FAILURE">
+  src/test.spec.ts:77:5 › Test Wizard: Client Side,  Client Methods: Update One ====================
+  browserName=chromium, headful=false, slowMo=0, video=false, screenshotOnFailure=true
+
+    Error: page.fill: value: expected string, got undefined
+
+      285 |
+      286 |     // Fill input[name=&amp;quot;id&amp;quot;]
+    &gt; 287 |     await page.fill('input[name=&amp;quot;id&amp;quot;]', inputId);
+          |                ^
+      288 |
+      289 |     // Click input[name=&amp;quot;id&amp;quot;]
+      290 |     await page.click('input[name=&amp;quot;name&amp;quot;]');
+
+        at exports.tString (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/protocol/validatorPrimitives.js:42:11)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/protocol/validatorPrimitives.js:81:27
+        at Proxy.&lt;anonymous&gt; (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/channelOwner.js:44:93)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/frame.js:272:40
+        at Frame._wrapApiCall (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/channelOwner.js:72:34)
+        at Frame.fill (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/frame.js:271:21)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:415:60
+        at Page._attributeToPage (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:205:20)
+        at Page.fill (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:415:21)
+        at updateOne (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/src/test.spec.ts:287:16)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/src/test.spec.ts:83:9
+        at WorkerRunner._runTestWithFixturesAndHooks (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/workerRunner.js:187:17)
+
+</failure>
+</testcase>
+<testcase name="Test Wizard: Client Side,  Client Methods: Delete One" classname="src/test.spec.ts Test Wizard: Client Side, " time="1.762">
+<failure message="test.spec.ts:95:5 Client Methods: Delete One" type="FAILURE">
+  src/test.spec.ts:95:5 › Test Wizard: Client Side,  Client Methods: Delete One ====================
+  browserName=chromium, headful=false, slowMo=0, video=false, screenshotOnFailure=true
+
+    Error: page.fill: value: expected string, got undefined
+
+      313 |
+      314 |     // Fill input[name=&amp;quot;id&amp;quot;]
+    &gt; 315 |     await page.fill('input[name=&amp;quot;id&amp;quot;]', inputId);
+          |                ^
+      316 |
+      317 |     await clickSend(page, side);
+      318 | }
+
+        at exports.tString (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/protocol/validatorPrimitives.js:42:11)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/protocol/validatorPrimitives.js:81:27
+        at Proxy.&lt;anonymous&gt; (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/channelOwner.js:44:93)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/frame.js:272:40
+        at Frame._wrapApiCall (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/channelOwner.js:72:34)
+        at Frame.fill (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/frame.js:271:21)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:415:60
+        at Page._attributeToPage (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:205:20)
+        at Page.fill (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:415:21)
+        at deleteOne (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/src/test.spec.ts:315:16)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/src/test.spec.ts:99:9
+        at WorkerRunner._runTestWithFixturesAndHooks (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/workerRunner.js:187:17)
+
+</failure>
+</testcase>
+<testcase name="Test Wizard: Client Side,  Client Methods: Not Found Alert" classname="src/test.spec.ts Test Wizard: Client Side, " time="1.937">
+<failure message="test.spec.ts:108:5 Client Methods: Not Found Alert" type="FAILURE">
+  src/test.spec.ts:108:5 › Test Wizard: Client Side,  Client Methods: Not Found Alert ==============
+  browserName=chromium, headful=false, slowMo=0, video=false, screenshotOnFailure=true
+
+    Error: page.fill: value: expected string, got undefined
+
+      118 |
+      119 |         // Fill input[name=&amp;quot;id&amp;quot;]
+    &gt; 120 |         await page.fill('input[name=&amp;quot;id&amp;quot;]', inputId);
+          |                    ^
+      121 |
+      122 |         await clickSend(page, 'ALERT');
+      123 |
+
+        at exports.tString (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/protocol/validatorPrimitives.js:42:11)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/protocol/validatorPrimitives.js:81:27
+        at Proxy.&lt;anonymous&gt; (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/channelOwner.js:44:93)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/frame.js:272:40
+        at Frame._wrapApiCall (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/channelOwner.js:72:34)
+        at Frame.fill (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/frame.js:271:21)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:415:60
+        at Page._attributeToPage (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:205:20)
+        at Page.fill (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/@playwright/test/node_modules/playwright/lib/client/page.js:415:21)
+        at /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/src/test.spec.ts:120:20
+        at WorkerRunner._runTestWithFixturesAndHooks (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/workerRunner.js:187:17)
+
+</failure>
+</testcase>
+</testsuite>
+</testsuites>

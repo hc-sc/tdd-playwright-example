@@ -16,7 +16,7 @@
         <option value="SERVER" th:text="#{server}">SERVER</option>
         <option value="CLIENT" th:text="#{client}">CLIENT</option>
       </select>
-      <select name="request" id="request">
+      <select name="request" id="request" onchange=inputRequiredHandler()>
         <option value="GET" th:text="#{get}">GET</option>
         <option value="POST" th:text="#{post}">POST</option>
         <option value="PUT" th:text="#{put}">PUT</option>
