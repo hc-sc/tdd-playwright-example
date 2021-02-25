@@ -132,18 +132,17 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
-      - playwright # Testing for now.
-      # - builde2e
-      # - deploy:
-      #     requires:
-      #       - build
-      #     filters:
-      #       branches:
-      #         only: dev
-      # - playwright: # Make sure to add colon back in when adding conditions
-      #     requires:
-      #       - build
-      #       - deploy
-      #     filters:
-      #       branches:
-      #         only: dev
+      - builde2e
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: dev
+      - playwright: # Make sure to add colon back in when adding conditions
+          requires:
+            - build
+            - deploy
+          filters:
+            branches:
+              only: dev
