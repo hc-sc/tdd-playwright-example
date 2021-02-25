@@ -68,7 +68,7 @@ describe("Test Wizard: Client Side, ", () => {
         const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
         const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
 
-        expect(htmlId).toBe(inputId);
+        expect(htmlId).toBe(inputIdkyg);
         expect(htmlName).toBe(inputName);
         expect(htmlRole).toBe(inputRole);
 
