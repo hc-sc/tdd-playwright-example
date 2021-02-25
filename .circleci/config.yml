@@ -119,7 +119,7 @@ jobs: # a collection of steps
             find . -type d -regex "./test-results" -exec cp {} ~/e2e-results/ \;
           when: always
       - store_test_results:  # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data
-          path: ~/e2e-results
+          path: ~/e2e-results/test-results
       - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: ~/e2e-results
       - save_cache:
@@ -132,7 +132,7 @@ workflows:
   build-and-deploy:
     jobs:
       - playwright # Testing for now.
-      # - build
+      # - builde2e
       # - deploy:
       #     requires:
       #       - build
