@@ -117,6 +117,7 @@ jobs: # a collection of steps
           command: |
             mkdir -p ~/test-results/e2e/
             find . -type f -regex ".*/.*xml" -exec cp {} ~/test-results/e2e/ \;
+            find . -type d -regex ".*/src/test/*" -exec cp {} ~/test-results/e2e/ \;
           when: always
       - store_test_results:  # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data
           path: ~/test-results
