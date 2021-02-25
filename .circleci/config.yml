@@ -115,13 +115,13 @@ jobs: # a collection of steps
       - run:
           name: Save test results
           command: |
-            mkdir -p ~/test-results
-            find . -type f -regex "/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+            mkdir -p ~/test-results/e2e/
+            find . -type f -regex ".*/.*xml" -exec cp {} ~/test-results/e2e/ \;
           when: always
       - store_test_results:  # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data
-          path: ~/test-results/junit
-      - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
           path: ~/test-results
+      - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
+          path: ~/test-results/e2e
       - save_cache:
           paths:
             - ~/project/e2e/cache
