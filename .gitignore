@@ -3,6 +3,7 @@ build/
 bin/
 .env
 node_modules/
+test-results/
 
 localhost.p12
 
