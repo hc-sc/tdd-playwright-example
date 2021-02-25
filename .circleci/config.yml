@@ -121,7 +121,7 @@ jobs: # a collection of steps
       - store_test_results:  # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data
           path: ~/e2e-results
       - store_artifacts: # Upload test results for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
-          path: ~/e2e-results/tmp/
+          path: ~/e2e-results
       - save_cache:
           paths:
             - ~/project/e2e/cache
