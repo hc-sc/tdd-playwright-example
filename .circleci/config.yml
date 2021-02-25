@@ -111,7 +111,7 @@ jobs: # a collection of steps
             cd e2e
             npm ci
             export BASE_URL="https://"$HEROKU_APP_NAME_SERVER".herokuapp.com"
-            FOLIO_JUNIT_OUTPUT_NAME=playwright_e2e_junit.xml npx folio --reporter=junit,line --param slowM0=1000 screenshotOnFailure
+            FOLIO_JUNIT_OUTPUT_NAME=playwright_e2e_junit.xml npx folio --reporter=junit,line --param slowMo=1000 screenshotOnFailure
       - run:
           name: Save test results
           command: |
