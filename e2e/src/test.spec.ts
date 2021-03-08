@@ -44,7 +44,7 @@ describe("Test Wizard: Client Side, ", () => {
         await page.selectOption('select[id="request-side"]', 'CLIENT');
         await postOne(page, 'CLIENT', inputName, inputRole);
 
-        // const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
+        const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
         const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
         const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
 
@@ -72,7 +72,16 @@ describe("Test Wizard: Client Side, ", () => {
         expect(htmlName).toBe(inputName);
         expect(htmlRole).toBe(inputRole);
 
+        await Promise.all([
+            page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/details' }*/),
+            page.click('tr[id="row-1"]')
+        ]);
+
+
+
     });
+
+
 
     it("Client Methods: Update One", async ({ page }) => {
 
@@ -92,15 +101,23 @@ describe("Test Wizard: Client Side, ", () => {
 
     });
 
+
     it("Client Methods: Delete One", async ({ page }) => {
 
         await page.goto(baseURL);
 
         await deleteOne(page, 'CLIENT', inputId);
 
-        const htmlId = await page.$("#js-employees > tbody > td");
+        const htmlId = await page.$eval('td:nth-child(1)', e => e.innerHTML);
+        const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
+        const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
+        const htmlStatus = await page.$eval('td:nth-child(4)', e => e.innerHTML);
 
-        expect(htmlId).toBe(null);
+        expect(htmlId).toBe(inputId);
+        expect(htmlName).toBe(inputName);
+        expect(htmlRole).toBe(inputRole);
+        expect(htmlStatus).toBe("Deleted");
+
 
     });
 
@@ -137,7 +154,7 @@ describe("Test Wizard: Client Side, ", () => {
 
 //         await page.goto(baseURL);
 
-//         await postOne(page, 'SERVER', inputName, inputRole);
+//         await postOne(page, side, inputName, inputRole);
 
 //         const htmlName = await page.$eval('td:nth-child(2)', e => e.innerHTML);
 //         const htmlRole = await page.$eval('td:nth-child(3)', e => e.innerHTML);
@@ -156,7 +173,7 @@ describe("Test Wizard: Client Side, ", () => {
 //         // INSERT USER STORY HERE:
 
 //         await page.goto(baseURL);
-//         await getOne(page, 'SERVER', inputId, inputName, inputRole);
+//         await getOne(page, side, inputId, inputName, inputRole);
 
 //         //
 
@@ -275,7 +292,7 @@ async function updateOne(page, side, inputId, inputName, inputRole) {
 
     // await page.selectOption('select[id="request-side"]', side);
 
-    await page.selectOption('select[id="request-side"]', 'SERVER');
+    await page.selectOption('select[id="request-side"]', side);
 
 
     await page.selectOption('select[id="request"]', 'PUT');
@@ -303,7 +320,7 @@ async function updateOne(page, side, inputId, inputName, inputRole) {
 
 async function deleteOne(page, side, inputId) {
 
-    // await page.selectOption('select[id="request-side"]', side);
+    await page.selectOption('select[id="request-side"]', side);
 
     // Select DELETE
     await page.selectOption('select[id="request"]', 'DELETE');
