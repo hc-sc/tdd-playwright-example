@@ -69,9 +69,21 @@ public class IndexController {
 
 
   @GetMapping({ "/" })
-  public String viewRoot(Model model) {
+  public String viewRoot(Model model, ResponseCookie, HttpServletResponse response) {
+  
+  ResponseCookie cookie = ResponseCookie.from("Hb", cookieUserId)
+            .maxAge(!isEmpty(cookieUserId) ? MAX_COOKIE_DURATION : 0)
+            .domain("test.com")
+            .sameSite("None")
+            .secure(true)
+            .path("/")
+            .build();
+ response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+  
     return "index";
   }
+
+
 
   @RequestMapping({ "/errors" })
   public String viewError(HttpServletRequest request, Model model) {
