@@ -2,6 +2,7 @@ package org.example.entities.employees;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.example.http.util.RestPreconditions;
 
@@ -52,7 +53,7 @@ public class EmployeeController {
   }
 
   @DeleteMapping({ "${endpoints.employees.en}/{id}", "${endpoints.employees.fr}/{id}" })
-  public Boolean deleteEmployee(@PathVariable Long id) {
+  public EmployeeDTO deleteEmployee(@PathVariable Long id) {
     return RestPreconditions.checkFound(employeeService.deleteEmployee(id));
     // return ("Employee with " + id + " successfully deleted."); //?
   }

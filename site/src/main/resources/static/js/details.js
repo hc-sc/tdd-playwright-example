@@ -16,6 +16,9 @@ var backend;
 
 async function initialization() {
   setURL();
+  const alert = document.getElementById('alert');
+  console.debug("ALERT LENGTH: " + alert.childNodes.length());
+  alert.hidden = alert.childNodes.length <= 3;
   await setAlertNotice();
   await setForm();
   await setTableRows();
@@ -40,13 +43,12 @@ function setURL() { // For now
 
 async function setAlertNotice() {
   const alert = document.getElementById('alert');
+  console.debug("ALERT LENGTH: " + alert.childNodes.length());
   alert.hidden = alert.childNodes.length <= 3;
 }
 
 async function setForm() {
   const form = document.getElementById('form');
-
-  if (form === undefined || form === null) { return }
 
 
 
@@ -86,6 +88,7 @@ function setTableRows() {
   const rows = document.querySelectorAll(".table-row");
 
   rows.forEach(function (row) {
+
     const id = document.querySelector("#server-side-employees > tbody:nth-child(2) > tr:nth-child(" + row.rowIndex + ") > td:nth-child(1)");
     const name = document.querySelector("#server-side-employees > tbody:nth-child(2) > tr:nth-child(" + row.rowIndex + ") > td:nth-child(2)");
     const role = document.querySelector("#server-side-employees > tbody:nth-child(2) > tr:nth-child(" + row.rowIndex + ") > td:nth-child(3)");
@@ -116,18 +119,16 @@ function clickRowListener(row, requestSide) {
     const comment = document.querySelector(`#${requestSide}-comment-${row.rowIndex}`).textContent;
 
     if (requestSide === RequestEnum.SERVER) {
-
-      window.location = `/employees/${id}`;
-
-    } else {
       window.location = `/inspect?id=${id}&name=${name}&role=${role}&comment=${comment}`;
+    } else {
+      window.location = `/employees/${id}`;
     }
   }
 }
 
 /**
  * Helper method to see parent/child css heirarchy
- * @param {} parent 
+ * @param {} e
  */
 function printChildNodeTree(e) {
   if (e.hasChildNodes) {
@@ -515,20 +516,20 @@ function buttonGenerator(row, type, requestSide) {
 }
 
 
-async function deleteEmployee(row) {
-  row.parentNode("tr").remove();
+// async function deleteEmployee(row) {
+//   row.parentNode("tr").remove();
 
 
-  // function removeParents(e, root) {
-  //   root = root ? root : document.body;
-  //       var p = e.parentNode;
-  //       if (p !== root) {
-  //       removeParents(p, root);
-  //       }
-  //   p.parentNode.removeChild(p) 
+//   // function removeParents(e, root) {
+//   //   root = root ? root : document.body;
+//   //       var p = e.parentNode;
+//   //       if (p !== root) {
+//   //       removeParents(p, root);
+//   //       }
+//   //   p.parentNode.removeChild(p) 
 
-  //   }
-}
+//   //   }
+// }
 
 
 // ---------------- End of: Client Table Methods ---------------- //

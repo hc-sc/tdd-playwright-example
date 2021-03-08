@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{master-template}" th:with="goctemplateclientbean=${@defaultmodelbean}">
+
+<style>
+  .table-row {
+    cursor: pointer;
+  }
+</style>
+
+<head>
+  <!-- <title layout:fragment="title" th:text="#{index.title}"></title> -->
+</head>
+
+<body>
+  <h1 name=greeting th:text=#{inspection.title}>Employees</h1>
+  <div layout:fragment="content">
+    <h1 th:text="#{employees.heading}"></h1>
+    <div class="alert alert-warning alert-dismissible" role="alert" id="alert">
+      <h3 class="alert-heading" th:text="#{error.heading}" id="alert-heading">Error: </h3>
+      <ul th:each="item, index : ${errors}" id=alertList>
+        <li th:text="${item}"></li>
+      </ul>
+    </div>
+    <h2 th:text=" #{server-side-table.heading}">Server-Side Generated</h2>
+    <table id="server-side-employees" class='table table-hover'>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th th:text="#{name}">Name</th>
+          <th th:text=#{role}>Role</th>
+          <th th:text=#{status}>Status</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr th:each="item, index : ${employees}" class="table-row" href-data="#">
+          <td th:text="${item.id}"></td>
+          <td th:text="${item.name}"></td>
+          <td th:text="${item.role}"></td>
+          <td th:text="${item.comment}"></td>
+        </tr>
+
+      </tbody>
+    </table>
+    <script type="text/javascript" src="/js/index.js"></script>
+  </div>
+</body>
+
+</html>
