@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -32,7 +33,7 @@ public class IndexController {
   private IndexService indexService;
 
   @GetMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
-  public String viewIndex(HttpServletRequest request, ServletResponse response, Model model) {
+  public String viewIndex(HttpServletRequest request, HttpServletResponse response, Model model) {
     try {
 
       HttpServletResponse resp = (HttpServletResponse) response;
