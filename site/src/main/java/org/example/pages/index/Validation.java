@@ -58,13 +58,10 @@ public class Validation {
            System.out.println("INVALID INPUT" + input.toString());
          errorMessages.add("Invalid input.");       
        }
-       
-        if(!isValid(apiEmployee).isEmpty()){
-         errorMessages.add("Employee not found.");       
-       }
+
 
         EmployeeDTO inputEmployee = (EmployeeDTO) input;
-       if(inputEmployee.getComment().equals("")){ inputEmployee.setComment(null); }
+       if(!isValid(apiEmployee).isEmpty() || inputEmployee.getComment().equals("")){ inputEmployee.setComment(null); }
        if(!inputEmployee.toString().equals(apiEmployee.toString())){
         errorMessages.add("Employee not found.");       
        }
