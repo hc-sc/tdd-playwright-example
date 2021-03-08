@@ -32,8 +32,12 @@ public class IndexController {
   private IndexService indexService;
 
   @GetMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
-  public String viewIndex(HttpServletRequest request, Model model) {
+  public String viewIndex(HttpServletRequest request, ServletResponse response, Model model) {
     try {
+
+      HttpServletResponse resp = (HttpServletResponse) response;
+      resp.setHeader("Set-Cookie", "locale=de; HttpOnly; SameSite=strict");
+
       Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
 
       log.debug("FlashMap: " + inputFlashMap.toString());
