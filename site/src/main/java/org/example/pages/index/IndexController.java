@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -33,11 +32,8 @@ public class IndexController {
   private IndexService indexService;
 
   @GetMapping({ "${endpoints.employees.en}", "${endpoints.employees.fr}" })
-  public String viewIndex(HttpServletRequest request, HttpServletResponse response, Model model) {
+  public String viewIndex(HttpServletRequest request, Model model) {
     try {
-
-      HttpServletResponse resp = (HttpServletResponse) response;
-      resp.setHeader("Set-Cookie", "locale=de; HttpOnly; SameSite=strict");
 
       Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
 
@@ -103,7 +99,8 @@ public class IndexController {
     if (!validInput(redirectAttributes, request, id, name, role)) {
       return "redirect:/errors";
     }
-String direction = "/employees";
+    
+    String direction = "/employees";
     switch (request) {
       case "GET":
         String redirection;
@@ -154,13 +151,6 @@ String direction = "/employees";
     return employee;
   }
 
-  /**
-   * 
-   * @param id
-   * @param name
-   * @param role
-   * @return
-   */
   private EmployeeDTO createEmployeeDto(String id, String name, String role) {
     EmployeeDTO employee = createEmployeeDto(name, role);
     employee.setId(Long.valueOf(id));
@@ -168,13 +158,7 @@ String direction = "/employees";
     return employee;
   }
 
-    /**
-   * 
-   * @param id
-   * @param name
-   * @param role
-   * @return
-   */
+
   private EmployeeDTO createEmployeeDto(String id, String name, String role, String comment) {
     EmployeeDTO employee = createEmployeeDto(id, name, role);
     employee.setComment(comment);
@@ -196,15 +180,19 @@ String direction = "/employees";
     return "redirect:/errors";
   }
 
-  private String validResponseQuery(RedirectAttributes redirectAttributes, Object data, String redirection) {
-    log.debug("DATA: " + data.toString());
-    if (!errorMessages(redirectAttributes, Validation.isValid(data))) {
+  private String validResponseQuery(RedirectAttributes redirectAttributes, Object input, String redirection) {
+    log.debug("DATA: " + input.toString());
+
+    EmployeeDTO inputEmployee = (EmployeeDTO) input;
+    EmployeeDTO apiEmployee = indexService.getEmployee(String.valueOf(inputEmployee.getId()));
+
+    if (!errorMessages(redirectAttributes, Validation.isValid(inputEmployee, apiEmployee))) {
       
       if(redirection.charAt(0) == ('/')){
-        redirectAttributes.addFlashAttribute("employees", data);
+        redirectAttributes.addFlashAttribute("employees", input);
         return "redirect:" + redirection;
       } else {
-        redirectAttributes.addFlashAttribute("employeesQuery", data);
+        redirectAttributes.addFlashAttribute("employeesQuery", input);
         return redirection;
       }
 
