@@ -2,6 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
   layout:decorate="~{master-template}" th:with="goctemplateclientbean=${@defaultmodelbean}">
 
+<style>
+  .table-row {
+    cursor: pointer;
+  }
+</style>
+
 <head>
   <!-- <title layout:fragment="title" th:text="#{index.title}"></title> -->
 </head>
@@ -11,7 +17,7 @@
   <div layout:fragment="content">
     <h1 th:text="#{index.title}"></h1>
     <h2 th:text="#{request-wizard.heading}"></h2>
-    <form id="form">
+    <form id="form" method="post" action="/submit">
       <select name="request-side" id="request-side">
         <option value="SERVER" th:text="#{server}">SERVER</option>
         <option value="CLIENT" th:text="#{client}">CLIENT</option>
@@ -22,43 +28,56 @@
         <option value="PUT" th:text="#{put}">PUT</option>
         <option value="DELETE" th:text="#{delete}">DELETE</option>
       </select>
-      <!-- <label for="id">ID:</label> -->
-      <input type="text" id="id" name="id" placeholder="ID" />
-      <!-- <label for="name">Name:</label> -->
-      <input type="text" id="name" name="name" th:placeholder="#{name}" />
-      <!-- <label for="role">Role:</label> -->
-      <input type="text" id="role" name="role" th:placeholder="#{role}" />
+      <input type="text" id="id" name="id" placeholder="ID" pattern="[0-9]*"
+        oninvalid="setCustomValidity('Must only be numbers.')" />
+      <input type="text" id="name" name="name" th:placeholder="#{name}" pattern="[A-Za-z\\-]+"
+        oninvalid="setCustomValidity('Must only be letters.')" />
+      <input type="text" id="role" name="role" th:placeholder="#{role}" pattern="[A-Za-z\\-]+"
+        oninvalid="setCustomValidity('Must only be letters.')" />
       <button type="submit" id="button" th:text="#{send}">Send</button>
     </form>
 
-    <h2 th:text="#{server-side-table.heading}">Server-Side Generated</h2>
-    <table id="server-side-employees">
+
+    <div class="alert alert-warning alert-dismissible" role="alert" id="alert">
+      <h3 class="alert-heading" th:text="#{error.heading}" id="alert-heading">Error: </h3>
+      <ul th:each="item, index : ${errors}" id=alertList>
+        <li th:text="${item}"></li>
+      </ul>
+    </div>
+    <h2 th:text=" #{server-side-table.heading}">Server-Side Generated</h2>
+    <table id="server-side-employees" class='table table-hover'>
       <thead>
         <tr>
           <th>id</th>
           <th th:text="#{name}">Name</th>
           <th th:text=#{role}>Role</th>
+          <th th:text=#{status}>Status</th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        <!-- <tr th:each="item, index : ${successful}">
-          <td th:text="${item.successful}"></td>
-        </tr> -->
-        <tr th:each="item, index : ${employees}">
+
+        <tr th:each="item, index : ${employees}" class="table-row" href-data="#">
           <td th:text="${item.id}"></td>
           <td th:text="${item.name}"></td>
           <td th:text="${item.role}"></td>
+          <td th:text="${item.comment}"></td>
         </tr>
+
       </tbody>
     </table>
 
     <h2 th:text="#{client-side-table.heading}">Client-Side Generated</h2>
-    <table id="js-employees">
+    <table id="js-employees" class='table table-hover'>
       <thead>
         <tr>
           <th>id</th>
           <th th:text="#{name}">Name</th>
           <th th:text=#{role}>Role</th>
+          <th th:text=#{status}>Status</th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>

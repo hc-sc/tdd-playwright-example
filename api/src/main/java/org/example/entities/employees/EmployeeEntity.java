@@ -15,13 +15,13 @@ import lombok.Data;
 class EmployeeEntity {
 
   private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
-  
+
   @NotNull(message = "Name cannot be null")
   private String name;
-  
+
   @NotNull(message = "Role cannot be null")
   private String role;
 
-
+  private String comment;
 
 }

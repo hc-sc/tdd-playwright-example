@@ -1,5 +1,7 @@
 package org.example.entities.employees;
 
+import java.util.Optional;
+
 import org.mapstruct.Mapper;
 
 @Mapper

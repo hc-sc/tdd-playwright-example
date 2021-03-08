@@ -1,15 +1,18 @@
 package org.example.pages.index;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import org.example.entities.employees.EmployeeDTO;
 import org.example.util.ApiClient;
@@ -29,7 +32,7 @@ public class IndexService {
   @Autowired
   public void setValues(@Value("${api.url}") String rootUrl,
       @Value("${endpoints.employees.en}") String employeesEndPoint) {
-    this.baseURL = rootUrl + "/" + employeesEndPoint;
+    this.baseURL = rootUrl + employeesEndPoint;
     log.debug("baseURL: " + this.baseURL);
   }
 
@@ -66,6 +69,14 @@ public class IndexService {
     return dtoRequest(request);
   }
 
+  public EmployeeDTO getEmployee(EmployeeDTO employeeDto) {
+    log.debug("Getting employee");
+    HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+        .uri(URI.create(baseURL + "/" + String.valueOf(employeeDto.getId()))).timeout(Duration.ofMinutes(1)).GET()
+        .build();
+    return dtoRequest(request);
+  }
+
   public EmployeeDTO addEmployee(EmployeeDTO employee) throws JsonProcessingException {
     log.debug("Adding employee");
 
@@ -98,32 +109,35 @@ public class IndexService {
     return dtoRequest(request);
   }
 
-  public String deleteEmployee(String id) throws JsonProcessingException {
+  public EmployeeDTO deleteEmployee(String id) throws JsonProcessingException {
     log.debug("Deleting employee");
-
+    EmployeeDTO deletedEmployee = getEmployee(id);
     HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
         .uri(URI.create(baseURL + "/" + id)).timeout(Duration.ofMinutes(1)).DELETE().build();
 
-    return booleanRequest(request);
+    return dtoRequest(request);
+    // return booleanRequest(request, deletedEmployee);
     // return true;
   }
 
   /*--------------------HelperMethods--------------*/
 
   private EmployeeDTO dtoRequest(HttpRequest request) {
-    @SuppressWarnings("unchecked")
-    Class<EmployeeDTO> clazz = (Class) EmployeeDTO.class;
+
     try {
-
+      @SuppressWarnings("unchecked")
+      Class<EmployeeDTO> clazz = (Class) EmployeeDTO.class;
       JsonBodyHandler jsonBodyHandler = new JsonBodyHandler<EmployeeDTO>((Class) EmployeeDTO.class);
-
       EmployeeDTO employeeResponse = ApiClient.getApiClient().send(request, new JsonBodyHandler<EmployeeDTO>(clazz))
           .body().get();
 
-      log.debug("" + employeeResponse);
+      log.debug("EMPLOYEE RESPONSE: " + employeeResponse.toString());
       return employeeResponse;
 
     } catch (IOException | InterruptedException e) {
+      log.error(e.getMessage());
+      return new EmployeeDTO();
+    } catch (UncheckedIOException e) {
       log.error(e.getMessage());
       return new EmployeeDTO();
     }
@@ -142,21 +156,25 @@ public class IndexService {
     } catch (IOException | InterruptedException e) {
       log.error(e.getMessage());
       return new ArrayList<EmployeeDTO>();
+    } catch (UncheckedIOException e) {
+      log.error(e.getMessage());
+      return new ArrayList<EmployeeDTO>();
     }
   }
 
-  private String booleanRequest(HttpRequest request) {
+  private EmployeeDTO booleanRequest(HttpRequest request, EmployeeDTO deletedEmployee) {
     @SuppressWarnings("unchecked")
     Class<String> clazz = (Class) String.class;
     try {
       String response = ApiClient.getApiClient().send(request, new JsonBodyHandler<String>(clazz)).body().get();
 
-      log.debug("{\"successful\": \"" + response.toString() + "\"}");
-      return ("{\"successful\": \"" + response.toString() + "\"}");
-
+      return deleteResponse(deletedEmployee, Boolean.valueOf(response));
     } catch (IOException | InterruptedException e) {
       log.error(e.getMessage());
-      return "Employee with that id not found";
+      return deleteResponse(deletedEmployee, false);
+    } catch (UncheckedIOException e) {
+      log.error(e.getMessage());
+      return deleteResponse(deletedEmployee, false);
     }
   }
 
@@ -165,6 +183,17 @@ public class IndexService {
     employee.setName(name);
     employee.setRole(role);
     return employee;
+  }
+
+  private EmployeeDTO deleteResponse(EmployeeDTO deletedEmployee, boolean successful) {
+    String message = "Deleted";
+    if (!successful) {
+      message = "";
+    }
+
+    deletedEmployee.setComment(message);
+
+    return deletedEmployee;
   }
 
   private String employeeMapify(EmployeeDTO employee) {
