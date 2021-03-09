@@ -34,11 +34,12 @@ public class SameSiteFilter implements javax.servlet.Filter {
         boolean firstHeader = true;
         for (String header : headers) { // there can be multiple Set-Cookie attributes
             if (firstHeader) {
-                response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=Strict"));
+                response.setHeader(HttpHeaders.SET_COOKIE,
+                        String.format("%s; %s; %s", header, "SameSite=None", "Secure"));
                 firstHeader = false;
                 continue;
             }
-            response.addHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=Strict"));
+            response.addHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s; %s", header, "SameSite=None", "Secure"));
         }
     }
 

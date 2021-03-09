@@ -139,6 +139,7 @@ public class IndexController {
   public String inspection(HttpServletRequest request, Model model, final RedirectAttributes redirectAttributes,
       @PathVariable("id") String id) throws IOException {
 
+    log.debug("HEY");
     EmployeeDTO employee = indexService.getEmployee(id);
     if (!errorMessages(redirectAttributes, Validation.isValid(employee))) {
       model.addAttribute("employees", employee);
