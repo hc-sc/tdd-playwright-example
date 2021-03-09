@@ -6,11 +6,15 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 @PropertySource(value = "endpoints.properties", name = "endpoints")
 @PropertySource(value = "application.properties", name = "properties")
 public class WebConfig implements WebMvcConfigurer {
+
+  Logger log = LoggerFactory.getLogger(this.getClass());
 
   @Value("${service.url}")
   String serviceURL;
@@ -19,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**") // all endpoints
         .allowedOrigins(serviceURL).allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS"); // specific
-    System.out.println("SERVICE URL: " + serviceURL);
+    log.info("CORS URL: " + serviceURL);
   }
 
   // ignore 'Accept' header (we use CustomContentNegotiationStrategy instead)

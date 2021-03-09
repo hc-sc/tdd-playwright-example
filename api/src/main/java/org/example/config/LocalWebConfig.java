@@ -23,7 +23,7 @@ public class LocalWebConfig implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**") // all endpoints
         .allowedOrigins(serviceURL).allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS"); // specific
-    System.out.println("SERVICE URL: " + serviceURL);
+    logger.info("CORS URL: " + serviceURL);
   }
 
 }
