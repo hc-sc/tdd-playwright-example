@@ -32,7 +32,7 @@ public class IndexService {
   @Autowired
   public void setValues(@Value("${api.url}") String rootUrl,
       @Value("${endpoints.employees.en}") String employeesEndPoint) {
-    this.baseURL = rootUrl + employeesEndPoint;
+    this.baseURL = String.format("%s;/%s;", rootUrl, employeesEndPoint);
     log.debug("baseURL: " + this.baseURL);
     log.info("this.baseURL: " + this.baseURL);
   }
