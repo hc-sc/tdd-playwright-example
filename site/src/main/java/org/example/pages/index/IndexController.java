@@ -140,12 +140,12 @@ public class IndexController {
       @PathVariable("id") String id) throws IOException {
 
     log.debug("HEY");
-    // EmployeeDTO employee = indexService.getEmployee(id);
-    EmployeeDTO employee = new EmployeeDTO();
-    employee.setId(Long.valueOf("1"));
-    employee.setName("TEST");
-    employee.setRole("TEST");
-    employee.setComment("TEST");
+    EmployeeDTO employee = indexService.getEmployee(id);
+    // EmployeeDTO employee = new EmployeeDTO();
+    // employee.setId(Long.valueOf("1"));
+    // employee.setName("TEST");
+    // employee.setRole("TEST");
+    // employee.setComment("TEST");
     model.addAttribute("employees", employee);
     return "details";
     // if (!errorMessages(redirectAttributes, Validation.isValid(employee))) {
