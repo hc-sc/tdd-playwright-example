@@ -34,6 +34,7 @@ public class IndexService {
       @Value("${endpoints.employees.en}") String employeesEndPoint) {
     this.baseURL = rootUrl + employeesEndPoint;
     log.debug("baseURL: " + this.baseURL);
+    log.info("this.baseURL: " + this.baseURL);
   }
 
   public List<EmployeeDTO> getEmployees() {
