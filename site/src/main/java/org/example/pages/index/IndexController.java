@@ -142,7 +142,7 @@ public class IndexController {
     log.debug("HEY");
     // EmployeeDTO employee = indexService.getEmployee(id);
     EmployeeDTO employee = new EmployeeDTO();
-    employee.setId("1");
+    employee.setId(Long.valueOf("1"));
     employee.setName("TEST");
     employee.setRole("TEST");
     employee.setComment("TEST");
