@@ -52,8 +52,6 @@ public class Validation {
     public static Map<String, List<String>> isValid(Object input, Object apiEmployee){
         List<String> errorMessages = new ArrayList<>();
 
-
-
        if(!isValid(input).isEmpty()){
            System.out.println("INVALID INPUT" + input.toString());
          errorMessages.add("Invalid input.");       
