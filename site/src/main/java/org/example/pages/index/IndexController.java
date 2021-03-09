@@ -140,12 +140,19 @@ public class IndexController {
       @PathVariable("id") String id) throws IOException {
 
     log.debug("HEY");
-    EmployeeDTO employee = indexService.getEmployee(id);
-    if (!errorMessages(redirectAttributes, Validation.isValid(employee))) {
-      model.addAttribute("employees", employee);
-      return "details";
-    }
-    return "redirect:/errors";
+    // EmployeeDTO employee = indexService.getEmployee(id);
+    EmployeeDTO employee = new EmployeeDTO();
+    employee.setId("1");
+    employee.setName("TEST");
+    employee.setRole("TEST");
+    employee.setComment("TEST");
+    model.addAttribute("employees", employee);
+    return "details";
+    // if (!errorMessages(redirectAttributes, Validation.isValid(employee))) {
+    // model.addAttribute("employees", employee);
+    // return "details";
+    // }
+    // return "redirect:/errors";
   }
 
   private EmployeeDTO createEmployeeDto(String name, String role) {
