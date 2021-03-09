@@ -22,7 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/**") // all endpoints
-        .allowedOrigins(serviceURL).allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS"); // specific
+        .allowedOrigins("https://tdd-playwright-example-api.herokuapp.com")
+        .allowedMethods("GET", "POST", "DELETE", "PUT", "OPTIONS"); // specific
     log.info("CORS URL: " + serviceURL);
   }
 
