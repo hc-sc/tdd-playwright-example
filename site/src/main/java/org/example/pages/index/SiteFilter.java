@@ -23,7 +23,7 @@ public class SiteFilter implements Filter {
             throws IOException, ServletException {
 
         HttpServletResponse resp = (HttpServletResponse) response;
-        resp.setHeader("Set-Cookie", "locale=de; HttpOnly; SameSite=strict");
+        resp.setHeader("Set-Cookie", "locale=de; HttpOnly; SameSite=none");
 
         System.out.println("Remote Host:" + request.getRemoteHost());
         System.out.println("Remote Address:" + request.getRemoteAddr());
