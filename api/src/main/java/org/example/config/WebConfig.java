@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Configuration
+@PropertySource(value = "endpoints.properties", name = "endpoints")
 @PropertySource(value = "application.properties", name = "properties")
 public class WebConfig implements WebMvcConfigurer {
 
