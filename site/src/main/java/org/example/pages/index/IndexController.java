@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -13,6 +14,7 @@ import org.example.entities.employees.EmployeeDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
@@ -47,8 +50,7 @@ public class IndexController {
     }
   }
 
-
-  @GetMapping({"/details" })
+  @GetMapping({ "/details" })
   public String viewDetails(HttpServletRequest request, Model model) {
     try {
       Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
@@ -63,14 +65,15 @@ public class IndexController {
     }
   }
 
-
   @GetMapping({ "/" })
   public String viewRoot(Model model) {
     return "index";
   }
 
   @RequestMapping({ "/errors" })
-  public String viewError(HttpServletRequest request, Model model) {
+  public String viewError(HttpServletResponse response, HttpServletRequest request, Model model) {
+
+    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 
     try {
       Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
@@ -99,44 +102,45 @@ public class IndexController {
     if (!validInput(redirectAttributes, request, id, name, role)) {
       return "redirect:/errors";
     }
-    
+
     String direction = "/employees";
     switch (request) {
-      case "GET":
-        String redirection;
-        if (id.isEmpty()) {
-          redirection = validResponse(redirectAttributes, indexService.getEmployees(), direction);
-        } else {
-          redirection = validResponse(redirectAttributes, indexService.getEmployee(id), direction);
-        }
-        return redirection;
-      case "POST":
-        return validResponse(redirectAttributes, indexService.addEmployee(createEmployeeDto(name, role)), direction);
-      case "PUT":
-        return validResponse(redirectAttributes, indexService.updateEmployee(createEmployeeDto(id, name, role)), direction);
-      case "DELETE": // TODO
-        return validResponse(redirectAttributes, indexService.deleteEmployee(id), direction);
-      default:
-        return "redirect:/";
+    case "GET":
+      String redirection;
+      if (id.isEmpty()) {
+        redirection = validResponse(redirectAttributes, indexService.getEmployees(), direction);
+      } else {
+        redirection = validResponse(redirectAttributes, indexService.getEmployee(id), direction);
+      }
+      return redirection;
+    case "POST":
+      return validResponse(redirectAttributes, indexService.addEmployee(createEmployeeDto(name, role)), direction);
+    case "PUT":
+      return validResponse(redirectAttributes, indexService.updateEmployee(createEmployeeDto(id, name, role)),
+          direction);
+    case "DELETE": // TODO
+      return validResponse(redirectAttributes, indexService.deleteEmployee(id), direction);
+    default:
+      return "redirect:/";
     }
   }
 
-
   @GetMapping({ "/inspect" })
-  public String inspection(final RedirectAttributes redirectAttributes,
-      @RequestParam(name = "id") String id, @RequestParam(name = "name") String name,
-      @RequestParam(name = "role") String role, @RequestParam(name = "comment") String comment) throws IOException {
+  public String inspection(final RedirectAttributes redirectAttributes, @RequestParam(name = "id") String id,
+      @RequestParam(name = "name") String name, @RequestParam(name = "role") String role,
+      @RequestParam(name = "comment") String comment) throws IOException {
 
-        return validResponseQuery(redirectAttributes, createEmployeeDto(id, name, role, comment), "/details");
+    return validResponseQuery(redirectAttributes, createEmployeeDto(id, name, role, comment), "/details");
 
-      }
+  }
 
   // NOT-idempotent
   @GetMapping({ "/employees/{id}" })
-  public String inspection(Model model, final RedirectAttributes redirectAttributes, @PathVariable("id") String id) throws IOException {
-    EmployeeDTO employee = indexService.getEmployee(id);
+  public String inspection(HttpServletRequest request, Model model, final RedirectAttributes redirectAttributes,
+      @PathVariable("id") String id) throws IOException {
 
-    if(!errorMessages(redirectAttributes, Validation.isValid(employee))){
+    EmployeeDTO employee = indexService.getEmployee(id);
+    if (!errorMessages(redirectAttributes, Validation.isValid(employee))) {
       model.addAttribute("employees", employee);
       return "details";
     }
@@ -158,13 +162,11 @@ public class IndexController {
     return employee;
   }
 
-
   private EmployeeDTO createEmployeeDto(String id, String name, String role, String comment) {
     EmployeeDTO employee = createEmployeeDto(id, name, role);
     employee.setComment(comment);
     return employee;
   }
-
 
   private boolean validInput(RedirectAttributes redirectAttributes, String request, String id, String name,
       String role) {
@@ -187,8 +189,8 @@ public class IndexController {
     EmployeeDTO apiEmployee = indexService.getEmployee(String.valueOf(inputEmployee.getId()));
 
     if (!errorMessages(redirectAttributes, Validation.isValid(inputEmployee, apiEmployee))) {
-      
-      if(redirection.charAt(0) == ('/')){
+
+      if (redirection.charAt(0) == ('/')) {
         redirectAttributes.addFlashAttribute("employees", input);
         return "redirect:" + redirection;
       } else {
@@ -240,5 +242,4 @@ public class IndexController {
 
     return cleaned;
   }
-
 }
