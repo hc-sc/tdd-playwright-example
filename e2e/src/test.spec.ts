@@ -48,8 +48,8 @@ for (const side of [Request.Server, Request.Client]) {
 
 
 
-        it("Post One", async ({ page }) => {
-
+        it(`Post One: ${side}`, async ({ page, browserName }) => {
+            console.log(`browserName: ${browserName}`);
             await page.goto(baseURL);
 
             await postOne(page, side, inputName, inputRole);
@@ -240,9 +240,7 @@ function greetingToLanguage(language) {
 }
 
 async function assertGreetingLanguage(page, changeLangButton) {
-    console.log(changeLangButton);
     let greeting = await page.$eval('h1', e => e.innerHTML);
-    console.debug(greeting);
     expect(greeting).toBe(greetingToLanguage(changeLangButton));
 }
 
