@@ -1,4 +1,4 @@
-const { chromium } = require('playwright');
+const { firefox } = require('playwright');
 
 (async () => {
     const browser = await chromium.launch({
