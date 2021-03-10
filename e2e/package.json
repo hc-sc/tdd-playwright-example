@@ -12,8 +12,9 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "getenv": "^1.0.0",
-    "playwright": "^1.8.1",
-    "playwright-webkit": "^1.8.1"
+    "playwright": "^1.9.2",
+    "playwright-firefox": "^1.9.2",
+    "playwright-webkit": "^1.9.2"
   },
   "devDependencies": {
     "@playwright/test": "^0.180.0",
