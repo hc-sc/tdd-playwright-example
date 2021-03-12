@@ -413,7 +413,7 @@ async function firstRowIdValue(page, side) {
 async function testAccessibility(page: Page, accessibilityTags) {
     await checkA11y(page, null, {
         detailedReport: true,
-        detailedReportOptions: { html: false },
+        detailedReportOptions: { html: true },
         axeOptions: {
             runOnly: {
                 type: 'tag',
