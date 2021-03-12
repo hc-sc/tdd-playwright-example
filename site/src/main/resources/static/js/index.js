@@ -445,7 +445,7 @@ async function populateTable(table, employees) {
 
 async function buttonRowGenerator(row, requestSide) {
   const td = document.createElement("td");
-  td.setAttribute("id", "button-row-" + row.rowIndex);
+  td.setAttribute("id", `button-row-${row.rowIndex}-${requestSide.toLowerCase()}`);
 
   let button;
 
@@ -468,6 +468,7 @@ function buttonGenerator(row, type, requestSide) {
   const index = row.rowIndex;
   requestSide = requestSide.toLowerCase();
   button.setAttribute("id", requestSide + "-" + type.toLowerCase() + "-" + index);
+  // button.setAttribute("aria-label", `${type} row ${index} of ${requestSide.toLowerCase()} table.`);
 
   const name = document.getElementById(requestSide + "-name-" + index);
   const role = document.getElementById(requestSide + "-role-" + index);

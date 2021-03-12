@@ -18,11 +18,11 @@
     <h1 th:text="#{index.title}"></h1>
     <h2 th:text="#{request-wizard.heading}"></h2>
     <form id="form" method="post" action="/submit">
-      <select name="request-side" id="request-side">
+      <select name="request-side" id="request-side" aria-label="server or client">
         <option value="SERVER" th:text="#{server}">SERVER</option>
         <option value="CLIENT" th:text="#{client}">CLIENT</option>
       </select>
-      <select name="request" id="request" onchange=inputRequiredHandler()>
+      <select name="request" id="request" onchange=inputRequiredHandler() aria-label="request type">
         <option value="GET" th:text="#{get}">GET</option>
         <option value="POST" th:text="#{post}">POST</option>
         <option value="PUT" th:text="#{put}">PUT</option>
@@ -58,7 +58,7 @@
       </thead>
       <tbody>
 
-        <tr th:each="item, index : ${employees}" class="table-row" href-data="#">
+        <tr th:each="item, index : ${employees}" class="table-row">
           <td th:text="${item.id}"></td>
           <td th:text="${item.name}"></td>
           <td th:text="${item.role}"></td>

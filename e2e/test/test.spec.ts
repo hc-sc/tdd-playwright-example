@@ -1,6 +1,11 @@
 import { it, describe, expect, afterEach, beforeEach, beforeAll, afterAll, folio } from "@playwright/test"
-import { devices, Browser, Page } from "playwright"
+import { devices, Browser, Page, chromium } from "playwright"
 const playwright = require('playwright');
+import { injectAxe, checkA11y, getViolations, reportViolations } from 'axe-playwright'
+
+// import {reporter, junit-reporter{require("@wdio/cli/package.json"); // @wdio/cli is a peer dependency. 
+// var junitReporter = require("@wdio/junit-reporter")
+
 /**
  * To use local environment variables, create a .env file and set the BASE_URL to the local endpoint being tested.
  * See the CircleCI config.yml file for how the BASE_URL is injected with a value during CI/CD pipeline.
@@ -19,7 +24,7 @@ enum Request {
 }
 
 
-describe(`Language Test, `, () => {
+describe.skip(`Language Test, `, () => {
 
     it("EN/FR", async ({ page }) => {
         await page.goto(baseURL);
@@ -40,7 +45,7 @@ describe(`Language Test, `, () => {
 
 for (const side of [Request.Server, Request.Client]) {
 
-    describe(`Test Wizard: ${side} `, () => {
+    describe.skip(`Test Wizard: ${side} `, () => {
 
         let inputId;
         let inputName = "Jane";
@@ -64,7 +69,7 @@ for (const side of [Request.Server, Request.Client]) {
 
             await page.goto(baseURL);
 
-            await getOne(page, side, inputId, inputName, inputRole);
+            await getOne(page, side, inputId);
 
             await assertion(page, side, inputName, inputRole, Request.Get)
 
@@ -100,10 +105,92 @@ for (const side of [Request.Server, Request.Client]) {
             await assertion(page, side, inputName, inputRole, Request.Delete)
 
         });
-
-
     })
 }
+
+describe(`Accessibility: `, () => {
+
+    let browser: Browser;
+    let page: Page;
+    let accessibilityTags = ['wcag2a']
+
+
+    beforeAll(async () => {
+        browser = await chromium.launch()
+        page = await browser.newPage()
+    })
+
+
+    // it('check a11y for the whole page and axe run options', async () => {
+    //     await page.goto(baseURL);
+    //     await getAll(page, Request.Server);
+    //     await getAll(page, Request.Client);
+
+    //     await injectAxe(page)
+    //     await testAccessibility(page, accessibilityTags);
+    // })
+
+
+    // it('check a11y for the whole page and axe run options', async () => {
+    //     await page.goto(baseURL);
+    //     await getAll(page, Request.Server);
+
+    //     await Promise.all([
+    //         page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
+    //         page.click('td[id="server-id-1"]')
+    //     ]);
+
+    //     await injectAxe(page)
+    //     await testAccessibility(page, accessibilityTags);
+
+    //     // const violations = await getViolations(page, null, {
+    //     //     detailedReport: true,
+    //     //     detailedReportOptions: { html: true },
+    //     //     axeOptions: {
+    //     //         runOnly: {
+    //     //             type: 'tag',
+    //     //             values: ['wcag2a'],
+    //     //         },
+    //     //     },
+    //     // })
+    //     // console.log(`VIOATIONS: ${violations.length}`)
+    //     // expect(violations.length).toBe(0)
+    // })
+
+    // it('check a11y for the whole page and axe run options', async () => {
+    //     await page.goto(`${baseURL}/errors`);
+    //     await injectAxe(page)
+    //     await testAccessibility(page, accessibilityTags);
+    // })
+
+    it('gets and reports a11y for the specific element', async () => {
+
+        await injectAxe(page)
+        await testAccessibility(page, accessibilityTags);
+
+        const violations = await getViolations(page, 'form', {
+            axeOptions: {
+                runOnly: {
+                    type: 'tag',
+                    values: ['wcag2a'],
+                },
+            },
+        })
+        // console.log(junitReporter);
+        // if (repo !== undefined) {
+        //     console.log(repo);
+        //     reportViolations(violations, repo)
+        // }
+
+
+        expect(violations.length).toBe(0)
+    })
+
+
+    afterAll(async () => {
+        await browser.close()
+    })
+})
 
 
 
@@ -136,7 +223,7 @@ async function postOne(page, side, inputName, inputRole) {
 
 }
 
-async function getOne(page, side, inputId, inputName, inputRole) {
+async function getOne(page, side, inputId) {
 
     await page.selectOption('select[id="request-side"]', side);
 
@@ -251,7 +338,6 @@ async function assertion(page, side, inputName, inputRole, request) {
     let commentSelector;
     let elementToScreenshot;
 
-
     switch (side) {
         case "SERVER":
 
@@ -322,4 +408,17 @@ async function firstRowIdValue(page, side) {
             break;
     }
     return await page.innerText(selector);
+}
+
+async function testAccessibility(page: Page, accessibilityTags) {
+    await checkA11y(page, null, {
+        detailedReport: true,
+        detailedReportOptions: { html: false },
+        axeOptions: {
+            runOnly: {
+                type: 'tag',
+                values: accessibilityTags,
+            },
+        },
+    })
 }
