@@ -140,9 +140,9 @@ workflows:
             branches:
               only: dev
       - playwright # Make sure to add colon back in when adding conditions
-          # requires:
-          #   - build
-          #   # - deploy
-          # filters:
-          #   branches:
-          #     only: billy
+          requires:
+            - build
+            # - deploy
+          filters:
+            branches:
+              only: billy
