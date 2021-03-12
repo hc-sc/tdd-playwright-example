@@ -168,22 +168,22 @@ describe(`Accessibility: `, () => {
         await injectAxe(page)
         await testAccessibility(page, accessibilityTags);
 
-        const violations = await getViolations(page, 'form', {
-            axeOptions: {
-                runOnly: {
-                    type: 'tag',
-                    values: ['wcag2a'],
-                },
-            },
-        })
-        // console.log(junitReporter);
-        // if (repo !== undefined) {
-        //     console.log(repo);
-        //     reportViolations(violations, repo)
-        // }
+        // const violations = await getViolations(page, 'form', {
+        //     axeOptions: {
+        //         runOnly: {
+        //             type: 'tag',
+        //             values: ['wcag2a'],
+        //         },
+        //     },
+        // })
+        // // console.log(junitReporter);
+        // // if (repo !== undefined) {
+        // //     console.log(repo);
+        // //     reportViolations(violations, repo)
+        // // }
 
 
-        expect(violations.length).toBe(0)
+        // expect(violations.length).toBe(0)
     })
 
 
