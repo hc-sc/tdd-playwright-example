@@ -1,0 +1,30 @@
+Error while reading /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/test/test.spec.ts:
+Cannot find module './models/IndexPage'
+Require stack:
+- /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/test/test.spec.ts
+- /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/runner.js
+- /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/cli.js
+- /home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/cli.js
+    at Function.Module._resolveFilename (internal/modules/cjs/loader.js:966:15)
+    at Function.Module._load (internal/modules/cjs/loader.js:842:27)
+    at Module.require (internal/modules/cjs/loader.js:1026:19)
+    at require (internal/modules/cjs/helpers.js:72:18)
+    at Object.<anonymous> (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/test/test.spec.ts:6:23)
+    at Module._compile (internal/modules/cjs/loader.js:1138:30)
+    at Module._compile (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/pirates/lib/index.js:99:24)
+    at Module._extensions..js (internal/modules/cjs/loader.js:1158:10)
+    at Object.newLoader [as .ts] (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/pirates/lib/index.js:104:7)
+    at Module.load (internal/modules/cjs/loader.js:986:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:879:14)
+    at Module.require (internal/modules/cjs/loader.js:1026:19)
+    at require (internal/modules/cjs/helpers.js:72:18)
+    at Runner.loadFiles (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/runner.js:50:17)
+    at runTests (/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/cli.js:108:43) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/test/test.spec.ts',
+    '/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/runner.js',
+    '/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/out/cli.js',
+    '/home/wbolton/Desktop/dev/tdd-playwright-example/e2e/node_modules/folio/cli.js'
+  ]
+}

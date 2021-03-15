@@ -1,7 +1,9 @@
 import { it, describe, expect, afterEach, beforeEach, beforeAll, afterAll, folio } from "@playwright/test"
-import { devices, Browser, Page, chromium } from "playwright"
+import { devices, Browser, Page, chromium, firefox, webkit } from "playwright"
 const playwright = require('playwright');
 import { injectAxe, checkA11y, getViolations, reportViolations } from 'axe-playwright'
+import { IndexPage } from "../PO/IndexPage";
+
 
 // import {reporter, junit-reporter{require("@wdio/cli/package.json"); // @wdio/cli is a peer dependency. 
 // var junitReporter = require("@wdio/junit-reporter")
@@ -24,319 +26,157 @@ enum Request {
 }
 
 
-describe.skip(`Language Test, `, () => {
+it("POM TEST", async ({ browserName }) => {
+    const page: IndexPage = await initialize(browserName);
+    await page.navigateHome();
+    await page.testAccessibility();
+    // page.hello();
+    // await page.navigateHome();
+})
 
-    it("EN/FR", async ({ page }) => {
-        await page.goto(baseURL);
-        let changeLangButton = await page.$eval('#wb-bnr > #wb-lng > ul > li > a', e => e.innerHTML);
-        await assertGreetingLanguage(page, changeLangButton);
+async function initialize(browserName: string) {
+    const browser = await browserType(browserName).launch()
+    const page = await browser.newPage()
+    return new IndexPage(page);
+}
 
-        // Change language on page
-        await Promise.all([
-            page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/' }*/),
-            page.click(`text=${changeLangButton}`)
-        ]);
+function browserType(browserName: string) {
+    switch (browserName) {
+        case "chromium":
+            return chromium;
+        case "firefox":
+            return firefox;
+        case "webkit":
+            return webkit;
+    }
+}
+describe(`Language Test, `, () => {
 
-        changeLangButton = await page.$eval('#wb-bnr > #wb-lng > ul > li > a', e => e.innerHTML);
-        await assertGreetingLanguage(page, changeLangButton);
+
+    it("EN/FR", async ({ browserName }) => {
+
+        const page = await initialize(browserName);
+        await page.navigateHome();
+        await assertGreetingLanguage(page);
+
+        page.toggleLanguage();
+
+        await assertGreetingLanguage(page);
 
     });
 })
 
 for (const side of [Request.Server, Request.Client]) {
 
-    describe.skip(`Test Wizard: ${side} `, () => {
+    describe(`Test Wizard: ${side} `, () => {
+
+        let page: IndexPage;
 
         let inputId;
         let inputName = "Jane";
         let inputRole = "Manager";
 
 
+        afterEach(async () => {
+            await page.testAccessibility();
+            await page.close();
+        })
 
-        it(`Post One: ${side}`, async ({ page, browserName }) => {
-            console.log(`browserName: ${browserName}`);
-            await page.goto(baseURL);
+        it(`Post One: ${side}`, async ({ browserName }) => {
+            page = await initialize(browserName);
+            await page.navigateHome();
 
-            await postOne(page, side, inputName, inputRole);
+            await page.postOne(side, inputName, inputRole);
 
-            inputId = await firstRowIdValue(page, side); // Saving for other tests
+            inputId = await page.firstRowIdValue(side); // Saving for other tests
 
             await assertion(page, side, inputName, inputRole, Request.Post)
 
         });
 
-        it("Get One", async ({ page }) => {
+        it("Get One", async ({ browserName }) => {
 
-            await page.goto(baseURL);
+            page = await initialize(browserName);
+            await page.navigateHome();
 
-            await getOne(page, side, inputId);
+            await page.getOne(side, inputId);
 
             await assertion(page, side, inputName, inputRole, Request.Get)
 
         });
 
-        it("Update One", async ({ page }) => {
+        it("Update One", async ({ browserName }) => {
 
-            await page.goto(baseURL);
+            page = await initialize(browserName);
+            await page.navigateHome();
 
             inputRole = swapRoles(inputRole);
 
-            await updateOne(page, side, inputId, inputName, inputRole);
+            await page.updateOne(side, inputId, inputName, inputRole);
 
             await assertion(page, side, inputName, inputRole, Request.Put)
 
         });
 
 
-        it("Get All", async ({ page }) => {
+        it("Get All", async ({ browserName }) => {
 
-            await page.goto(baseURL);
-            await getAll(page, side);
+            page = await initialize(browserName);
+            await page.navigateHome();
+            await page.getAll(side);
             await assertion(page, side, await page.innerText(`td[id="${side.toLowerCase()}-name-1"]`), await page.innerText(`td[id="${side.toLowerCase()}-role-1"]`), Request.Get);
 
         });
 
-        it("Delete One", async ({ page }) => {
+        it("Delete One", async ({ browserName }) => {
 
-            await page.goto(baseURL);
+            page = await initialize(browserName);
+            await page.navigateHome();
 
-            await deleteOne(page, side, inputId);
+            await page.deleteOne(side, inputId);
 
             await assertion(page, side, inputName, inputRole, Request.Delete)
 
         });
+
+        it('Page with an error alert ', async ({ browserName }) => {
+            page = await initialize(browserName);
+            await page.navigateErrors();
+            await page.testAccessibility();
+        })
+
     })
 }
 
-describe(`Accessibility: `, () => {
-
-    let browser: Browser;
-    let page: Page;
-    let accessibilityTags = ['wcag2a']
-
-
-    beforeAll(async () => {
-        browser = await chromium.launch()
-        page = await browser.newPage()
-    })
-
-
-    // it('check a11y for the whole page and axe run options', async () => {
-    //     await page.goto(baseURL);
-    //     await getAll(page, Request.Server);
-    //     await getAll(page, Request.Client);
-
-    //     await injectAxe(page)
-    //     await testAccessibility(page, accessibilityTags);
-    // })
-
-
-    // it('check a11y for the whole page and axe run options', async () => {
-    //     await page.goto(baseURL);
-    //     await getAll(page, Request.Server);
-
-    //     await Promise.all([
-    //         page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
-    //         page.click('td[id="server-id-1"]')
-    //     ]);
-
-    //     await injectAxe(page)
-    //     await testAccessibility(page, accessibilityTags);
-
-    //     // const violations = await getViolations(page, null, {
-    //     //     detailedReport: true,
-    //     //     detailedReportOptions: { html: true },
-    //     //     axeOptions: {
-    //     //         runOnly: {
-    //     //             type: 'tag',
-    //     //             values: ['wcag2a'],
-    //     //         },
-    //     //     },
-    //     // })
-    //     // console.log(`VIOATIONS: ${violations.length}`)
-    //     // expect(violations.length).toBe(0)
-    // })
-
-    // it('check a11y for the whole page and axe run options', async () => {
-    //     await page.goto(`${baseURL}/errors`);
-    //     await injectAxe(page)
-    //     await testAccessibility(page, accessibilityTags);
-    // })
-
-    it('gets and reports a11y for the specific element', async () => {
-
-        await injectAxe(page)
-        await testAccessibility(page, accessibilityTags);
-
-        // const violations = await getViolations(page, 'form', {
-        //     axeOptions: {
-        //         runOnly: {
-        //             type: 'tag',
-        //             values: ['wcag2a'],
-        //         },
-        //     },
-        // })
-        // // console.log(junitReporter);
-        // // if (repo !== undefined) {
-        // //     console.log(repo);
-        // //     reportViolations(violations, repo)
-        // // }
-
-
-        // expect(violations.length).toBe(0)
-    })
-
-
-    afterAll(async () => {
-        await browser.close()
-    })
-})
 
 
 
 // ------------- Test Utility Functions --------------- //
 
-async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function postOne(page, side, inputName, inputRole) {
-
-    await page.selectOption('select[id="request-side"]', side);
-
-    // Select POST
-    await page.selectOption('select[id="request"]', Request.Post);
-
-    // Click input[name="name"]
-    await page.click('input[name="name"]');
-
-    // Fill input[name="name"]
-    await page.fill('input[name="name"]', inputName);
-
-    // Press Tab
-    await page.press('input[name="name"]', 'Tab');
-
-    // Fill input[name="role"]
-    await page.fill('input[name="role"]', inputRole);
-
-    await clickSend(page, side);
-
-}
-
-async function getOne(page, side, inputId) {
-
-    await page.selectOption('select[id="request-side"]', side);
-
-    await page.selectOption('select[id="request"]', Request.Get);
-
-    // Click input[name="id"]
-    await page.click('input[name="id"]');
-
-    // Fill input[name="id"]
-    await page.fill('input[name="id"]', inputId);
-
-    await clickSend(page, side);
-}
-
-async function getAll(page, side) {
-
-    await page.selectOption('select[id="request-side"]', side);
-    await page.selectOption('select[id="request"]', Request.Get);
-
-    await clickSend(page, side);
-}
 
 function swapRoles(inputRole) {
     return (inputRole === 'Manager' ? 'Director' : 'Manager');
 }
 
-async function updateOne(page, side, inputId, inputName, inputRole) {
-
-    await page.selectOption('select[id="request-side"]', side);
-
-    await page.selectOption('select[id="request"]', Request.Put);
-
-    // Click input[name="id"]
-    await page.click('input[name="id"]');
-
-    // Fill input[name="id"]
-    await page.fill('input[name="id"]', inputId);
-
-    // Click input[name="id"]
-    await page.click('input[name="name"]');
-
-    // Fill input[name="name"]
-    await page.fill('input[name="name"]', inputName);
-
-    // Click input[name="id"]
-    await page.click('input[name="role"]');
-
-    // Fill input[name="role"]
-    await page.fill('input[name="role"]', inputRole);
-
-    await clickSend(page, side);
-}
-
-async function deleteOne(page, side, inputId) {
-
-    await page.selectOption('select', side);
-
-    await page.selectOption('#request', Request.Delete);
-
-    await page.click('input[name="id"]');
-
-    await page.fill('input[name="id"]', inputId);
-
-    await clickSend(page, side);
-}
-
-async function clickSend(page, side) {
-    switch (side) {
-        case Request.Client:
-            // Click text="Send"
-            await page.click('text="Send"');
-            await sleep(2500);
-            break;
-        case Request.Server:
-            // Click text="Send"
-            await Promise.all([
-                page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/employees/add' }*/),
-                page.click('text="Send"')
-            ]);
-            break;
-        case 'ALERT':
-            // Click text="Send"
-            page.once('dialog', dialog => {
-                console.log(`Dialog message: ${dialog.message()}`);
-                dialog.dismiss().catch(() => { });
-            });
-            await page.click('text="Send"');
-            break;
-
-    }
-
-}
-
-function greetingToLanguage(language) {
-    switch (language) {
+async function assertGreetingLanguage(page: IndexPage) {
+    let greeting;
+    switch (await page.getCurrentLanguage()) {
         case 'English':
-            return "Bienvenue!";
+            greeting = "Bienvenue!";
+            break;
         case 'Français':
-            return "Welcome!";
+            greeting = "Welcome!";
     }
+
+    expect(await page.getGreeting()).toBe(greeting);
 }
 
-async function assertGreetingLanguage(page, changeLangButton) {
-    let greeting = await page.$eval('h1', e => e.innerHTML);
-    expect(greeting).toBe(greetingToLanguage(changeLangButton));
-}
-
-async function assertion(page, side, inputName, inputRole, request) {
-    let idSelector;
-    let nameSelector;
-    let roleSelector
-    let commentSelector;
-    let elementToScreenshot;
+async function assertion(page: IndexPage, side: string, inputName: string, inputRole: string, request: string) {
+    let idSelector: string;
+    let nameSelector: string;
+    let roleSelector: string;
+    let commentSelector: string;
+    let elementToScreenshot: string;
 
     switch (side) {
         case "SERVER":
@@ -369,12 +209,9 @@ async function assertion(page, side, inputName, inputRole, request) {
     expect(htmlRole).toBe(inputRole);
     expect(htmlComment).toBe(commentToAssert);
 
-    await Promise.all([
-        page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
-        page.click(idSelector)
-    ]);
+    await page.click(idSelector);
 
-    const errors = await page.isVisible('id:light=alert');
+    const errors = await page.selectorVisible('id:light=alert');
     if (errors) {
         console.log(`Errors on page: ${errors}`);
         expect(errors).toBeTruthy();
@@ -395,30 +232,4 @@ async function assertion(page, side, inputName, inputRole, request) {
         expect(htmlComment).toBe(commentToAssert);
     }
 
-}
-
-async function firstRowIdValue(page, side) {
-    let selector;
-    switch (side) {
-        case "SERVER":
-            selector = 'td[id="server-id-1"]';
-            break
-        case "CLIENT":
-            selector = 'td[id="client-id-1"]';
-            break;
-    }
-    return await page.innerText(selector);
-}
-
-async function testAccessibility(page: Page, accessibilityTags) {
-    await checkA11y(page, null, {
-        detailedReport: true,
-        detailedReportOptions: { html: false },
-        axeOptions: {
-            runOnly: {
-                type: 'tag',
-                values: accessibilityTags,
-            },
-        },
-    })
 }
