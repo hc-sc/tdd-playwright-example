@@ -50,7 +50,7 @@ function browserType(browserName: string) {
             return webkit;
     }
 }
-describe.skip(`Language Test, `, () => {
+describe(`Language Test, `, () => {
 
 
     it("EN/FR", async ({ browserName }) => {
@@ -68,7 +68,7 @@ describe.skip(`Language Test, `, () => {
 
 for (const side of [Request.Server, Request.Client]) {
 
-    describe.skip(`Test Wizard: ${side} `, () => {
+    describe(`Test Wizard: ${side} `, () => {
 
         let page: IndexPage;
 
