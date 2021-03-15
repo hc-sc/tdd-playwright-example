@@ -26,13 +26,13 @@ enum Request {
 }
 
 
-it("POM TEST", async ({ browserName }) => {
-    const page: IndexPage = await initialize(browserName);
-    await page.navigateHome();
-    await page.testAccessibility();
-    // page.hello();
-    // await page.navigateHome();
-})
+// it("POM TEST", async ({ browserName }) => {
+//     const page: IndexPage = await initialize(browserName);
+//     await page.navigateHome();
+//     await page.testAccessibility();
+//     // page.hello();
+//     // await page.navigateHome();
+// })
 
 async function initialize(browserName: string) {
     const browser = await browserType(browserName).launch()
@@ -59,7 +59,7 @@ describe(`Language Test, `, () => {
         await page.navigateHome();
         await assertGreetingLanguage(page);
 
-        page.toggleLanguage();
+        await page.toggleLanguage();
 
         await assertGreetingLanguage(page);
 
@@ -148,7 +148,27 @@ for (const side of [Request.Server, Request.Client]) {
     })
 }
 
+describe('Accessibility,', async () => {
 
+    let page: IndexPage;
+
+    it("Wizard Page,", async ({ browserName }) => {
+        page = await initialize(browserName);
+        await page.navigateHome();
+
+        page.getAll(Request.Server);
+        page.getAll(Request.Client);
+        page.testAccessibility();
+    })
+
+    it("Wizard Page,", async ({ browserName }) => {
+        page = await initialize(browserName);
+        await page.navigateErrors();
+
+        page.testAccessibility();
+    })
+
+})
 
 
 // ------------- Test Utility Functions --------------- //

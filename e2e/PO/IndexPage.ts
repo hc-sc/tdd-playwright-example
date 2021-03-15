@@ -204,7 +204,7 @@ export class IndexPage {
         // notWorking = ['wcag2aa', 'wcag21a', 'wcag21aa', 'wcag***', 'ACT', 'section508', 'experimental']
 
         await injectAxe(this.page);
-        await checkA11y(this.page, null, {
+        await checkA11y(this.page, 'main', {
             detailedReport: true,
             detailedReportOptions: { html: true },
             axeOptions: {
