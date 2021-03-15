@@ -468,7 +468,7 @@ function buttonGenerator(row, type, requestSide) {
   const index = row.rowIndex;
   requestSide = requestSide.toLowerCase();
   button.setAttribute("id", requestSide + "-" + type.toLowerCase() + "-" + index);
-  // button.setAttribute("aria-label", `${type} row ${index} of ${requestSide.toLowerCase()} table.`);
+  button.setAttribute("aria-label", `${type} row ${index} of ${requestSide.toLowerCase()} table.`);
 
   const name = document.getElementById(requestSide + "-name-" + index);
   const role = document.getElementById(requestSide + "-role-" + index);
