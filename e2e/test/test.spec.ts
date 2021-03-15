@@ -50,7 +50,7 @@ function browserType(browserName: string) {
             return webkit;
     }
 }
-describe(`Language Test, `, () => {
+describe.skip(`Language Test, `, () => {
 
 
     it("EN/FR", async ({ browserName }) => {
@@ -68,7 +68,7 @@ describe(`Language Test, `, () => {
 
 for (const side of [Request.Server, Request.Client]) {
 
-    describe(`Test Wizard: ${side} `, () => {
+    describe.skip(`Test Wizard: ${side} `, () => {
 
         let page: IndexPage;
 
@@ -78,7 +78,6 @@ for (const side of [Request.Server, Request.Client]) {
 
 
         afterEach(async () => {
-            await page.testAccessibility();
             await page.close();
         })
 
@@ -139,12 +138,6 @@ for (const side of [Request.Server, Request.Client]) {
 
         });
 
-        it('Page with an error alert ', async ({ browserName }) => {
-            page = await initialize(browserName);
-            await page.navigateErrors();
-            await page.testAccessibility();
-        })
-
     })
 }
 
@@ -152,20 +145,28 @@ describe('Accessibility,', async () => {
 
     let page: IndexPage;
 
-    it("Wizard Page,", async ({ browserName }) => {
-        page = await initialize(browserName);
-        await page.navigateHome();
-
-        page.getAll(Request.Server);
-        page.getAll(Request.Client);
-        page.testAccessibility();
+    afterEach(async () => {
+        await page.close();
     })
 
     it("Wizard Page,", async ({ browserName }) => {
         page = await initialize(browserName);
+        await page.navigateHome();
+
+        await page.getAll(Request.Server);
+        await page.getAll(Request.Client);
+        await page.testAccessibility();
+        // await page.screenshot("test");
+        await page.clickFirstRow();
+        await page.testAccessibility();
+        // await page.screenshot(browserName);
+    })
+
+    it("Errors Page,", async ({ browserName }) => {
+        page = await initialize(browserName);
         await page.navigateErrors();
 
-        page.testAccessibility();
+        await page.testAccessibility();
     })
 
 })
