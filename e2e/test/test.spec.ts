@@ -26,13 +26,13 @@ enum Request {
 }
 
 
-it("POM TEST", async ({ browserName }) => {
-    const page: IndexPage = await initialize(browserName);
-    await page.navigateHome();
-    await page.testAccessibility();
-    // page.hello();
-    // await page.navigateHome();
-})
+// it("POM TEST", async ({ browserName }) => {
+//     const page: IndexPage = await initialize(browserName);
+//     await page.navigateHome();
+//     await page.testAccessibility();
+//     // page.hello();
+//     // await page.navigateHome();
+// })
 
 async function initialize(browserName: string) {
     const browser = await browserType(browserName).launch()
@@ -59,7 +59,7 @@ describe(`Language Test, `, () => {
         await page.navigateHome();
         await assertGreetingLanguage(page);
 
-        page.toggleLanguage();
+        await page.toggleLanguage();
 
         await assertGreetingLanguage(page);
 
@@ -78,7 +78,6 @@ for (const side of [Request.Server, Request.Client]) {
 
 
         afterEach(async () => {
-            await page.testAccessibility();
             await page.close();
         })
 
@@ -139,16 +138,38 @@ for (const side of [Request.Server, Request.Client]) {
 
         });
 
-        it('Page with an error alert ', async ({ browserName }) => {
-            page = await initialize(browserName);
-            await page.navigateErrors();
-            await page.testAccessibility();
-        })
-
     })
 }
 
+describe('Accessibility,', async () => {
 
+    let page: IndexPage;
+
+    afterEach(async () => {
+        await page.close();
+    })
+
+    it("Wizard Page,", async ({ browserName }) => {
+        page = await initialize(browserName);
+        await page.navigateHome();
+
+        await page.getAll(Request.Server);
+        await page.getAll(Request.Client);
+        await page.testAccessibility();
+        // await page.screenshot("test");
+        await page.clickFirstRow();
+        await page.testAccessibility();
+        // await page.screenshot(browserName);
+    })
+
+    it("Errors Page,", async ({ browserName }) => {
+        page = await initialize(browserName);
+        await page.navigateErrors();
+
+        await page.testAccessibility();
+    })
+
+})
 
 
 // ------------- Test Utility Functions --------------- //

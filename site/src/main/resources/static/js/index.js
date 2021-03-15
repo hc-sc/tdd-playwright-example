@@ -91,6 +91,7 @@ function setTableRows() {
     const role = document.querySelector("#server-side-employees > tbody:nth-child(2) > tr:nth-child(" + row.rowIndex + ") > td:nth-child(3)");
     const comment = document.querySelector("#server-side-employees > tbody:nth-child(2) > tr:nth-child(" + row.rowIndex + ") > td:nth-child(4)");
 
+    row.setAttribute("id", `server-row-${row.rowIndex}`)
     id.setAttribute("id", "server-id-" + row.rowIndex);
     name.setAttribute("id", "server-name-" + row.rowIndex);
     role.setAttribute("id", "server-role-" + row.rowIndex);

@@ -183,6 +183,20 @@ export class IndexPage {
         return await this.page.innerText(selector);
     }
 
+    async screenshot(browserType) {
+        await this.page.screenshot({ path: `example-${browserType}.png` });
+
+    }
+
+    async clickFirstRow() {
+        await Promise.all([
+            this.page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
+            // this.page.click('tr[id="server-row-1"]'),
+            // this.page.click('#server')
+            this.page.click('td[id="server-id-1"]')
+        ]);
+    }
+
     async click(selector: string) {
         await Promise.all([
             this.page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
@@ -199,12 +213,12 @@ export class IndexPage {
     }
 
     async testAccessibility() {
-        let accessibilityTags = ['wcag2a']
+        let accessibilityTags = ['wcag2a', 'best-practice']
         // 'best-practice' will fail due to WET body > nav
         // notWorking = ['wcag2aa', 'wcag21a', 'wcag21aa', 'wcag***', 'ACT', 'section508', 'experimental']
 
         await injectAxe(this.page);
-        await checkA11y(this.page, null, {
+        await checkA11y(this.page, 'main', {
             detailedReport: true,
             detailedReportOptions: { html: true },
             axeOptions: {
