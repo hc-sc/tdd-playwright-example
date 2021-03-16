@@ -23,9 +23,11 @@ export class IndexPage {
     }
 
     async getCurrentLanguage() {
+        // this is available the the html element's 'lang' property, use that instead
         return await this.page.$eval('#wb-bnr > #wb-lng > ul > li > a', e => e.innerHTML);;
     }
 
+    // do you need this?
     async hello() {
         console.log("HELLO");
     }
@@ -49,6 +51,7 @@ export class IndexPage {
         // Select POST
         await this.page.selectOption('select[id="request"]', Request.Post);
 
+        // do we need to click and then fill?
         // Click input[name="name"]
         await this.page.click('input[name="name"]');
 
@@ -71,6 +74,7 @@ export class IndexPage {
 
         await this.page.selectOption('select[id="request"]', Request.Get);
 
+        // click and fill?
         // Click input[name="id"]
         await this.page.click('input[name="id"]');
 
@@ -158,9 +162,11 @@ export class IndexPage {
     }
 
     async toggleLanguage() {
+        // I think the language toggle has it's own class you can use, something like .wb-lang?
         let changeLangButton = await this.page.$eval('#wb-bnr > #wb-lng > ul > li > a', e => e.innerHTML);
         // Change language on page
         await Promise.all([
+            // this looks unfinished
             this.page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/' }*/),
             this.page.click(`text=${changeLangButton}`)
         ]);
@@ -190,6 +196,7 @@ export class IndexPage {
 
     async clickFirstRow() {
         await Promise.all([
+            // unfinished?
             this.page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
             // this.page.click('tr[id="server-row-1"]'),
             // this.page.click('#server')
@@ -199,12 +206,14 @@ export class IndexPage {
 
     async click(selector: string) {
         await Promise.all([
+            // unfinished?
             this.page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
             this.page.click(selector)
         ]);
     }
 
     async selectorVisible(selector) {
+        // not using the argument
         return await this.page.isVisible('id:light=alert');
     }
 
