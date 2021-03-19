@@ -145,8 +145,8 @@ jobs: # a collection of steps
             - ~/project/e2e/cache
           key: v2-npm-deps-{{ checksum "package-lock.json" }}
 
-# workflows:
-#   version: 2
+workflows:
+  version: 2
 #   test_all:
 #     jobs:
 #     - minimal_core
