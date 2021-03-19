@@ -52,24 +52,24 @@ jobs: # a collection of steps
           root: .
           paths:
             - .
-  
-  minimal_core:
-    machine:
-      enabled: true
-    steps:
-    - checkout
-    - run:
-        command: ./gradlew --no-daemon --continue --scan testcontainers:test --tests '*GenericContainerRuleTest'
-    - run:
-        name: Save test results
-        command: |
-          mkdir -p ~/junit/
-          find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
-        when: always
-    - store_test_results:
-        path: ~/junit
-    - store_artifacts:
-        path: ~/junit
+  # Dockerizing Deployment
+  # minimal_core:
+  #   machine:
+  #     enabled: true
+  #   steps:
+  #   - checkout
+  #   - run:
+  #       command: ./gradlew --no-daemon --continue --scan testcontainers:test --tests '*GenericContainerRuleTest'
+  #   - run:
+  #       name: Save test results
+  #       command: |
+  #         mkdir -p ~/junit/
+  #         find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/junit/ \;
+  #       when: always
+  #   - store_test_results:
+  #       path: ~/junit
+  #   - store_artifacts:
+  #       path: ~/junit
 
   # Heroku
   deploy:
@@ -145,25 +145,25 @@ jobs: # a collection of steps
             - ~/project/e2e/cache
           key: v2-npm-deps-{{ checksum "package-lock.json" }}
 
-workflows:
-  version: 2
-  test_all:
-    jobs:
-    - minimal_core
+# workflows:
+#   version: 2
+#   test_all:
+#     jobs:
+#     - minimal_core
 
-  # build-and-deploy:
-  #   jobs:
-  #     - build
-  #     - deploy:
-  #         requires:
-  #           - build
-  #         filters:
-  #           branches:
-  #             only: dev
-  #     - playwright: # Make sure to add colon back in when adding conditions
-  #         requires:
-  #           - build
-  #           - deploy
-  #         filters:
-  #           branches:
-  #             only: dev
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: dev
+      - playwright # Make sure to add colon back in when adding conditions
+          # requires:
+          #   - build
+          #   - deploy
+          # filters:
+          #   branches:
+          #     only: dev
