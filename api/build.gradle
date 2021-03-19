@@ -81,6 +81,14 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter:5.4.0" // remove?
 		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
 	}
+
+  testCompile group:'junit', name: 'junit', version: '4.12'
+
+  //testcontainer
+  testCompile "org.testcontainers:testcontainers:1.14.1"
+
+  //redis client
+  compile 'io.lettuce:lettuce-core:5.3.0.RELEASE'
 }
 
 // make sure your environment is set up correctly!

@@ -1,12 +1,9 @@
 import { it, describe, expect, afterEach, beforeEach, beforeAll, afterAll, folio } from "@playwright/test"
-import { devices, Browser, Page, chromium, firefox, webkit } from "playwright"
+import { chromium, firefox, webkit } from "playwright"
 const playwright = require('playwright');
-import { injectAxe, checkA11y, getViolations, reportViolations } from 'axe-playwright'
 import { IndexPage } from "../PO/IndexPage";
+import { injectAxe, checkA11y, getViolations, reportViolations } from 'axe-playwright'
 
-
-// import {reporter, junit-reporter{require("@wdio/cli/package.json"); // @wdio/cli is a peer dependency. 
-// var junitReporter = require("@wdio/junit-reporter")
 
 /**
  * To use local environment variables, create a .env file and set the BASE_URL to the local endpoint being tested.
@@ -24,15 +21,6 @@ enum Request {
     Put = "PUT",
     Delete = "DELETE"
 }
-
-
-// it("POM TEST", async ({ browserName }) => {
-//     const page: IndexPage = await initialize(browserName);
-//     await page.navigateHome();
-//     await page.testAccessibility();
-//     // page.hello();
-//     // await page.navigateHome();
-// })
 
 async function initialize(browserName: string) {
     const browser = await browserType(browserName).launch()
@@ -55,12 +43,12 @@ describe(`Language Test, `, () => {
 
     it("EN/FR", async ({ browserName }) => {
 
-        const page = await initialize(browserName);
+        let page: IndexPage = await initialize(browserName);
+
         await page.navigateHome();
+        await page.getCurrentLanguage()
         await assertGreetingLanguage(page);
-
         await page.toggleLanguage();
-
         await assertGreetingLanguage(page);
 
     });
@@ -68,7 +56,7 @@ describe(`Language Test, `, () => {
 
 for (const side of [Request.Server, Request.Client]) {
 
-    describe(`Test Wizard: ${side} `, () => {
+    describe.skip(`Test Wizard: ${side} `, () => {
 
         let page: IndexPage;
 
@@ -83,13 +71,14 @@ for (const side of [Request.Server, Request.Client]) {
 
         it(`Post One: ${side}`, async ({ browserName }) => {
             page = await initialize(browserName);
+
             await page.navigateHome();
 
             await page.postOne(side, inputName, inputRole);
 
             inputId = await page.firstRowIdValue(side); // Saving for other tests
-
             await assertion(page, side, inputName, inputRole, Request.Post)
+
 
         });
 
@@ -123,8 +112,7 @@ for (const side of [Request.Server, Request.Client]) {
             page = await initialize(browserName);
             await page.navigateHome();
             await page.getAll(side);
-            await assertion(page, side, await page.innerText(`td[id="${side.toLowerCase()}-name-1"]`), await page.innerText(`td[id="${side.toLowerCase()}-role-1"]`), Request.Get);
-
+            await assertion(page, side, inputName, inputRole, Request.Get);
         });
 
         it("Delete One", async ({ browserName }) => {
@@ -152,21 +140,36 @@ describe('Accessibility,', async () => {
     it("Wizard Page,", async ({ browserName }) => {
         page = await initialize(browserName);
         await page.navigateHome();
+        await page.debugScreenshot(browserName, "PIC");
+        // await page.testAccessibility();
 
-        await page.getAll(Request.Server);
-        await page.getAll(Request.Client);
-        await page.testAccessibility();
-        // await page.screenshot("test");
-        await page.clickFirstRow();
-        await page.testAccessibility();
-        // await page.screenshot(browserName);
+        const violations = await page.testAccessibility();
+        // violations.forEach(elem => console.debug(elem));
+
+        expect(violations).toBe(undefined);
+
+        // let accessibilityTags = ['wcag2a', 'best-practice']
+        // // notWorking = ['wcag2aa', 'wcag21a', 'wcag21aa', 'wcag***', 'ACT', 'section508', 'experimental']
+        // // https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter
+
+
+        // await injectAxe(await page.getPage());
+        // await checkA11y(await page.getPage(), 'main', {
+        //     detailedReport: true,
+        //     detailedReportOptions: { html: false },
+        //     axeOptions: {
+        //         runOnly: {
+        //             type: 'tag',
+        //             values: accessibilityTags,
+        //         },
+        //     },
+        // })
+
     })
 
-    it("Errors Page,", async ({ browserName }) => {
+    it.skip("Errors Page,", async ({ browserName }) => {
         page = await initialize(browserName);
         await page.navigateErrors();
-
-        await page.testAccessibility();
     })
 
 })
@@ -175,53 +178,28 @@ describe('Accessibility,', async () => {
 // ------------- Test Utility Functions --------------- //
 
 
-function swapRoles(inputRole) {
+function swapRoles(inputRole: string) {
     return (inputRole === 'Manager' ? 'Director' : 'Manager');
 }
 
 async function assertGreetingLanguage(page: IndexPage) {
-    let greeting;
-    switch (await page.getCurrentLanguage()) {
-        case 'English':
-            greeting = "Bienvenue!";
-            break;
-        case 'Français':
-            greeting = "Welcome!";
-    }
-
+    const greeting = await page.getCurrentLanguage() === 'English' ? "Welcome!" : "Bienvenue!";
     expect(await page.getGreeting()).toBe(greeting);
+    // expect(await page.getGreeting()).toBe(undefined);
 }
 
-async function assertion(page: IndexPage, side: string, inputName: string, inputRole: string, request: string) {
-    let idSelector: string;
-    let nameSelector: string;
-    let roleSelector: string;
-    let commentSelector: string;
-    let elementToScreenshot: string;
+async function assertion(page: IndexPage, side: Request, inputName: string, inputRole: string, request: string) {
 
-    switch (side) {
-        case "SERVER":
 
-            idSelector = 'td[id="server-id-1"]';
-            nameSelector = 'td[id="server-name-1"]';
-            roleSelector = 'td[id="server-role-1"]';
-            commentSelector = 'td[id="server-comment-1"]';
-            elementToScreenshot = '#server-side-employees'
-            break;
 
-        case "CLIENT":
+    let rowIndex: number = 1;
 
-            idSelector = 'td[id="client-id-1"]';
-            nameSelector = 'td[id="client-name-1"]';
-            roleSelector = 'td[id="client-role-1"]';
-            commentSelector = 'td[id="client-comment-1"]';
-            elementToScreenshot = '#js-employees'
-            break;
-    }
-    let htmlId = await page.innerText(idSelector);
-    let htmlName = await page.innerText(nameSelector);
-    let htmlRole = await page.innerText(roleSelector);
-    let htmlComment = await page.innerText(commentSelector);
+    let rowValues = await page.getRowValues(rowIndex, side);
+
+    let htmlId = rowValues[0];
+    let htmlName = rowValues[1];
+    let htmlRole = rowValues[2];
+    let htmlComment = rowValues[3];
 
     let inputId = htmlId;
     let commentToAssert = request === Request.Delete ? "Deleted" : "";
@@ -230,9 +208,9 @@ async function assertion(page: IndexPage, side: string, inputName: string, input
     expect(htmlRole).toBe(inputRole);
     expect(htmlComment).toBe(commentToAssert);
 
-    await page.click(idSelector);
+    await page.clickRow(side, 1);
 
-    const errors = await page.selectorVisible('id:light=alert');
+    const errors = await page.warningsVisible();
     if (errors) {
         console.log(`Errors on page: ${errors}`);
         expect(errors).toBeTruthy();
@@ -241,11 +219,11 @@ async function assertion(page: IndexPage, side: string, inputName: string, input
 
 
     if (request !== Request.Delete) {
-
-        htmlId = await page.innerText('td[id="server-id-1"]');
-        htmlName = await page.innerText('td[id="server-name-1"]');
-        htmlRole = await page.innerText('td[id="server-role-1"]');
-        htmlComment = await page.innerText('td[id="server-comment-1"]');
+        rowValues = await page.getRowValues(rowIndex, side);
+        let htmlId = rowValues[0];
+        let htmlName = rowValues[1];
+        let htmlRole = rowValues[2];
+        let htmlComment = rowValues[3];
 
         expect(htmlId).toBe(inputId);
         expect(htmlName).toBe(inputName);

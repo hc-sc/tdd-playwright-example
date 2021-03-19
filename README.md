@@ -6,6 +6,8 @@
 * `clear && ./gradlew :api:bootRun --args="--spring.profiles.active=local"`
 * `clear && ./gradlew :site:bootRun --args="--spring.profiles.active=local"`
 
+## Heroku
+Deployed: [here](http://tdd-playwright-example-server.herokuapp.com/)
 
 ## Playwright
 
@@ -20,6 +22,15 @@ Running tests in all browsers: `chromium, firefox, webkit`
 
 Running tests in select available browsers:
 * `npx folio --param browserName=chromium screenshotOnFailure`
+
+## Support
+### Heroku
+#### Environment Variables
+#### Dyno Usage
+* Heroku provides 550 free dyno hours each month. For personal development, this allowance provides more than 17 hours a day in a 31 day month of development usage. To optimize this allowance, Heroku automatically puts the dyno to sleep after 30 minutes of no web traffic.
+* If a sleeping web dyno receives web traffic, it will become active again after a short delay (assuming the Heroku account has free dyno hours available).
+* When executing automated tests in CI/CD pipeline, be mindful that sleep periods may be needed upon running the first request on the dyno to allow the application to wake.
+* Click [here](https://devcenter.heroku.com/articles/free-dyno-hours) for more information about dyno sleeping.
 
 ## Sources:
 * [Playwright](https://playwright.dev/ "Playwright.dev")

@@ -398,7 +398,7 @@ async function tableHandler(response, tableFiller) {
 }
 
 async function newTable() {
-  const table = document.querySelector("#js-employees > tbody")
+  const table = document.querySelector("#client-side-employees > tbody")
   while (table.hasChildNodes()) {
     table.removeChild(table.childNodes[0]);
   }
@@ -425,11 +425,10 @@ async function populateTable(table, employees) {
   }
   const row = document.createElement("tr");
   row.setAttribute("class", "table-row");
-  row.setAttribute("href-data", "www.google.com");
   row.addEventListener("click", function () { clickRowListener(row, RequestEnum.CLIENT) });
 
   table.appendChild(row);
-  row.setAttribute("id", "row-" + row.rowIndex);
+  row.setAttribute("id", `${RequestEnum.CLIENT}-row-${row.rowIndex}`);
 
   console.debug(employees);
   for (let key of Object.keys(employees)) {
@@ -446,7 +445,7 @@ async function populateTable(table, employees) {
 
 async function buttonRowGenerator(row, requestSide) {
   const td = document.createElement("td");
-  td.setAttribute("id", `button-row-${row.rowIndex}-${requestSide.toLowerCase()}`);
+  td.setAttribute("id", `${requestSide.toLowerCase()}-button-row-${row.rowIndex}`);
 
   let button;
 
