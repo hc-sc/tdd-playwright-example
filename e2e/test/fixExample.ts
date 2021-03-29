@@ -1,3 +1,8 @@
+// https://github.com/microsoft/playwright-test
+// https://github.com/microsoft/folio
+// https://github.com/microsoft/playwright/issues/1604#issuecomment-723307823
+
+
 // In tests/fixtures.ts
 import { folio as baseFolio } from '@playwright/test';
 import { Browser, chromium, firefox, Page, webkit } from "playwright";
