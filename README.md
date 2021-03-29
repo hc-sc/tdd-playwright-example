@@ -9,7 +9,7 @@
 ## Heroku
 Deployed: [here](http://tdd-playwright-example-server.herokuapp.com/)
 
-## Playwright
+## 🎭 Playwright
 
 ### Playwright CLI
 
@@ -23,14 +23,26 @@ Running tests in all browsers: `chromium, firefox, webkit`
 Running tests in select available browsers:
 * `npx folio --param browserName=chromium screenshotOnFailure`
 
+### Custom fixtures to support POM
+
+## sonarQube
+### Setup
+* `docker volume create --name sonarqube_data`
+* `docker volume create --name sonarqube_logs`
+* `docker volume create --name sonarqube_extensions`
+* `docker run --rm -p 9000:9000 -v sonarqube_extensions:/opt/sonarqube/extensions sonarqube:8.7.1-community`
+
 ## Support
 ### Heroku
 #### Environment Variables
 #### Dyno Usage
 * Heroku provides 550 free dyno hours each month. For personal development, this allowance provides more than 17 hours a day in a 31 day month of development usage. To optimize this allowance, Heroku automatically puts the dyno to sleep after 30 minutes of no web traffic.
 * If a sleeping web dyno receives web traffic, it will become active again after a short delay (assuming the Heroku account has free dyno hours available).
-* When executing automated tests in CI/CD pipeline, be mindful that sleep periods may be needed upon running the first request on the dyno to allow the application to wake.
+* When executing automated tests in CI/CD pipeline (ie. e2e), be mindful that sleep periods or test reruns may be needed upon running the first request on the dyno to allow the application to wake.
 * Click [here](https://devcenter.heroku.com/articles/free-dyno-hours) for more information about dyno sleeping.
+
+## Azure B2C
+* [Azure AD Java Quickstartah for](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v2-java-webapp "Azure B2C Tutorial")
 
 ## Sources:
 * [Playwright](https://playwright.dev/ "Playwright.dev")

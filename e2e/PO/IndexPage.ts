@@ -1,6 +1,3 @@
-require('dotenv').config();
-const baseURL = process.env.BASE_URL;
-
 import { Page } from "playwright"
 import { GenericPage } from "../PO/GenericPage";
 
@@ -16,12 +13,12 @@ enum Request {
 
 export class IndexPage extends GenericPage {
 
-    constructor(page: Page) {
-        super(page);
+    constructor(page: Page, baseURL: string) {
+        super(page, baseURL);
     }
 
     async getCurrentLanguage() {
-        const lang = 'English' === await this.page.$eval(`css=#wb-lng > ul > li > a`, e => e.innerHTML) ? "Français" : "English";
+        const lang = 'English' === await this.page.$eval(`css=#wb-lng > ul > li > a`, e => e.innerHTML) ? 'Français' : 'English';
         // console.debug(lang);
         return lang;
     }
@@ -31,7 +28,7 @@ export class IndexPage extends GenericPage {
     }
 
     async navigateErrors() {
-        return await this.page.goto(`${baseURL}/errors`);
+        return await this.page.goto(`${this.baseURL}/errors`);
     }
 
 
@@ -167,3 +164,4 @@ export class IndexPage extends GenericPage {
 
 
 }
+module.exports = { IndexPage }

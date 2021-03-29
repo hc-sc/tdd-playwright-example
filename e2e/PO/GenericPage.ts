@@ -1,12 +1,13 @@
-require('dotenv').config();
-const baseURL = process.env.BASE_URL;
+
 import { Page } from "playwright"
 import { injectAxe, checkA11y, getViolations, reportViolations } from 'axe-playwright'
 
 export class GenericPage {
     protected page: Page;
-    constructor(page: Page) {
+    protected baseURL: string;
+    constructor(page: Page, baseURL: string) {
         this.page = page;
+        this.baseURL = baseURL;
     }
 
     async getPage() {
@@ -25,7 +26,7 @@ export class GenericPage {
     }
 
     async navigateHome() {
-        return await this.page.goto(baseURL);
+        await this.page.goto(this.baseURL);
     }
 
     async testAccessibility() {
@@ -81,3 +82,4 @@ export class GenericPage {
 
 
 }
+module.exports = { GenericPage }
