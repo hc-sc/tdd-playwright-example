@@ -31,6 +31,20 @@ Running tests in select available browsers:
 * `docker volume create --name sonarqube_logs`
 * `docker volume create --name sonarqube_extensions`
 * `docker run --rm -p 9000:9000 -v sonarqube_extensions:/opt/sonarqube/extensions sonarqube:8.7.1-community`
+* Navigate to `http://localhost:9000`
+* Click `Create a project`
+* Add a `Project key`, (can be any value).
+* `Dispay name` should automatically be filled with the `Project key` value. Change the `Display name` if desired.
+* Click `Setup`
+* Enter a `Token name`, and click `Generate`. Make note of the generated token.
+* Click `Continue`.
+* Select the appropriate `build technology`. This project uses `Gradle`.
+* Configure your `build` to include `sonarqube` and run the provided command to run the `sonarqube`.
+* Run in shell: `./gradlew sonarqube \
+  -Dsonar.projectKey=${projectKey} \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=${generatedToken}`
+* Optional: Building sonarqube on a specific app is possible by prefixing the app name: `./gradlew :site:sonarqube \ ` [etc..]
 
 ## Support
 ### Heroku
