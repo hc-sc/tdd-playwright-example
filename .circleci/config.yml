@@ -166,4 +166,4 @@ workflows:
             - deploy
           filters:
             branches:
-              only: build
+              only: dev
