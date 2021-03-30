@@ -1,6 +1,3 @@
-require('dotenv').config();
-const baseURL = process.env.BASE_URL;
-
 import { Page } from "playwright"
 import { GenericPage } from "../PO/GenericPage";
 
@@ -16,22 +13,22 @@ enum Request {
 
 export class IndexPage extends GenericPage {
 
-    constructor(page: Page) {
-        super(page);
+    constructor(page: Page, baseURL: string) {
+        super(page, baseURL);
     }
 
     async getCurrentLanguage() {
-        const lang = 'English' === await this.page.$eval(`css=#wb-lng > ul > li > a`, e => e.innerHTML) ? "Français" : "English";
+        const lang = 'English' === await this.page.$eval(`css=#wb-lng > ul > li > a`, e => e.textContent) ? 'Français' : 'English';
         // console.debug(lang);
         return lang;
     }
 
     async getGreeting() {
-        return await this.page.$eval('h1', e => e.innerHTML);
+        return await this.page.$eval('h1', e => e.textContent);
     }
 
     async navigateErrors() {
-        return await this.page.goto(`${baseURL}/errors`);
+        return await this.page.goto(`${this.baseURL}/errors`);
     }
 
 
@@ -92,20 +89,16 @@ export class IndexPage extends GenericPage {
         await this.page.fill('input[name="id"]', inputId);
         await this.clickSend(side);
     }
-
-    private async clickSend(side: Request) {
+    async clickSend(side: Request) {
         switch (side) {
             case Request.Client:
                 // Click text="Send"
-                await this.page.click('text="Send"');
+                await this.click('text="Send"');
                 await this.sleep(2500);
                 break;
             case Request.Server:
                 // Click text="Send"
-                await Promise.all([
-                    this.page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/employees/add' }*/),
-                    this.page.click('text="Send"')
-                ]);
+                await this.clickWait('text="Send"')
                 break;
             case Request.Alert:
                 // Click text="Send"
@@ -115,9 +108,10 @@ export class IndexPage extends GenericPage {
                 });
                 await this.page.click('text="Send"');
                 break;
-        }
-    }
 
+        }
+
+    }
 
 
     async firstRowIdValue(side: Request) {
@@ -134,36 +128,41 @@ export class IndexPage extends GenericPage {
         await this.page.screenshot({ path: `debug-photos/${comment}-${browserType}-page.png` })
     }
 
+    async getLastRowIndex(side: Request) {
+        let index = await (await this.page.$eval(`table[id=${side.toLowerCase()}-side-employees] > tbody`, e => e.lastElementChild.id)).split('-')[2];
+        return parseInt(await index);
+    }
 
     async getRowValues(index: number, side: Request,) {
         const id = await this.page.innerText(`td[id="${side.toLowerCase()}-id-${index}"]`);
         const name = await this.page.innerText(`td[id="${side.toLowerCase()}-name-${index}"]`);
         const role = await this.page.innerText(`td[id="${side.toLowerCase()}-role-${index}"]`);
         const comment = await this.page.innerText(`td[id="${side.toLowerCase()}-comment-${index}"]`);
-
         return [id, name, role, comment];
     }
 
     async clickRow(side: Request, index: number) {
-        await Promise.all([
-            this.page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
-            this.page.click(`td[id="${side.toLowerCase()}-id-${index}"]`),
-        ]);
+        await this.clickWait(`td[id="${side.toLowerCase()}-id-${index}"]`)
     }
 
     async warningsVisible() {
         return await this.page.isVisible('id:light=alert');
     }
 
+    protected async showAll() {
+        await super.showAll();
+        await this.getAll(Request.Server);
+        await this.getAll(Request.Client);
+    }
+
     async testAccessibility() {
-        // this.getAll(Request.Server);
-        // this.getAll(Request.Client);
-        return super.testAccessibility();
+        await this.showAll();
+        await super.testAccessibility();
     }
 
     async close() {
-        this.page.close();
+        await this.page.close();
     }
 
-
 }
+module.exports = { IndexPage }
