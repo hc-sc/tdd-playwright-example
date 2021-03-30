@@ -1,6 +1,6 @@
 
 import { Page } from "playwright"
-import { injectAxe, checkA11y, getViolations, reportViolations } from 'axe-playwright'
+import { injectAxe, checkA11y } from 'axe-playwright'
 
 export class GenericPage {
     protected page: Page;
@@ -19,67 +19,62 @@ export class GenericPage {
     }
 
     async toggleLanguage() {
-        await Promise.all([
-            this.page.waitForNavigation(),
-            this.page.click(`css=#wb-lng > ul > li`) // Always the first instance in light:DOM.
-        ]);
+        await this.clickWait(`css=#wb-lng > ul > li`) // Always the first instance in light:DOM.
     }
 
     async navigateHome() {
         await this.page.goto(this.baseURL);
     }
 
+    protected async clickWait(selector: string) {
+
+        await Promise.all([
+            this.page.waitForNavigation(/*{ url: 'https://localhost:8443/employees' }*/),
+            this.page.click(selector)
+        ]);
+
+        // https://css-tricks.com/why-using-reduce-to-sequentially-resolve-promises-works/
+        // const clicks = [selector];
+        // clicks.reduce(async (promiseAccumulator, selector) => {
+        //     await promiseAccumulator;
+        //     return promiseAccumulator.then(() => {
+        //         return this.page.click(selector);
+        //     });
+
+        // }, Promise.resolve());
+    }
+
+    protected async click(selector: string) {
+        this.page.click(selector)
+    }
+
+    protected async showAll() {
+        this.navigateHome();
+    }
+
+    // Ensure all components are visible
     async testAccessibility() {
 
-        // Ensure all components are visible
-
-        let accessibilityTags = ['wcag2a', 'best-practice']
-        // notWorking = ['wcag2aa', 'wcag21a', 'wcag21aa', 'wcag***', 'ACT', 'section508', 'experimental']
-        // https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter
-
         await injectAxe(this.page);
+
         // 'main' tag will exclude wet components
-        const violations = await getViolations(this.page, null, {
+        const componentToTest = 'main'; // Set to null to test entire page
+
+        // let accessibilityTags = ['wcag2a', 'best-practice']
+        // others = ['wcag2aa', 'wcag21a', 'wcag21aa', 'wcag***', 'ACT', 'section508', 'experimental']
+        // https://www.deque.com/axe/core-documentation/api-documentation/#options-parameter
+        await checkA11y(this.page, componentToTest, {
             detailedReport: true,
-            detailedReportOptions: { html: true },
+            detailedReportOptions: { html: false },
             axeOptions: {
-                runOnly: {
-                    type: 'tag',
-                    values: accessibilityTags,
-                },
+                reporter: 'raw-env',
+                // runOnly: {
+                //     type: 'tag',
+                //     values: accessibilityTags,
+                // },
             },
         })
 
-
-        const scrubbedVio = await this.removeANSI(JSON.stringify(violations[0]));
-        console.log(scrubbedVio);
-        // const map = new Map(Object.entries(violations));
-
-
-
-        // console.log(typeof map)
-        // console.log(map);
-
-        // for (const [key, value] of Object.entries(violations)) {
-        //     console.log(key, this.removeANSI(value));
-        // }
-
-        // return scrubbedVio;
-        return violations;
     }
-
-    protected async removeANSI(violations: string) {
-        if (violations === undefined) { return violations; }
-
-
-        const regex = 's/\x1b\[[0-9;]*m//g'
-
-        // console.log('Hello myRegexp!'.replace(regex, 'World')) // = Hello World!
-        return (violations.replace(regex, 'World')).replace(/["']/g, "");
-    }
-
-
-
-
 }
 module.exports = { GenericPage }

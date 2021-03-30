@@ -1,10 +1,7 @@
-import { it, describe, expect, afterEach, beforeEach, beforeAll, afterAll, folio } from '@playwright/test'
-import { Page, chromium, firefox, webkit } from 'playwright'
-import { IndexPage } from '../PO/IndexPage';
 
+import { describe, it, expect } from './fixtures'
 require('dotenv').config();
 const baseURL = process.env.BASE_URL;
-
 enum Request {
     Server = 'SERVER',
     Client = 'CLIENT',
@@ -14,33 +11,33 @@ enum Request {
     Delete = 'DELETE'
 }
 
-async function initialize(browserName: string) {
-    const browser = await browserType(browserName).launch()
-    const page = await browser.newPage()
-    return new IndexPage(page, baseURL);
-}
 
-function browserType(browserName: string) {
-    switch (browserName) {
-        case 'chromium':
-            return chromium;
-        case 'firefox':
-            return firefox;
-        case 'webkit':
-            return webkit;
-    }
-}
+describe(`Our first test: `, () => {
 
-it('EN/FR', async ({ page }) => {
+    it.skip('A simple test', async ({ page }) => {
+        await page.goto(baseURL);
+        expect("hello").toBe("goodbye");
+    });
 
-    await page.goto(baseURL);
+    it('Testing a recorded user story via a codegen', async ({ page }) => {
 
-    let indexpage: IndexPage = new IndexPage(page, baseURL)
+        /**
+         * Insert codegen story here. 
+        **/
+
+        const id = await page.innerText(`td[id="${Request.Server.toLowerCase()}-id-1"]`);
+        expect(id).toBe("2");
+    });
+
+    it.skip('Using a page-object-model for same recorded user story', async ({ indexPage }) => {
+        await indexPage.getAll(Request.Server);
+        await indexPage.getAll(Request.Client);
+
+    });
+
+    it.skip('Improving tests even more with POM', async ({ indexPage }) => {
+
+    });
 
 });
 
-async function assertGreetingLanguage(page: IndexPage) {
-    const greeting = await page.getCurrentLanguage() === 'English' ? 'Welcome!' : 'Bienvenue!';
-    // expect(await page.getGreeting()).toBe(greeting);
-    expect(await page.getGreeting()).not.toBe(greeting);
-}
