@@ -2,6 +2,7 @@ plugins {
   id 'war'
   id 'org.springframework.boot' version '2.2.1.RELEASE'
   id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+  id "org.sonarqube" version "3.0"
 }
 
 // pulls out properties from a global properties file
@@ -81,6 +82,14 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter:5.4.0" // remove?
 		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
 	}
+
+  testCompile group:'junit', name: 'junit', version: '4.12'
+
+  //testcontainer
+  testCompile "org.testcontainers:testcontainers:1.14.1"
+
+  //redis client
+  compile 'io.lettuce:lettuce-core:5.3.0.RELEASE'
 }
 
 // make sure your environment is set up correctly!

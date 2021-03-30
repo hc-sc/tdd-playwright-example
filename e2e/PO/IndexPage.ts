@@ -1,7 +1,5 @@
-require('dotenv').config();
-const baseURL = process.env.BASE_URL;
-import { devices, Browser, Page, chromium } from "playwright"
-import { injectAxe, checkA11y, getViolations, reportViolations } from 'axe-playwright'
+import { Page } from "playwright"
+import { GenericPage } from "../PO/GenericPage";
 
 enum Request {
     Server = "SERVER",
@@ -9,142 +7,100 @@ enum Request {
     Get = "GET",
     Post = "POST",
     Put = "PUT",
-    Delete = "DELETE"
+    Delete = "DELETE",
+    Alert = "ALERT"
 }
 
-export class IndexPage {
-    private page: Page;
-    constructor(page: Page) {
-        this.page = page;
-    }
+export class IndexPage extends GenericPage {
 
-    async getGreeting() {
-        return await this.page.$eval('h1', e => e.innerHTML);
+    constructor(page: Page, baseURL: string) {
+        super(page, baseURL);
     }
 
     async getCurrentLanguage() {
-        return await this.page.$eval('#wb-bnr > #wb-lng > ul > li > a', e => e.innerHTML);;
+        const lang = 'English' === await this.page.$eval(`css=#wb-lng > ul > li > a`, e => e.textContent) ? 'Français' : 'English';
+        // console.debug(lang);
+        return lang;
     }
 
-    async hello() {
-        console.log("HELLO");
-    }
-
-    async navigateHome() {
-        return await this.page.goto(baseURL);
+    async getGreeting() {
+        return await this.page.$eval('h1', e => e.textContent);
     }
 
     async navigateErrors() {
-        return await this.page.goto(baseURL);
+        return await this.page.goto(`${this.baseURL}/errors`);
     }
 
-    async sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
 
-    async postOne(side, inputName, inputRole) {
+
+    async postOne(side: Request, inputName: string, inputRole: string) {
 
         await this.page.selectOption('select[id="request-side"]', side);
 
-        // Select POST
         await this.page.selectOption('select[id="request"]', Request.Post);
 
-        // Click input[name="name"]
-        await this.page.click('input[name="name"]');
-
-        // Fill input[name="name"]
         await this.page.fill('input[name="name"]', inputName);
 
-        // Press Tab
-        await this.page.press('input[name="name"]', 'Tab');
-
-        // Fill input[name="role"]
         await this.page.fill('input[name="role"]', inputRole);
 
         await this.clickSend(side);
 
     }
 
-    async getOne(side, inputId) {
+    async getOne(side: Request, inputId: string) {
 
         await this.page.selectOption('select[id="request-side"]', side);
 
         await this.page.selectOption('select[id="request"]', Request.Get);
 
-        // Click input[name="id"]
-        await this.page.click('input[name="id"]');
-
-        // Fill input[name="id"]
         await this.page.fill('input[name="id"]', inputId);
 
         await this.clickSend(side);
     }
 
-    async getAll(side) {
+    async getAll(side: Request) {
 
         await this.page.selectOption('select[id="request-side"]', side);
+
         await this.page.selectOption('select[id="request"]', Request.Get);
 
         await this.clickSend(side);
     }
 
-
-
-    async updateOne(side, inputId, inputName, inputRole) {
+    async updateOne(side: Request, inputId: string, inputName: string, inputRole: string) {
 
         await this.page.selectOption('select[id="request-side"]', side);
 
         await this.page.selectOption('select[id="request"]', Request.Put);
 
-        // Click input[name="id"]
-        await this.page.click('input[name="id"]');
-
-        // Fill input[name="id"]
         await this.page.fill('input[name="id"]', inputId);
 
-        // Click input[name="id"]
-        await this.page.click('input[name="name"]');
-
-        // Fill input[name="name"]
         await this.page.fill('input[name="name"]', inputName);
 
-        // Click input[name="id"]
-        await this.page.click('input[name="role"]');
-
-        // Fill input[name="role"]
         await this.page.fill('input[name="role"]', inputRole);
 
         await this.clickSend(side);
     }
 
-    async deleteOne(side, inputId) {
-
+    async deleteOne(side: Request, inputId: string) {
         await this.page.selectOption('select', side);
-
         await this.page.selectOption('#request', Request.Delete);
 
-        await this.page.click('input[name="id"]');
-
         await this.page.fill('input[name="id"]', inputId);
-
         await this.clickSend(side);
     }
-
-    async clickSend(side) {
+    async clickSend(side: Request) {
         switch (side) {
             case Request.Client:
                 // Click text="Send"
-                await this.page.click('text="Send"');
+                await this.click('text="Send"');
                 await this.sleep(2500);
                 break;
             case Request.Server:
                 // Click text="Send"
-                await Promise.all([
-                    this.page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/employees/add' }*/),
-                    this.page.click('text="Send"')
-                ]);
+                await this.clickWait('text="Send"')
                 break;
-            case 'ALERT':
+            case Request.Alert:
                 // Click text="Send"
                 this.page.once('dialog', dialog => {
                     console.log(`Dialog message: ${dialog.message()}`);
@@ -157,81 +113,56 @@ export class IndexPage {
 
     }
 
-    async toggleLanguage() {
-        let changeLangButton = await this.page.$eval('#wb-bnr > #wb-lng > ul > li > a', e => e.innerHTML);
-        // Change language on page
-        await Promise.all([
-            this.page.waitForNavigation(/*{ url: 'https://tdd-playwright-example-server.herokuapp.com/' }*/),
-            this.page.click(`text=${changeLangButton}`)
-        ]);
+
+    async firstRowIdValue(side: Request) {
+        return await this.page.innerText(`td[id="${side.toLowerCase()}-id-1"]`);
     }
 
-    async firstRowIdValue(side: string) {
-        let selector: string;
-        switch (side) {
-            case Request.Server:
-                selector = 'td[id="server-id-1"]';
-                break
-            case Request.Client:
-                selector = 'td[id="client-id-1"]';
-                break;
-        }
-        return await this.page.innerText(selector);
+    async screenShotTable(browserType: string, requestSide: Request) {
+        const tableSelector = `${requestSide.toLowerCase()}-side-employees`
+        const element = await this.page.$(`${tableSelector}`);
+        await element.screenshot({ path: `assert-photos/${browserType}-${tableSelector}.png` })
     }
 
-    async innerText(selector: string) {
-        return await this.page.innerText(selector);
+    async debugScreenshot(browserType: string, comment: string) {
+        await this.page.screenshot({ path: `debug-photos/${comment}-${browserType}-page.png` })
     }
 
-    async screenshot(browserType) {
-        await this.page.screenshot({ path: `example-${browserType}.png` });
-
+    async getLastRowIndex(side: Request) {
+        let index = await (await this.page.$eval(`table[id=${side.toLowerCase()}-side-employees] > tbody`, e => e.lastElementChild.id)).split('-')[2];
+        return parseInt(await index);
     }
 
-    async clickFirstRow() {
-        await Promise.all([
-            this.page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
-            // this.page.click('tr[id="server-row-1"]'),
-            // this.page.click('#server')
-            this.page.click('td[id="server-id-1"]')
-        ]);
+    async getRowValues(index: number, side: Request,) {
+        const id = await this.page.innerText(`td[id="${side.toLowerCase()}-id-${index}"]`);
+        const name = await this.page.innerText(`td[id="${side.toLowerCase()}-name-${index}"]`);
+        const role = await this.page.innerText(`td[id="${side.toLowerCase()}-role-${index}"]`);
+        const comment = await this.page.innerText(`td[id="${side.toLowerCase()}-comment-${index}"]`);
+        return [id, name, role, comment];
     }
 
-    async click(selector: string) {
-        await Promise.all([
-            this.page.waitForNavigation(/*{ url: 'https://localhost:8443/details' }*/),
-            this.page.click(selector)
-        ]);
+    async clickRow(side: Request, index: number) {
+        await this.clickWait(`td[id="${side.toLowerCase()}-id-${index}"]`)
     }
 
-    async selectorVisible(selector) {
+    async warningsVisible() {
         return await this.page.isVisible('id:light=alert');
     }
 
-    async injectAxe() {
-
+    protected async showAll() {
+        await super.showAll();
+        await this.getAll(Request.Server);
+        await this.getAll(Request.Client);
     }
 
     async testAccessibility() {
-        let accessibilityTags = ['wcag2a', 'best-practice']
-        // 'best-practice' will fail due to WET body > nav
-        // notWorking = ['wcag2aa', 'wcag21a', 'wcag21aa', 'wcag***', 'ACT', 'section508', 'experimental']
-
-        await injectAxe(this.page);
-        await checkA11y(this.page, 'main', {
-            detailedReport: true,
-            detailedReportOptions: { html: true },
-            axeOptions: {
-                runOnly: {
-                    type: 'tag',
-                    values: accessibilityTags,
-                },
-            },
-        })
+        await this.showAll();
+        await super.testAccessibility();
     }
 
     async close() {
-        this.page.close();
+        await this.page.close();
     }
 
 }
+module.exports = { IndexPage }
