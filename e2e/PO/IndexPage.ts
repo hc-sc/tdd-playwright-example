@@ -89,6 +89,7 @@ export class IndexPage extends GenericPage {
         await this.page.fill('input[name="id"]', inputId);
         await this.clickSend(side);
     }
+
     async clickSend(side: Request) {
         switch (side) {
             case Request.Client:

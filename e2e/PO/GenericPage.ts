@@ -10,10 +10,6 @@ export class GenericPage {
         this.baseURL = baseURL;
     }
 
-    async getPage() {
-        return this.page;
-    }
-
     async sleep(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
@@ -67,7 +63,7 @@ export class GenericPage {
             detailedReport: true,
             detailedReportOptions: { html: false },
             axeOptions: {
-                reporter: 'raw-env',
+                reporter: 'v2',
                 // runOnly: {
                 //     type: 'tag',
                 //     values: accessibilityTags,
