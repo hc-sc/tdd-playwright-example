@@ -90,6 +90,13 @@ dependencies {
 
   //redis client
   compile 'io.lettuce:lettuce-core:5.3.0.RELEASE'
+
+  def junitJupiterVersion = '5.4.2'
+  testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+  testCompile "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+  testCompile "org.testcontainers:testcontainers:1.15.2"
+  testCompile "org.testcontainers:junit-jupiter:1.15.2"
 }
 
 // make sure your environment is set up correctly!
