@@ -1,10 +1,16 @@
-ARG TOMCAT_VERSION
+FROM openjdk:11.0.3-jdk-stretch
+ENV API_URL=${API_URL}
+ARG JAR_FILE=build/libs/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java", "-Dserver.port=$PORT", "$JAVA_OPTS", "-jar",  "/app.jar"]
 
-FROM tomcat:$TOMCAT_VERSION
-WORKDIR /usr/local/tomcat
-COPY ./build/libs/*.war ./webapps/
+# ARG TOMCAT_VERSION
 
-# required for Oracle DB client
-ENV TZ=EST
+# FROM tomcat:$TOMCAT_VERSION
+# WORKDIR /usr/local/tomcat
+# COPY ./build/libs/*.war ./webapps/
 
-CMD ["catalina.sh", "run"]
+# # required for Oracle DB client
+# ENV TZ=EST
+
+# CMD ["catalina.sh", "run"]

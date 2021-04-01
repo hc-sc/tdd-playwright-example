@@ -1,11 +1,11 @@
-ARG SERVICE_URL=https://tdd-playwright-example-server.herokuapp.com
-
 FROM openjdk:11.0.3-jdk-stretch
+ENV SERVICE_URL=${SERVICE_URL}
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java", "-Dserver.port=$PORT", "$JAVA_OPTS", "-jar",  "/app.jar"]
+
 # RUN docker build --build-arg JAR_FILE=build/libs/\*.jar -t tdd-playwright-example-api .
-# FROM openjdk
+# FROM openjdkC
 # WORKDIR /usr/src/myapp
 # COPY . /usr/src/myapp
 # RUN java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/api##1.0.0.1.jar

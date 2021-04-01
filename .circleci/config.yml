@@ -52,29 +52,53 @@ jobs: # a collection of steps
           root: .
           paths:
             - .
-
-
+  # https://circleci.com/blog/how-to-build-a-docker-image-on-circleci-2-0/
+  # containerize:
   deploy:
-    docker:
-      - image: circleci/openjdk:11.0.3-jdk-stretch
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+    machine:
+        enabled: true
     steps:
       - checkout
       - attach_workspace:
           at: .
-      - restore_cache:
-          keys:
-            - v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-            - v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
-          name: Creating and deploying container
+          name: Setting up heroku
           command: |
             bash .circleci/setup-heroku.sh
+      - run:
+          name: Build and push api image to heroku
+          command: |
             cd api
-            docker build -t tdd-playwright-example-api .
-            heroku container:push web --app tdd-playwright-example-api 
+            heroku container:push web --app $HEROKU_APP_NAME_API
+            heroku container:release web --app $HEROKU_APP_NAME_API
+            cd ../site
+            heroku container:push web --app $HEROKU_APP_NAME_SERVER
+            heroku container:release web --app $HEROKU_APP_NAME_SERVER
+            cd ../site
+
+      
+
+  # deploy:
+  #   docker:
+  #     - image: circleci/openjdk:11.0.3-jdk-stretch
+  #       auth:
+  #         username: mydockerhub-user
+  #         password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: .
+  #     - restore_cache:
+  #         keys:
+  #           - v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+  #           - v1-gradle-cache-{{ checksum "build.gradle" }}
+  #     - run:
+  #         name: Creating and deploying container
+  #         command: |
+  #           bash .circleci/setup-heroku.sh
+  #           cd api
+  #           docker build -t tdd-playwright-example-api .
+  #           heroku container:push web --app tdd-playwright-example-api 
   # Dockerizing Deployment
   # minimal_core:
   #   machine:
