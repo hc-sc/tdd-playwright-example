@@ -61,6 +61,10 @@ jobs: # a collection of steps
       - checkout
       - attach_workspace:
           at: .
+      - restore_cache:
+          keys:
+            - v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+            - v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
           name: Setting up heroku
           command: |
@@ -74,7 +78,7 @@ jobs: # a collection of steps
             cd ../site
             heroku container:push web --app $HEROKU_APP_NAME_SERVER
             heroku container:release web --app $HEROKU_APP_NAME_SERVER
-            cd ../site
+            cd ..
 
       
 
