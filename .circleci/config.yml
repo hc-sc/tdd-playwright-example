@@ -36,7 +36,7 @@ jobs: # a collection of steps
       - run:
           name: Assembling JARs
           command: |
-             SERVER_URL=https://$HEROKU_APP_NAME_SERVER.herokuapp.com ./gradlew :api:bootJar
+             SERVICE_URL=https://$HEROKU_APP_NAME_SERVER.herokuapp.com ./gradlew :api:bootJar
              API_URL=https://$HEROKU_APP_NAME_API.herokuapp.com  ./gradlew :site:bootJar
       - store_artifacts:
           path: api/build/libs
@@ -72,6 +72,7 @@ jobs: # a collection of steps
       - run:
           name: Build and push api image to heroku
           command: |
+            heroku container:login
             cd api
             heroku container:push web --app $HEROKU_APP_NAME_API
             heroku container:release web --app $HEROKU_APP_NAME_API
