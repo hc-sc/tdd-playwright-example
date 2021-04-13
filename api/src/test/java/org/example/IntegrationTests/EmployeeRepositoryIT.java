@@ -53,17 +53,6 @@ public class EmployeeRepositoryIT extends BaseIT {
         assertThat(count).isEqualTo(eRepository.count());
     }
 
-    // @Test
-    // @Sql(scripts = { "/init.sql" })
-    // public void updateEntity() {
-    // EmployeeEntity employee = getOne(1);
-    // employee = EmployeeTestHelper.updateEntity(employee);
-
-    // eRepository.save(employee);
-
-    // assertEntity(employee, 1);
-    // }
-
     @Test
     @Sql(scripts = { "/init.sql" })
     public void deleteEntity() {
