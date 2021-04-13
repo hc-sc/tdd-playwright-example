@@ -44,11 +44,13 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.groups.Default;
 
+@Profile("local")
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)
 public class ServiceUnitTest extends BaseUnitTest {

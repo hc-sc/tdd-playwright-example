@@ -12,6 +12,7 @@ import java.util.List;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -32,10 +33,11 @@ import static io.restassured.RestAssured.*;
 import static io.restassured.matcher.RestAssuredMatchers.*;
 import static org.hamcrest.Matchers.*;
 
+@Disabled // Until IT test profiles are fixed
 @Tag("integration")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // automatically scans for @SpringBootApplication
 @ActiveProfiles("local")
-public class EntityIT { // make it abstract so it isn't instantiated by Spring Test
+public class ControllerIT { // make it abstract so it isn't instantiated by Spring Test
 
     @LocalServerPort
     int port; // autowired to be set to whichever port the application is served on
