@@ -1,4 +1,4 @@
-package org.example.entities.employees;
+package org.example.IntegrationTests;
 
 // import main.java.org.example.http;
 
@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.context.WebApplicationContext;
 import io.restassured.RestAssured;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -32,8 +34,8 @@ import static org.hamcrest.Matchers.*;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // automatically scans for @SpringBootApplication
-
-public class EntityUnitTests { // make it abstract so it isn't instantiated by Spring Test
+@ActiveProfiles("local")
+public class EntityIT { // make it abstract so it isn't instantiated by Spring Test
 
     @LocalServerPort
     int port; // autowired to be set to whichever port the application is served on
@@ -51,8 +53,8 @@ public class EntityUnitTests { // make it abstract so it isn't instantiated by S
 
     @Test
     public void test_findEmployeeById() {
-        given().get("/employees/2").then().statusCode(200).body("name", equalTo("Billy"));
-        given().get("/yolos/2").then().statusCode(200).body("name", equalTo("Billy"));
+        given().get("/employees/1").then().statusCode(200).body("name", equalTo("Alex"));
+        given().get("/yolos/1").then().statusCode(200).body("name", equalTo("Alex"));
     }
 
     @Test
@@ -62,19 +64,6 @@ public class EntityUnitTests { // make it abstract so it isn't instantiated by S
 
         given().get("/yolos").then().statusCode(200).body("employees.name[0]", equalTo("Alex"));
         given().get("/yolos").then().statusCode(200).body("employees.name[1]", equalTo("Billy"));
-    }
-
-    @Test
-    public void test_addEmployee() throws JSONException {
-        given().header("Content-Type", "application/json").body(createProfile("Patty", "Minister of Health").toString())
-                .when().post("/employees").then().statusCode(200);
-
-        // given().get("/employees/add").then().statusCode(200).body("employees.name[2]",
-        // equalTo("Patty"));
-
-        // given().get("/yolos").then().statusCode(200).body("employees.name[2]",
-        // equalTo("Patty"));
-
     }
 
     @Test
@@ -99,13 +88,26 @@ public class EntityUnitTests { // make it abstract so it isn't instantiated by S
     }
 
     @Test
+    public void test_addEmployee() throws JSONException {
+        given().header("Content-Type", "application/json").body(createProfile("Patty", "Minister of Health").toString())
+                .when().post("/employees").then().statusCode(200);
+
+        // given().get("/employees/add").then().statusCode(200).body("employees.name[2]",
+        // equalTo("Patty"));
+
+        // given().get("/yolos").then().statusCode(200).body("employees.name[2]",
+        // equalTo("Patty"));
+
+    }
+
+    @Test
     public void test_updateEmployees() throws JSONException {
 
         given().header("Content-Type", "application/json").body(createProfile("Sally", "LL").toString()).when()
-                .put("/employees/1").then().statusCode(200);
+                .put("/employees/2").then().statusCode(200);
 
-        given().get("/employees/1").then().statusCode(200).body("name", equalTo("Sally"));
-        given().get("/yolos/1").then().statusCode(200).body("name", equalTo("Sally"));
+        given().get("/employees/2").then().statusCode(200).body("name", equalTo("Sally"));
+        given().get("/yolos/2").then().statusCode(200).body("name", equalTo("Sally"));
     }
 
     @Test

@@ -1,8 +1,13 @@
 plugins {
-  id 'war'
-  id 'org.springframework.boot' version '2.2.1.RELEASE'
-  id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-  id "org.sonarqube" version "3.0"
+  id 'org.springframework.boot' version '2.4.2'
+  id "org.sonarqube" version "3.1.1"
+}
+
+apply plugin: 'war'
+apply plugin: 'io.spring.dependency-management'
+
+repositories {
+	mavenCentral()
 }
 
 // pulls out properties from a global properties file
@@ -13,18 +18,25 @@ subPropertiesFile.withInputStream {
 }
 
 // define environment and application settings
-def applicationName = env.APPLICATION_NAME
-def buildNumber = env.APPLICATION_BUILD_NUMBER
-group = env.APPLICATION_GROUP
-version = env.APPLICATION_VERSION
+def gradleVersion = env.GRADLE_VERSION
+def applicationName = env.NAME
+def buildNumber = env.BUILD_NUMBER
+group = env.GROUP
+version = env.VERSION
 def javaVersion = JavaVersion.toVersion(env.JAVA_VERSION)
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 compileJava.options.encoding = env.ENCODING
 
-def archiveName = "${applicationName}##${version + '.' + buildNumber}"
+def archiveName = env.ARCHIVE_NAME
 
-def profiles
+def profiles = (project.hasProperty('profiles')
+  ? project.property('profiles')
+  : "local,https").split(",")
+
+bootRun {
+  args = ["--spring.profiles.active=${profiles.join(",")}"]
+}
 
 bootJar {
   archiveFileName = "${archiveName}.jar"
@@ -36,6 +48,11 @@ bootWar {
 
 test {
   useJUnitPlatform()
+  testLogging {
+        events "passed", "skipped", "failed"
+    }
+  // need to be able to pass through the active profile supplied in gradle task
+  systemProperty 'spring.profiles.active', profiles.join(",")
 }
 
 configurations {
@@ -46,11 +63,16 @@ configurations {
 }
 
 ext {
+  DB_DRIVER_VERSION = "42.2.18"
   H2_VERSION = "1.4.+"
-  JUNIT_VERSION = "5.3.1"
-  MAPSTRUCT_VERSION = '1.3.1.Final'
+  JUNIT_VERSION = "5.4.2"
+  MAPSTRUCT_VERSION = '1.4.1.Final'
+  MAPSTRUCT_BINDING_VERSION = '0.2.0'
   MOCKITO_VERSION = '2.18.3'
   RESTASSURED_VERSION = '4.1.2'
+  SWAGGER_UI_VERSION= '3.45.1'
+  TESTCONTAINERS_VERSION = '1.15.1'
+  WEBJARS_LOCATION_VERSION = '0.30'
   XML_VERSION = '2.+'
 }
 
@@ -61,27 +83,56 @@ compileJava {
 }
 
 dependencies {
-  runtimeOnly "com.h2database:h2"
   implementation project(':common')
+
+  if (profiles.contains("local") && !profiles.contains("tc")) {
+    runtimeOnly "com.h2database:h2"
+
+
+      implementation "org.testcontainers:postgresql:$TESTCONTAINERS_VERSION"
+      runtimeOnly "org.testcontainers:testcontainers:$TESTCONTAINERS_VERSION"
+      testCompile "org.testcontainers:junit-jupiter:$TESTCONTAINERS_VERSION"
+      testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.19.0'
+  }
+
+  else {
+    implementation "org.postgresql:postgresql:$DB_DRIVER_VERSION"
+
+    // if (profiles.contains("tc")) {
+      if (true){
+      implementation "org.testcontainers:postgresql:$TESTCONTAINERS_VERSION"
+      runtimeOnly "org.testcontainers:testcontainers:$TESTCONTAINERS_VERSION"
+      testCompile "org.testcontainers:junit-jupiter:$TESTCONTAINERS_VERSION"
+      testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.19.0'
+
+    }
+  }
+  
+  compile "org.hibernate:hibernate-validator:5.2.4.Final"
+  testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.8.0-M1'
+
+  implementation "org.webjars.npm:swagger-ui-dist:$SWAGGER_UI_VERSION"
+  implementation "org.webjars:webjars-locator:$WEBJARS_LOCATION_VERSION"
+
   annotationProcessor "jakarta.xml.bind:jakarta.xml.bind-api:$XML_VERSION" // JAXB annotations
-  annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
+  annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster DTOs
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
   annotationProcessor "org.projectlombok:lombok" // annotations for getters/setters/ctors/equals/hashCode
+  annotationProcessor "org.projectlombok:lombok-mapstruct-binding:$MAPSTRUCT_BINDING_VERSION"
   developmentOnly "org.springframework.boot:spring-boot-devtools" // better dev experience in bootRun
+  implementation "jakarta.validation:jakarta.validation-api:3.0.0"
   implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml" // can produce XML responses
-  implementation "org.mapstruct:mapstruct:$MAPSTRUCT_VERSION" // easier/faster common
+  implementation "org.mapstruct:mapstruct:$MAPSTRUCT_VERSION" // easier/faster DTOs
   implementation "org.springframework.boot:spring-boot-starter-actuator" // health checks
   implementation "org.springframework.boot:spring-boot-starter-data-jpa" // persistance and validation with hibernate
   implementation "org.springframework.boot:spring-boot-starter-web" // allows for 'controllers'
   providedRuntime "org.springframework.boot:spring-boot-starter-tomcat" // set to 'providedRuntime' to allow both jar/war deploys
-  testAnnotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
+  testAnnotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster DTOs
   testImplementation "org.mockito:mockito-junit-jupiter:$MOCKITO_VERSION"
   testImplementation "io.rest-assured:rest-assured-all:$RESTASSURED_VERSION" // easier REST testing
   testImplementation "io.rest-assured:spring-mock-mvc:3.3.0" // test mocks
-	testImplementation ("org.springframework.boot:spring-boot-starter-test") { // allows for SpringBootTest
-  testImplementation "org.junit.jupiter:junit-jupiter:5.4.0" // remove?
-		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
-	}
+	testImplementation ("org.springframework.boot:spring-boot-starter-test") // allows for SpringBootTest
+
 }
 
 // make sure your environment is set up correctly!
@@ -91,8 +142,8 @@ task checkEnvironment {
       throw new GradleException("Configured version of Java (${javaVersion}) is different than the host version (${JavaVersion.current()})")
     }
 
-    println "Spring Boot profiles: ${profiles}"
     println "Java: ${javaVersion} (${env.JAVA_VERSION})"
+    println "Spring Boot profiles: ${profiles}"
   }
 }
 

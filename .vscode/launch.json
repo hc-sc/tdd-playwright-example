@@ -9,6 +9,13 @@
             "name": "Launch Application",
             "request": "launch",
             "mainClass": "org.example.Application",
+            "projectName": "api"
+        },
+        {
+            "type": "java",
+            "name": "Launch Application",
+            "request": "launch",
+            "mainClass": "org.example.Application",
             "projectName": "site"
         },
         {

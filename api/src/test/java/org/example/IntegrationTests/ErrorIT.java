@@ -1,4 +1,4 @@
-package org.example.http.error;
+package org.example.IntegrationTests;
 
 // import main.java.org.example.http;
 
@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.context.WebApplicationContext;
 import io.restassured.RestAssured;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -33,8 +34,8 @@ import static org.hamcrest.Matchers.*;
 
 @Tag("integration")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // automatically scans for @SpringBootApplication
-
-public class ErrorUnitTests { // make it abstract so it isn't instantiated by Spring Test
+@ActiveProfiles("local")
+public class ErrorIT { // make it abstract so it isn't instantiated by Spring Test
 
     @LocalServerPort
     int port; // autowired to be set to whichever port the application is served on

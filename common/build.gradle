@@ -28,4 +28,5 @@ dependencies {
 	annotationProcessor "org.projectlombok:lombok:$LOMBOK_VERSION"
 	testCompileOnly "org.projectlombok:lombok:$LOMBOK_VERSION"
 	testAnnotationProcessor "org.projectlombok:lombok:$LOMBOK_VERSION"
+	 implementation "jakarta.validation:jakarta.validation-api:3.0.0"
 }
