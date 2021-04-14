@@ -1,5 +1,5 @@
 import { IndexPage } from '../PO/IndexPage';
-import { describe, it, expect } from './fixtures'
+import { test, expect } from '../config'
 
 /**
  * To use local environment variables, create a .env file and set the BASE_URL to the local endpoint being tested.
@@ -17,13 +17,9 @@ enum Request {
 
 for (const side of [Request.Server, Request.Client]) {
 
-    describe.skip(`Index: ${side} `, () => {
+    test.describe(`Index: ${side} `, () => {
 
-        let inputId: string;
-        let inputName = 'Jane';
-        let inputRole = 'Manager';
-
-        it('EN/FR', async ({ indexPage }) => {
+        test('EN/FR', async ({ indexPage }) => {
 
             // let indexPage: IndexPage = new IndexPage(page, baseURL);
 
@@ -33,10 +29,13 @@ for (const side of [Request.Server, Request.Client]) {
             await indexPage.toggleLanguage();
             await assertGreetingLanguage(indexPage);
 
-
         });
 
-        it(`Post One: ${side}`, async ({ indexPage }) => {
+        let inputId: string;
+        let inputName = 'Jane';
+        let inputRole = 'Manager';
+
+        test(`Post One: ${side}`, async ({ indexPage }) => {
 
             await indexPage.navigateHome();
 
@@ -48,7 +47,7 @@ for (const side of [Request.Server, Request.Client]) {
 
         });
 
-        it('Get One', async ({ indexPage }) => {
+        test('Get One', async ({ indexPage }) => {
 
             await indexPage.navigateHome();
 
@@ -58,7 +57,7 @@ for (const side of [Request.Server, Request.Client]) {
 
         });
 
-        it('Update One', async ({ indexPage }) => {
+        test('Update One', async ({ indexPage }) => {
 
             await indexPage.navigateHome();
 
@@ -71,14 +70,14 @@ for (const side of [Request.Server, Request.Client]) {
         });
 
 
-        it('Get All', async ({ indexPage }) => {
+        test('Get All', async ({ indexPage }) => {
 
             await indexPage.navigateHome();
             await indexPage.getAll(side);
             await assertTableRows(indexPage, side, inputName, inputRole, Request.Get);
         });
 
-        it('Delete One', async ({ indexPage }) => {
+        test('Delete One', async ({ indexPage }) => {
 
             await indexPage.navigateHome();
 
@@ -88,7 +87,7 @@ for (const side of [Request.Server, Request.Client]) {
 
         });
 
-        it('Errors Page,', async ({ indexPage }) => {
+        test('Errors Page,', async ({ indexPage }) => {
             await indexPage.navigateErrors();
         })
 
@@ -107,8 +106,8 @@ async function assertGreetingLanguage(indexPage: IndexPage) {
     const lang = await indexPage.getCurrentLanguage();
     const greeting = lang === 'English' ? 'Welcome!' : 'Bienvenue!';
     // console.log(`LANG: ${lang} Greet: ${greeting}`);
-    // expect(await indexPage.getGreeting()).toBe(greeting);
-    expect(await indexPage.getGreeting()).not.toBe(greeting);
+    expect(await indexPage.getGreeting()).toBe(greeting);
+    // expect(await indexPage.getGreeting()).not.toBe(greeting);
 }
 
 async function assertTableRows(indexPage: IndexPage, side: Request, inputName: string, inputRole: string, request: string) {

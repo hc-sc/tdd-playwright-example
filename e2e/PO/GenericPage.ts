@@ -25,7 +25,7 @@ export class GenericPage {
     protected async clickWait(selector: string) {
 
         await Promise.all([
-            this.page.waitForNavigation(/*{ url: 'https://localhost:8443/employees' }*/),
+            this.page.waitForNavigation(),
             this.page.click(selector)
         ]);
 
@@ -73,4 +73,4 @@ export class GenericPage {
 
     }
 }
-module.exports = { GenericPage }
+// module.exports = { GenericPage }

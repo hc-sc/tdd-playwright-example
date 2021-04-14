@@ -1,6 +1,6 @@
 
 import { checkA11y, injectAxe } from 'axe-playwright';
-import { describe, it, expect } from './fixtures'
+import { test, expect } from '../config'
 require('dotenv').config();
 const baseURL = process.env.BASE_URL;
 enum Request {
@@ -13,16 +13,16 @@ enum Request {
 }
 
 
-describe.skip(`Our first test: `, () => {
+test.describe(`DEMO: Our first test: `, () => {
 
-    it.skip('A simple test', async ({ page }) => {
+    test.skip('DEMO: A simple test', async ({ page }) => {
 
-        // await page.goto(baseURL);
-        // expect("1").toBe("2");
+        await page.goto(baseURL);
+        expect("1").toBe("2");
 
     });
 
-    it.skip('Testing a recorded user story via a codegen', async ({ page }) => {
+    test('DEMO: Testing a recorded user story via a codegen', async ({ page }) => {
 
         /**
          * Insert codegen user-story here
@@ -34,7 +34,7 @@ describe.skip(`Our first test: `, () => {
 
     });
 
-    it.skip('Testing a page for accessibility using built-in fixture', async ({ page }) => {
+    test('DEMO: Testing a page for accessibility using built-in fixture', async ({ page }) => {
 
         // await page.goto(baseURL);
         // await injectAxe(page);
@@ -42,7 +42,7 @@ describe.skip(`Our first test: `, () => {
 
     });
 
-    it('Testing a page using a page-object-model and custom fixture', async ({ indexPage }) => {
+    test('DEMO: Testing a page using a page-object-model and custom fixture', async ({ indexPage }) => {
 
         // await indexPage.navigateHome();
         // await indexPage.testAccessibility();

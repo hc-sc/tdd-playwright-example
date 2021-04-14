@@ -1,5 +1,5 @@
 import { Page } from "playwright"
-import { GenericPage } from "../PO/GenericPage";
+import { GenericPage } from "./GenericPage";
 
 enum Request {
     Server = "SERVER",
@@ -30,8 +30,6 @@ export class IndexPage extends GenericPage {
     async navigateErrors() {
         return await this.page.goto(`${this.baseURL}/errors`);
     }
-
-
 
     async postOne(side: Request, inputName: string, inputRole: string) {
 
@@ -166,4 +164,4 @@ export class IndexPage extends GenericPage {
     }
 
 }
-module.exports = { IndexPage }
+// module.exports = { IndexPage }

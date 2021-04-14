@@ -1,15 +1,15 @@
-import { describe, it, expect } from './fixtures'
+import { test, expect } from '../config'
 import { injectAxe, checkA11y } from 'axe-playwright'
 require('dotenv').config();
 
-describe.skip(`Accessibility: `, () => {
+test.describe(`Accessibility: `, () => {
 
-    it('gets and reports a11y for the specific element', async ({ indexPage }) => {
+    test('gets and reports a11y for the specific element', async ({ indexPage }) => {
         await indexPage.testAccessibility();
     })
 
 
-    it.skip('gets and reports a11y for the specific element', async ({ page }) => {
+    test.skip('gets and reports a11y for the specific element', async ({ page }) => {
 
         const baseURL = process.env.BASE_URL;
 
