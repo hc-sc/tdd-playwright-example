@@ -134,7 +134,7 @@ workflows:
             - build
           filters:
             branches:
-              only: billy
+              only: dev
       - playwright: # Make sure to add colon back in when adding conditions
           requires:
             - build
