@@ -168,17 +168,20 @@ workflows:
 
   build-and-deploy:
     jobs:
-      # - uTest_iTest
-      # - build:
-      #     requires:
-      #       - uTest_iTest
-      # - deploy:
-      #     requires:
-      #       - uTest_iTest
-      #       - build
-      #     filters:
-      #       branches:
-      #         only: dev
+      - uTest_iTest:
+        filters:
+          branches:
+            only: dev
+      - build:
+          requires:
+            - uTest_iTest
+      - deploy:
+          requires:
+            - uTest_iTest
+            - build
+          filters:
+            branches:
+              only: dev
       # - playwright: # Make sure to add colon back in when adding conditions
       #     requires:
       #       - uTest_iTest
