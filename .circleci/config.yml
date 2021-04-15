@@ -129,7 +129,7 @@ jobs: # a collection of steps
       - image: mcr.microsoft.com/playwright:bionic
         environment:
           NODE_ENV: development # Needed if playwright is in `devDependencies`
-          BASE_URL: "https://$HEROKU_APP_NAME_SERVER.herokuapp.com/"
+          BASE_URL: https://$HEROKU_APP_NAME_SERVER.herokuapp.com
 
     steps:
       - checkout
@@ -168,22 +168,23 @@ workflows:
 
   build-and-deploy:
     jobs:
-      - uTest_iTest
-      - build:
-          requires:
-            - uTest_iTest
-      - deploy:
-          requires:
-            - uTest_iTest
-            - build
-          filters:
-            branches:
-              only: dev
-      - playwright: # Make sure to add colon back in when adding conditions
-          requires:
-            - uTest_iTest
-            - build
-            # - deploy
-          filters:
-            branches:
-              only: billy
+      # - uTest_iTest
+      # - build:
+      #     requires:
+      #       - uTest_iTest
+      # - deploy:
+      #     requires:
+      #       - uTest_iTest
+      #       - build
+      #     filters:
+      #       branches:
+      #         only: dev
+      # - playwright: # Make sure to add colon back in when adding conditions
+      #     requires:
+      #       - uTest_iTest
+      #       - build
+      #       # - deploy
+      #     filters:
+      #       branches:
+      #         only: billy
+      playwright
