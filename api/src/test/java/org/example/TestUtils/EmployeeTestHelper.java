@@ -26,9 +26,27 @@ public class EmployeeTestHelper {
     }
 
     public static EmployeeEntity createEntity(String aName, String aRole) {
-        EmployeeEntity employee = new EmployeeEntity(null, aName, aRole, null);
+        EmployeeEntity employee = new EmployeeEntity();
         employee.setName(aName);
         employee.setRole(aRole);
+        return employee;
+    }
+
+    public static EmployeeDTO createDto(Long id, String aName, String aRole, String comment) {
+        EmployeeDTO employee = createDto();
+        employee.setId(id);
+        employee.setName(aName);
+        employee.setRole(aRole);
+        employee.setComment(comment);
+        return employee;
+    }
+
+    public static EmployeeEntity createEntity(Long id, String aName, String aRole, String comment) {
+        EmployeeEntity employee = new EmployeeEntity();
+        employee.setId(id);
+        employee.setName(aName);
+        employee.setRole(aRole);
+        employee.setComment(comment);
         return employee;
     }
 
@@ -93,7 +111,7 @@ public class EmployeeTestHelper {
     }
 
     public static EmployeeEntity copyDtoToEntity(EmployeeDTO employee) {
-        EmployeeEntity copied = new EmployeeEntity(null, employee.getName(), employee.getRole(), null);
+        EmployeeEntity copied = createEntity(null, employee.getName(), employee.getRole(), null);
         copied.setId(employee.getId());
         copied.setName(employee.getName());
         copied.setRole(employee.getRole());
@@ -102,7 +120,7 @@ public class EmployeeTestHelper {
     }
 
     public static EmployeeDTO copyEntityToDto(EmployeeEntity employee) {
-        EmployeeDTO copied = new EmployeeDTO();
+        EmployeeDTO copied = createDto();
         copied.setId(employee.getId());
         copied.setName(employee.getName());
         copied.setRole(employee.getRole());

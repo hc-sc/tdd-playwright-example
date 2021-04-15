@@ -75,15 +75,15 @@ public class ServiceUnitTest extends BaseUnitTest {
         String invalidRole = "myR0l3";
 
         return Stream.of(
-                Arguments.of(new EmployeeEntity(validId, validName, validRole, null),
-                        new EmployeeDTO(validId, validName, validRole, null), false),
-                Arguments.of(new EmployeeEntity(invalidId, validName, validRole, null),
-                        new EmployeeDTO(invalidId, validName, validRole, null), true),
-                Arguments.of(new EmployeeEntity(validId, invalidName, validRole, null),
-                        new EmployeeDTO(validId, invalidName, validRole, null), true),
-                Arguments.of(new EmployeeEntity(validId, validName, invalidRole, null),
-                        new EmployeeDTO(validId, validName, invalidRole, null), true),
-                Arguments.of(null, new EmployeeDTO(validId, validName, invalidRole, null), true));
+                Arguments.of(EmployeeTestHelper.createEntity(validId, validName, validRole, null),
+                        EmployeeTestHelper.createDto(validId, validName, validRole, null), false),
+                Arguments.of(EmployeeTestHelper.createEntity(invalidId, validName, validRole, null),
+                        EmployeeTestHelper.createDto(invalidId, validName, validRole, null), true),
+                Arguments.of(EmployeeTestHelper.createEntity(validId, invalidName, validRole, null),
+                        EmployeeTestHelper.createDto(validId, invalidName, validRole, null), true),
+                Arguments.of(EmployeeTestHelper.createEntity(validId, validName, invalidRole, null),
+                        EmployeeTestHelper.createDto(validId, validName, invalidRole, null), true),
+                Arguments.of(null, EmployeeTestHelper.createDto(validId, validName, invalidRole, null), true));
     }
 
     @ParameterizedTest

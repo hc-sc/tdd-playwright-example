@@ -27,6 +27,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
+// import org.springframework.security.access.prepost.PreAuthorize;
+
 @Controller
 public class IndexController {
   private static final Logger log = LoggerFactory.getLogger(IndexController.class);
@@ -125,6 +127,7 @@ public class IndexController {
     }
   }
 
+  // @PreAuthorize("hasRole('ROLE_group1')")
   @GetMapping({ "/inspect" })
   public String inspection(final RedirectAttributes redirectAttributes, @RequestParam(name = "id") String id,
       @RequestParam(name = "name") String name, @RequestParam(name = "role") String role,

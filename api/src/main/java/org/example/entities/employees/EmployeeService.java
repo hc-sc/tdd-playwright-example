@@ -130,13 +130,14 @@ public class EmployeeService {
   }
 
   public boolean isValid(EmployeeEntity employee) {
+    // return true;
 
-    // if (employee == null)
-    // throw new EntityNotFoundException("Entity not found.");
+    if (employee == null)
+      throw new EntityNotFoundException("Entity not found.");
 
-    // Long id = employee.getId();
-    // String name = employee.getName();
-    // String role = employee.getRole();
+    Long id = employee.getId();
+    String name = employee.getName();
+    String role = employee.getRole();
 
     boolean isValid = employee != null && employee.getId() != null && employee.getId() > 0L
         && validText(employee.getName()) && validText(employee.getRole());
@@ -147,6 +148,9 @@ public class EmployeeService {
   }
 
   public boolean isValid(EmployeeDTO employee) {
+
+    // return true;
+
     Long id = employee.getId();
     String name = employee.getName();
     String role = employee.getRole();
@@ -164,6 +168,8 @@ public class EmployeeService {
   }
 
   private boolean validText(String input) {
+    // return true;
+
     String regex = "[A-Za-z\\-]+";
     return (!input.isEmpty() && isValid(regex, input));
   }

@@ -1,7 +1,6 @@
 plugins {
-  id 'org.springframework.boot' version '2.2.1.RELEASE'
-  id 'io.reflectoring.spring-boot-devtools' version '0.0.2'
-  id "org.sonarqube" version "3.0"
+  id 'org.springframework.boot' version '2.4.2'
+  id "org.sonarqube" version "3.1.1"
 }
 
 apply plugin: 'war'
@@ -20,18 +19,24 @@ subPropertiesFile.withInputStream {
 
 // define environment and application settings
 def gradleVersion = env.GRADLE_VERSION
-def applicationName = env.APPLICATION_NAME
-def buildNumber = env.APPLICATION_BUILD_NUMBER
-group = env.APPLICATION_GROUP
-version = env.APPLICATION_VERSION
+def applicationName = env.NAME
+def buildNumber = env.BUILD_NUMBER
+group = env.GROUP
+version = env.VERSION
 def javaVersion = JavaVersion.toVersion(env.JAVA_VERSION)
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 compileJava.options.encoding = env.ENCODING
 
-def archiveName = "${applicationName}##${version + '.' + buildNumber}"
+def archiveName = env.ARCHIVE_NAME
 
-def profiles
+def profiles = (project.hasProperty('profiles')
+  ? project.property('profiles')
+  : env.DEFAULT_LOCAL_PROFILES).split(",");
+
+bootRun {
+  args = ["--spring.profiles.active=${profiles.join(",")}"]
+}
 
 bootJar {
   archiveFileName = "${archiveName}.jar"
@@ -43,6 +48,9 @@ bootWar {
 
 test {
   useJUnitPlatform()
+
+  // need to be able to pass through the active profile supplied in gradle task
+  systemProperty 'spring.profiles.active', profiles.join(",")
 }
 
 configurations {
@@ -73,22 +81,26 @@ compileJava {
 dependencies {
   implementation project(':common')
   implementation fileTree(include: ["*.jar"], dir: "libs")
-  annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
+  annotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster DTOs
   annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
   annotationProcessor "org.projectlombok:lombok" // annotations for getters/setters/ctors/equals/hashCode
   annotationProcessor "org.projectlombok:lombok-mapstruct-binding:$MAPSTRUCT_BINDING_VERSION"
   developmentOnly "org.springframework.boot:spring-boot-devtools" // better dev experience in bootRun
   implementation "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect"
-  implementation "org.mapstruct:mapstruct:$MAPSTRUCT_VERSION" // easier/faster common
+  implementation "org.mapstruct:mapstruct:$MAPSTRUCT_VERSION" // easier/faster DTOs
   implementation "org.springframework.boot:spring-boot-starter-actuator" // health checks
   implementation "org.springframework.boot:spring-boot-starter-thymeleaf" // health checks
   implementation "org.springframework.boot:spring-boot-starter-web" // allows for 'controllers'
   providedRuntime "org.springframework.boot:spring-boot-starter-tomcat" // set to 'providedRuntime' to allow both jar/war deploys
-  testAnnotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster common
+  testAnnotationProcessor "org.mapstruct:mapstruct-processor:$MAPSTRUCT_VERSION" // easier/faster DTOs
   testImplementation "org.mockito:mockito-junit-jupiter:$MOCKITO_VERSION"
   testImplementation "io.rest-assured:rest-assured-all:$RESTASSURED_VERSION" // easier REST testing
   testImplementation "io.rest-assured:spring-mock-mvc:3.3.0" // test mocks
 	testImplementation ("org.springframework.boot:spring-boot-starter-test") // allows for SpringBootTest
+  
+	// compile "org.springframework.boot:spring-boot-starter-data-jpa"
+	// compile "org.springframework.boot:spring-boot-starter-security"
+	// compile "org.springframework.security:spring-security-test"
 }
 
 // make sure your environment is set up correctly!
@@ -98,8 +110,8 @@ task checkEnvironment {
       throw new GradleException("Configured version of Java (${javaVersion}) is different than the host version (${JavaVersion.current()})")
     }
 
-    println "Spring Boot profiles: ${profiles}"
     println "Java: ${javaVersion} (${env.JAVA_VERSION})"
+    println "Spring Boot profiles: ${profiles}"
   }
 }
 

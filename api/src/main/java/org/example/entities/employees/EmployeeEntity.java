@@ -20,12 +20,12 @@ import lombok.NonNull;
 @Data
 @Entity
 @Table(name = "employees")
-@AllArgsConstructor
+// @AllArgsConstructor
 public class EmployeeEntity {
 
   private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 
-  @NonNull // Lombak runtime
+  // @NonNull // Lombak runtime
   @NotNull(message = "Name cannot be null")
   private String name;
 

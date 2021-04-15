@@ -5,6 +5,7 @@ import { injectAxe, checkA11y } from 'axe-playwright'
 export class GenericPage {
     protected page: Page;
     protected baseURL: string;
+
     constructor(page: Page, baseURL: string) {
         this.page = page;
         this.baseURL = baseURL;
@@ -70,7 +71,8 @@ export class GenericPage {
                 // },
             },
         })
-
     }
+
+
 }
 // module.exports = { GenericPage }

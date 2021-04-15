@@ -1,12 +1,14 @@
 
 version: 2 # use CircleCI 2.0
 jobs: # a collection of steps
-  build:
+  uTest_iTest:
     # Remove if parallelism is not desired
     environment:
       # Configure the JVM and Gradle to avoid OOM errors
       _JAVA_OPTIONS: "-Xmx3g"
       GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1"
+      SERVICE_URL: "https://$HEROKU_APP_NAME_SERVER.herokuapp.com"
+      API_URL: "https://$HEROKU_APP_NAME_API.herokuapp.com"
     docker: # run the steps with Docker
       - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
         auth:
@@ -22,7 +24,7 @@ jobs: # a collection of steps
           name: Run tests in parallel # See: https://circleci.com/docs/2.0/parallelism-faster-jobs/
           # Use "./gradlew test" instead if tests are not run in parallel
           command: |
-            SERVICE_URL=https://$HEROKU_APP_NAME_SERVER.herokuapp.com ./gradlew test -Pprofiles=local,https,tc
+            ./gradlew test -Pprofiles=local,https,tc
 
       - run:
           name: Save test results
@@ -37,8 +39,8 @@ jobs: # a collection of steps
       - run:
           name: Assembling JARs
           command: |
-             SERVICE_URL=https://$HEROKU_APP_NAME_SERVER.herokuapp.com ./gradlew :api:bootJar
-             API_URL=https://$HEROKU_APP_NAME_API.herokuapp.com  ./gradlew :site:bootJar
+            ./gradlew :api:bootJar
+            ./gradlew :site:bootJar
       - store_artifacts:
           path: api/build/libs
       - save_cache:
@@ -53,8 +55,46 @@ jobs: # a collection of steps
           root: .
           paths:
             - .
-  # https://circleci.com/blog/how-to-build-a-docker-image-on-circleci-2-0/
-  # containerize:
+
+  build:
+  # Remove if parallelism is not desired
+    environment:
+      # Configure the JVM and Gradle to avoid OOM errors
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1"
+      SERVICE_URL: "https://$HEROKU_APP_NAME_SERVER.herokuapp.com"
+      API_URL: "https://$HEROKU_APP_NAME_API.herokuapp.com"
+    docker: # run the steps with Docker
+      - image: circleci/openjdk:11.0.3-jdk-stretch # ...with this image as the primary container; this is where all `steps` will run
+        auth:
+          username: mydockerhub-user
+          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+    steps: # a collection of executable commands
+      - checkout # check out source code to working directory
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}     
+      - run:
+          name: Assembling JARs
+          command: |
+            ./gradlew :api:bootJar
+            ./gradlew :site:bootJar
+      - store_artifacts:
+          path: api/build/libs
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
   deploy:
     machine:
         enabled: true
@@ -89,6 +129,7 @@ jobs: # a collection of steps
       - image: mcr.microsoft.com/playwright:bionic
         environment:
           NODE_ENV: development # Needed if playwright is in `devDependencies`
+          BASE_URL: "https://$HEROKU_APP_NAME_SERVER.herokuapp.com/"
 
     steps:
       - checkout
@@ -102,8 +143,7 @@ jobs: # a collection of steps
           command: | # BASE_URL=$HEROKU_APP_NAME_SERVER is the env variable being tested upon
             cd e2e
             npm ci
-            export BASE_URL="https://"$HEROKU_APP_NAME_SERVER".herokuapp.com"
-            FOLIO_JUNIT_OUTPUT_NAME=test-results/playwright_e2e_junit.xml npx folio --reporter=junit,line --param slowMo=1000 screenshotOnFailure
+            FOLIO_JUNIT_OUTPUT_NAME=test-results/playwright_e2e_junit.xml npx folio --config=config.ts
       - run:
           name: Save test results
           command: |
@@ -128,15 +168,18 @@ workflows:
 
   build-and-deploy:
     jobs:
+      - uTest_iTest
       - build
       - deploy:
           requires:
+            - uTest_iTest
             - build
           filters:
             branches:
               only: dev
       - playwright: # Make sure to add colon back in when adding conditions
           requires:
+            - uTest_iTest
             - build
             # - deploy
           filters:

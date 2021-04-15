@@ -19,6 +19,10 @@ for (const side of [Request.Server, Request.Client]) {
 
     test.describe(`Index: ${side} `, () => {
 
+        test.only('Confirm Setup', async ({ indexPage }) => {
+            await indexPage.navigateHome();
+        })
+
         test('EN/FR', async ({ indexPage }) => {
 
             // let indexPage: IndexPage = new IndexPage(page, baseURL);

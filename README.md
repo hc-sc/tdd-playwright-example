@@ -22,6 +22,7 @@ Running tests in all browsers: `chromium, firefox, webkit`
 
 Running tests in select available browsers:
 * `npx folio --param browserName=chromium screenshotOnFailure`
+* `clear &&  FOLIO_JUNIT_OUTPUT_NAME=test-results/playwright_e2e_junit.xml npx folio --reporter=junit,line --param browserName=chromium slowMo=1000 screenshotOnFailure`
 
 Running tests with a reporter:
 * `clear &&  FOLIO_JUNIT_OUTPUT_NAME=test-results/playwright_e2e_junit.xml npx folio --reporter=junit,line --param browserName=chromium slowMo=1000 screenshotOnFailure`
