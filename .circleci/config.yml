@@ -169,9 +169,9 @@ workflows:
   build-and-deploy:
     jobs:
       - uTest_iTest
-      - build
-        requires:
-          - uTest_iTest
+      - build:
+          requires:
+            - uTest_iTest
       - deploy:
           requires:
             - uTest_iTest
