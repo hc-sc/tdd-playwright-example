@@ -170,6 +170,8 @@ workflows:
     jobs:
       - uTest_iTest
       - build
+        requires:
+          - uTest_iTest
       - deploy:
           requires:
             - uTest_iTest
@@ -184,4 +186,4 @@ workflows:
             # - deploy
           filters:
             branches:
-              only: dev
+              only: billy
