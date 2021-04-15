@@ -190,4 +190,4 @@ workflows:
       #     filters:
       #       branches:
       #         only: billy
-      playwright
+      - playwright
