@@ -168,10 +168,7 @@ workflows:
 
   build-and-deploy:
     jobs:
-      - uTest_iTest:
-        filters:
-          branches:
-            only: dev
+      - uTest_iTest
       - build:
           requires:
             - uTest_iTest
