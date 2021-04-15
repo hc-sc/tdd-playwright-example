@@ -129,7 +129,6 @@ jobs: # a collection of steps
       - image: mcr.microsoft.com/playwright:bionic
         environment:
           NODE_ENV: development # Needed if playwright is in `devDependencies`
-          BASE_URL: https://$HEROKU_APP_NAME_SERVER.herokuapp.com
 
     steps:
       - checkout
@@ -143,6 +142,7 @@ jobs: # a collection of steps
           command: | # BASE_URL=$HEROKU_APP_NAME_SERVER is the env variable being tested upon
             cd e2e
             npm ci
+            export BASE_URL=https://$HEROKU_APP_NAME_SERVER.herokuapp.com
             FOLIO_JUNIT_OUTPUT_NAME=test-results/playwright_e2e_junit.xml npx folio --config=config.ts
       - run:
           name: Save test results
