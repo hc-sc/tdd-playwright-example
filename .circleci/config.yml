@@ -172,6 +172,9 @@ workflows:
       - build:
           requires:
             - uTest_iTest
+          filters:
+            branches:
+              only: dev
       - deploy:
           requires:
             - uTest_iTest
