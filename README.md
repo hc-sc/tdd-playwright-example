@@ -62,7 +62,10 @@ Running tests with a reporter:
 * Click [here](https://devcenter.heroku.com/articles/free-dyno-hours) for more information about dyno sleeping.
 
 ## Azure B2C
-* [Azure AD Java Quickstartah for](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v2-java-webapp "Azure B2C Tutorial")
+* [Azure AD Java Quick start for](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-v2-java-webapp "Azure B2C Tutorial")
+* [Other AAD Quick start](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/spring/azure-spring-boot-starter)
+* [Another one](https://github.com/Azure-Samples/ms-identity-java-webapp/blob/master/spring-security-web-app/src/main/resources/application.properties)
+* [Another one](https://www.digitalonus.com/securing-a-restful-api-using-spring-boot-and-microsofts-azure-active-directory/)
 
 ## Sources:
 * [Playwright](https://playwright.dev/ "Playwright.dev")

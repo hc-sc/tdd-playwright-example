@@ -3,9 +3,14 @@ package org.example.beans;
 import org.example.config.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import goc.webtemplate.component.spring.DefaultTemplateCoreBean;
+
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @Component("defaultmodelbean")
 public class DefaultModelBean extends DefaultTemplateCoreBean {
@@ -28,4 +33,5 @@ public class DefaultModelBean extends DefaultTemplateCoreBean {
     return language.equals(goc.webtemplate.Constants.ENGLISH_ACCRONYM) ? goc.webtemplate.Constants.FRENCH_ACCRONYM
         : goc.webtemplate.Constants.ENGLISH_ACCRONYM;
   }
+
 }

@@ -45,7 +45,7 @@ const options = {
     headless: true,
     slowMo: 50,
     // Context options:
-    viewport: { width: 800, height: 600 },
+    // viewport: { width: 800, height: 600 },
     ignoreHTTPSErrors: true,
     // Testing options:
     // video: 'retain-on-failure',

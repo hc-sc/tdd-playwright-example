@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.example.entities.employees.EmployeeDTO;
+import org.example.pages.index.controllers.IndexController;
 
 public class Validation {
 
@@ -49,20 +50,21 @@ public class Validation {
         }
     }
 
-    public static Map<String, List<String>> isValid(Object input, Object apiEmployee){
+    public static Map<String, List<String>> isValid(Object input, Object apiEmployee) {
         List<String> errorMessages = new ArrayList<>();
 
-       if(!isValid(input).isEmpty()){
-           System.out.println("INVALID INPUT" + input.toString());
-         errorMessages.add("Invalid input.");       
-       }
-
+        if (!isValid(input).isEmpty()) {
+            System.out.println("INVALID INPUT" + input.toString());
+            errorMessages.add("Invalid input.");
+        }
 
         EmployeeDTO inputEmployee = (EmployeeDTO) input;
-       if(!isValid(apiEmployee).isEmpty() || inputEmployee.getComment().equals("")){ inputEmployee.setComment(null); }
-       if(!inputEmployee.toString().equals(apiEmployee.toString())){
-        errorMessages.add("Employee not found.");       
-       }
+        if (!isValid(apiEmployee).isEmpty() || inputEmployee.getComment().equals("")) {
+            inputEmployee.setComment(null);
+        }
+        if (!inputEmployee.toString().equals(apiEmployee.toString())) {
+            errorMessages.add("Employee not found.");
+        }
         Map<String, List<String>> errors = new HashMap<>();
         if (!errorMessages.isEmpty()) {
             errors.put("errorMessages", errorMessages);
@@ -77,20 +79,20 @@ public class Validation {
         String type = data.getClass().getSimpleName();
         log.debug("TYPE: " + type);
         switch (type) {
-            case "EmployeeDTO":
-                EmployeeDTO employee = (EmployeeDTO) data;
-                if (employee.getId() == null || employee.getName() == null || employee.getRole() == null) {
-                    errorMessages.add("Employee not found.");
-                }
-                break;
-            case "ArrayList":
-                List<EmployeeDTO> employees = (ArrayList<EmployeeDTO>) data;
-                if (employees.isEmpty()) {
-                    errorMessages.add("No employees in database.");
-                }
-                break;
-            default:
-                break;
+        case "EmployeeDTO":
+            EmployeeDTO employee = (EmployeeDTO) data;
+            if (employee.getId() == null || employee.getName() == null || employee.getRole() == null) {
+                errorMessages.add("Employee not found.");
+            }
+            break;
+        case "ArrayList":
+            List<EmployeeDTO> employees = (ArrayList<EmployeeDTO>) data;
+            if (employees.isEmpty()) {
+                errorMessages.add("No employees in database.");
+            }
+            break;
+        default:
+            break;
         }
 
         Map<String, List<String>> errors = new HashMap<>();
@@ -103,24 +105,24 @@ public class Validation {
     public static Map<String, List<String>> isValid(String request, String id, String name, String role) {
         List<String> errorMessages = new ArrayList<>();
         switch (request) {
-            case "GET":
-                validId(errorMessages, "ID", id);
-                break;
-            case "POST":
-                validText(errorMessages, "Name", name);
-                validText(errorMessages, "Role", role);
-                break;
-            case "PUT":
-                validId(errorMessages, "ID", id);
-                validText(errorMessages, "Name", name);
-                validText(errorMessages, "Role", role);
-                break;
-            case "DELETE":
-                validId(errorMessages, "ID", id);
-                break;
-            default:
-                validRequest(errorMessages, "REQUEST", request);
-                break;
+        case "GET":
+            validId(errorMessages, "ID", id);
+            break;
+        case "POST":
+            validText(errorMessages, "Name", name);
+            validText(errorMessages, "Role", role);
+            break;
+        case "PUT":
+            validId(errorMessages, "ID", id);
+            validText(errorMessages, "Name", name);
+            validText(errorMessages, "Role", role);
+            break;
+        case "DELETE":
+            validId(errorMessages, "ID", id);
+            break;
+        default:
+            validRequest(errorMessages, "REQUEST", request);
+            break;
         }
 
         Map<String, List<String>> errors = new HashMap<>();

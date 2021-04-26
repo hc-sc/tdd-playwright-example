@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.*;
 @Disabled // Until IT test profiles are fixed
 @Tag("integration")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) // automatically scans for @SpringBootApplication
-@ActiveProfiles("local")
+@s("local")
 public class ControllerErrorIT { // make it abstract so it isn't instantiated by Spring Test
 
     @LocalServerPort

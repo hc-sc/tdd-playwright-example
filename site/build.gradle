@@ -1,6 +1,7 @@
 plugins {
   id 'org.springframework.boot' version '2.4.2'
   id "org.sonarqube" version "3.1.1"
+  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
 apply plugin: 'war'
@@ -70,6 +71,7 @@ ext {
   MAPSTRUCT_BINDING_VERSION = '0.2.0'
   MOCKITO_VERSION = '2.18.3'
   RESTASSURED_VERSION = '4.1.2'
+  AZURE_VERSION='3.3.0'
 }
 
 compileJava {
@@ -97,11 +99,25 @@ dependencies {
   testImplementation "io.rest-assured:rest-assured-all:$RESTASSURED_VERSION" // easier REST testing
   testImplementation "io.rest-assured:spring-mock-mvc:3.3.0" // test mocks
 	testImplementation ("org.springframework.boot:spring-boot-starter-test") // allows for SpringBootTest
-  
-	// compile "org.springframework.boot:spring-boot-starter-data-jpa"
-	// compile "org.springframework.boot:spring-boot-starter-security"
-	// compile "org.springframework.security:spring-security-test"
+
+implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.4.5'
+implementation 'org.springframework.security:spring-security-oauth2-client:5.4.6'
+implementation 'org.springframework.security:spring-security-oauth2-jose:5.4.6'
+implementation 'com.microsoft.azure:azure-active-directory-spring-boot-starter:2.2.1'
+  compile group: 'org.springframework', name: 'spring-webflux', version: '5.2.7.RELEASE'
+
+      implementation 'com.azure.spring:azure-spring-boot-starter-active-directory:3.3.0'
+    implementation 'com.azure.spring:azure-spring-boot-starter:3.3.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web:2.4.3'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf:2.4.3'
+    implementation 'org.springframework.boot:spring-boot-starter-security:2.4.3'
+    implementation 'org.springframework.security:spring-security-oauth2-client:5.4.5'
+    implementation 'org.springframework.security:spring-security-oauth2-jose:5.4.5'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE'
+    compile "org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.8.RELEASE"
 }
+
+
 
 // make sure your environment is set up correctly!
 task checkEnvironment {

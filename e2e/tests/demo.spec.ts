@@ -15,7 +15,7 @@ enum Request {
 
 test.describe(`DEMO: Our first test: `, () => {
 
-    test.skip('DEMO: A simple test', async ({ page }) => {
+    test('DEMO: A simple test', async ({ page }) => {
 
         await page.goto(baseURL);
         expect("1").toBe("2");
